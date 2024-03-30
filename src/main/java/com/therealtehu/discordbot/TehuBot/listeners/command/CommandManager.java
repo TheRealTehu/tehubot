@@ -1,6 +1,8 @@
 package com.therealtehu.discordbot.TehuBot.listeners.command;
 
 import com.therealtehu.discordbot.TehuBot.model.command.CommandWithFunctionality;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -31,9 +33,17 @@ public class CommandManager extends ListenerAdapter {
             event.getChannel().asTextChannel().sendMessage("Command: " + event.getName() + " not found!").queue();
         }
     }
+    @Override
+    public void onGuildReady(@NotNull GuildReadyEvent event) {
+        addCommands(event);
+    }
 
     @Override
-    public void onGuildReady(GuildReadyEvent event) {
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        addCommands(event);
+    }
+
+    private void addCommands(GenericGuildEvent event) {
         event.getGuild().updateCommands().addCommands(commands).queue();
     }
 }
