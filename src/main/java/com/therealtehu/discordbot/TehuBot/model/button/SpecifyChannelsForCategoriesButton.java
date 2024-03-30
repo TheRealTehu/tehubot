@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SpecifyChannelsForCategoriesButton extends ButtonWithFunctionality{
-    private static final ButtonImpl button = (ButtonImpl) Button.secondary(ButtonLabels.SPECIFY_CHANNELS_FOR_CATEGORIES.getButtonId(),
+    private static final ButtonImpl button = (ButtonImpl) Button.secondary(ButtonLabel.SPECIFY_CHANNELS_FOR_CATEGORIES.getButtonId(),
             "I will specify channels for every category!");
 
     public SpecifyChannelsForCategoriesButton() {
