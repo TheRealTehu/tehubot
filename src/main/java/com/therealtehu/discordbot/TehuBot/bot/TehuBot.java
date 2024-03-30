@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.bot;
 
+import com.therealtehu.discordbot.TehuBot.listeners.event.EventListener;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -15,6 +16,7 @@ public class TehuBot {
         builder.setStatus(OnlineStatus.ONLINE);
         builder.setActivity(Activity.playing("Useful Little Bot"));
         shardManager = builder.build();
+        shardManager.addEventListener(new EventListener());
     }
 
     public ShardManager getShardManager() {
