@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateOneChannelForAllButton extends ButtonWithFunctionality{
-    private static final ButtonImpl button = (ButtonImpl) Button.secondary(ButtonLabels.CREATE_ONE_CHANNEL_FOR_ALL.getButtonId(),
+    private static final ButtonImpl button = (ButtonImpl) Button.secondary(ButtonLabel.CREATE_ONE_CHANNEL_FOR_ALL.getButtonId(),
             "Create one channel where everything should be posted!");
 
     public CreateOneChannelForAllButton() {
