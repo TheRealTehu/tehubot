@@ -1,6 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.model.event.guild;
 
 import com.therealtehu.discordbot.TehuBot.model.button.*;
+import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
 import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.event.EventName;
 import net.dv8tion.jda.api.events.Event;
