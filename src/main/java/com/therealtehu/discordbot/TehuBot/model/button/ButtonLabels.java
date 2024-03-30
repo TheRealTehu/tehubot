@@ -1,4 +1,4 @@
-package com.therealtehu.discordbot.TehuBot.listeners.event.guild;
+package com.therealtehu.discordbot.TehuBot.model.button;
 
 public enum ButtonLabels {
     SET_SERVER_DEFAULT("setChannelsDefault"),
