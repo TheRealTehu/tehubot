@@ -5,11 +5,11 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
 public class CoinFlipCommand extends CommandWithFunctionality{
-    private static final CommandDataImpl commandData =
+    private static final CommandDataImpl COMMAND_DATA =
             (CommandDataImpl) Commands.slash("coinflip", "Flip a coin to help with decisions");
 
     public CoinFlipCommand() {
-        super(commandData);
+        super(COMMAND_DATA);
     }
 
     @Override
