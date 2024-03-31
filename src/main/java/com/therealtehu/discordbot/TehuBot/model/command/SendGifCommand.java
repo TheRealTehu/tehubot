@@ -12,17 +12,17 @@ import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
 import java.util.List;
 public class SendGifCommand extends CommandWithFunctionality {
-    private static final OptionData promptOption = new OptionData(
+    private static final OptionData PROMPT_OPTION = new OptionData(
             OptionType.STRING,
             "gifprompt",
             "The keyword you would like to use.",
             true).setMinLength(1).setMaxLength(100);
-    private static final CommandDataImpl commandData =
+    private static final CommandDataImpl COMMAND_DATA =
             (CommandDataImpl) Commands.slash("sendgif", "Send a gif from Tenor");
 
     private final TenorGifService tenorGifService;
     public SendGifCommand(TenorGifService tenorGifService) {
-        super(commandData, List.of(promptOption));
+        super(COMMAND_DATA, List.of(PROMPT_OPTION));
         this.tenorGifService = tenorGifService;
     }
 

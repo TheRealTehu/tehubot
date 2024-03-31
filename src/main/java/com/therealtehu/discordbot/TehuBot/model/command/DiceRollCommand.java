@@ -10,16 +10,16 @@ import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import java.util.List;
 
 public class DiceRollCommand extends CommandWithFunctionality{
-    private static final OptionData sidesOption = new OptionData(
+    private static final OptionData SIDES_OPTION = new OptionData(
             OptionType.INTEGER,
             "sides",
             "The number of sides of the die. Default: 6 (Should be between 3 and 100)",
             false).setMinValue(3).setMaxValue(100);
-    private static final CommandDataImpl commandData =
+    private static final CommandDataImpl COMMAND_DATA =
             (CommandDataImpl) Commands.slash("diceroll", "Roll an N-sided dice (3 <= N <= 100)");
 
     public DiceRollCommand() {
-        super(commandData, List.of(sidesOption));
+        super(COMMAND_DATA, List.of(SIDES_OPTION));
     }
 
     @Override

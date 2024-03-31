@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AlwaysInCommandChannelButton extends ButtonWithFunctionality {
-    private static final ButtonImpl button = (ButtonImpl) Button.secondary(ButtonLabel.SET_SERVER_DEFAULT.getButtonId(),
+    private static final ButtonImpl BUTTON = (ButtonImpl) Button.secondary(ButtonLabel.SET_SERVER_DEFAULT.getButtonId(),
             "Always post to the channel where the command was given!");
 
     public AlwaysInCommandChannelButton() {
-        super(button);
+        super(BUTTON);
     }
 
     @Override

@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 public class ServerJoinEvent extends EventHandler {
-    private static final String greetingText = "Hey! I'm TehuBot! I'm new on this server, a server admin please go through my initial setup!\n Where should I post?\n";
+    private static final String GREETING_TEXT = "Hey! I'm TehuBot! I'm new on this server, a server admin please go through my initial setup!\n Where should I post?\n";
     private final List<ButtonWithFunctionality> buttons;
 
     @Autowired
@@ -36,7 +36,7 @@ public class ServerJoinEvent extends EventHandler {
             ActionRow actionRow = ActionRow.of(buttons);
 
             MessageCreateData messageCreateData = new MessageCreateBuilder()
-                    .addContent(greetingText)
+                    .addContent(GREETING_TEXT)
                     .addComponents(actionRow).build();
             guildJoinEvent.getGuild().getDefaultChannel().asTextChannel().sendMessage(messageCreateData).queue();
         }

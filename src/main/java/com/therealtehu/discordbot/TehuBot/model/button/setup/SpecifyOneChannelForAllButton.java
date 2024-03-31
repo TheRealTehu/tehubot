@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SpecifyOneChannelForAllButton extends ButtonWithFunctionality {
-    private static final ButtonImpl button = (ButtonImpl) Button.secondary(ButtonLabel.SPECIFY_ONE_CHANNEL_FOR_ALL.getButtonId(),
+    private static final ButtonImpl BUTTON = (ButtonImpl) Button.secondary(ButtonLabel.SPECIFY_ONE_CHANNEL_FOR_ALL.getButtonId(),
             "I will specify one channel where you should post!");
 
     public SpecifyOneChannelForAllButton() {
-        super(button);
+        super(BUTTON);
     }
 
     @Override
