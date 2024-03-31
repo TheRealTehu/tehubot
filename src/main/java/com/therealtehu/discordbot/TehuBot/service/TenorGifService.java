@@ -22,6 +22,9 @@ public class TenorGifService {
     }
 
     public MessageEmbed getGifAsEmbed(String searchTerm) {
+        if(!searchTerm.matches(".*[a-zA-Z0-9].*")) {
+            searchTerm = "Error";
+        }
         return new EmbedBuilder()
                 .setImage(searchGifUrlOnTenor(searchTerm))
                 .build();
