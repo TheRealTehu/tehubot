@@ -6,6 +6,7 @@ import com.therealtehu.discordbot.TehuBot.model.command.DiceRollCommand;
 import com.therealtehu.discordbot.TehuBot.model.command.SendGifCommand;
 import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerJoinEvent;
+import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerNewMemberEvent;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,8 @@ public class ListenerUtils {
     @Bean
     public List<EventHandler> getEventHandlers() {
         return List.of(
-                new ServerJoinEvent()
+                new ServerJoinEvent(),
+                new ServerNewMemberEvent(tenorGifService)
         );
     }
 }

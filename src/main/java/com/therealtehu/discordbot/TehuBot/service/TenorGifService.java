@@ -2,6 +2,8 @@ package com.therealtehu.discordbot.TehuBot.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,7 +20,13 @@ public class TenorGifService {
     public TenorGifService() {
         this.webClient = WebClient.create();
     }
-    public String searchGifUrlOnTenor(String searchTerm) {
+
+    public MessageEmbed getGifAsEmbed(String searchTerm) {
+        return new EmbedBuilder()
+                .setImage(searchGifUrlOnTenor(searchTerm))
+                .build();
+    }
+    private String searchGifUrlOnTenor(String searchTerm) {
         String URL = String.format("https://tenor.googleapis.com/v2/search?q=%s&key=%s&random=true&limit=1", searchTerm, API_KEY);
         String response = webClient
                 .get()
