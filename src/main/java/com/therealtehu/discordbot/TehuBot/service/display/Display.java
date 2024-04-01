@@ -20,6 +20,10 @@ public class Display implements MessageSender{
     }
 
     @Override
+    public void sendMessageWithMessageEmbed(TextChannel channel, String message, MessageEmbed gif) {
+        channel.sendMessage(message).addEmbeds(gif).queue();
+    }
+    @Override
     public void replyToEvent(SlashCommandInteractionEvent event, String message) {
         event.reply(message).queue();
     }
@@ -33,4 +37,5 @@ public class Display implements MessageSender{
     public void sendMessageEmbedOnHook(InteractionHook hook, MessageEmbed embed) {
         hook.sendMessageEmbeds(embed).queue();
     }
+
 }

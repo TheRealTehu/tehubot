@@ -38,8 +38,8 @@ public class ListenerUtils {
     @Bean
     public List<EventHandler> getEventHandlers() {
         return List.of(
-                new ServerJoinEvent(),
-                new ServerNewMemberEvent(tenorGifService)
+                new ServerJoinEvent(messageSender),
+                new ServerNewMemberEvent(tenorGifService, messageSender)
         );
     }
 }
