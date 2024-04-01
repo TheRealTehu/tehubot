@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -18,8 +19,8 @@ public class DiceRollCommand extends CommandWithFunctionality{
     private static final CommandDataImpl COMMAND_DATA =
             (CommandDataImpl) Commands.slash("diceroll", "Roll an N-sided dice (3 <= N <= 100)");
 
-    public DiceRollCommand() {
-        super(COMMAND_DATA, List.of(SIDES_OPTION));
+    public DiceRollCommand(MessageSender messageSender) {
+        super(COMMAND_DATA, List.of(SIDES_OPTION), messageSender);
     }
 
     @Override
@@ -31,8 +32,8 @@ public class DiceRollCommand extends CommandWithFunctionality{
         }
         int rolledNumber = (int) (Math.random() * numberOfSides) + 1;
 
-        event.reply(event.getMember().getAsMention()
-                + " rolled a " + numberOfSides + " sided die and the result is: " + rolledNumber + "!"
-        ).queue();
+        String message = event.getMember().getAsMention() + " rolled a " + numberOfSides
+                + " sided die and the result is: " + rolledNumber + "!";
+        messageSender.replyToEvent(event, message);
     }
 }
