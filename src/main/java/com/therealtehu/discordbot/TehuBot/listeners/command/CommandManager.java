@@ -1,6 +1,8 @@
 package com.therealtehu.discordbot.TehuBot.listeners.command;
 
 import com.therealtehu.discordbot.TehuBot.model.command.CommandWithFunctionality;
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -16,10 +18,12 @@ import java.util.Optional;
 @Service
 public class CommandManager extends ListenerAdapter {
     private final List<CommandWithFunctionality> commands;
+    private final MessageSender messageSender;
 
     @Autowired
-    public CommandManager(List<CommandWithFunctionality> commands) {
+    public CommandManager(List<CommandWithFunctionality> commands, MessageSender messageSender) {
         this.commands = commands;
+        this.messageSender = messageSender;
     }
 
     @Override
@@ -30,7 +34,9 @@ public class CommandManager extends ListenerAdapter {
         if(chosenCommand.isPresent()) {
             chosenCommand.get().executeCommand(event);
         } else {
-            event.getChannel().asTextChannel().sendMessage("Command: " + event.getName() + " not found!").queue();
+            String errorMessage = "Command: " + event.getName() + " not found!";
+            TextChannel channel = event.getChannel().asTextChannel();
+            messageSender.sendMessage(channel, errorMessage);
         }
     }
     @Override

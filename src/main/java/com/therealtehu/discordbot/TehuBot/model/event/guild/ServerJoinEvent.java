@@ -4,6 +4,8 @@ import com.therealtehu.discordbot.TehuBot.model.button.*;
 import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
 import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.event.EventName;
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -21,8 +23,8 @@ public class ServerJoinEvent extends EventHandler {
     private final List<ButtonWithFunctionality> buttons;
 
     @Autowired
-    public ServerJoinEvent() {
-        super(EventName.SERVER_JOIN.getEventName());
+    public ServerJoinEvent(MessageSender messageSender) {
+        super(EventName.SERVER_JOIN.getEventName(), messageSender);
         buttons = new ArrayList<>();
         buttons.add(new AlwaysInCommandChannelButton());
         buttons.add(new CreateOneChannelForAllButton());
@@ -35,10 +37,11 @@ public class ServerJoinEvent extends EventHandler {
         if(event instanceof GuildJoinEvent guildJoinEvent) {
             ActionRow actionRow = ActionRow.of(buttons);
 
+            TextChannel channel = guildJoinEvent.getGuild().getDefaultChannel().asTextChannel();
             MessageCreateData messageCreateData = new MessageCreateBuilder()
                     .addContent(GREETING_TEXT)
                     .addComponents(actionRow).build();
-            guildJoinEvent.getGuild().getDefaultChannel().asTextChannel().sendMessage(messageCreateData).queue();
+            messageSender.sendMessage(channel, messageCreateData);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
@@ -7,9 +8,8 @@ import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 public class CoinFlipCommand extends CommandWithFunctionality{
     private static final CommandDataImpl COMMAND_DATA =
             (CommandDataImpl) Commands.slash("coinflip", "Flip a coin to help with decisions");
-
-    public CoinFlipCommand() {
-        super(COMMAND_DATA);
+    public CoinFlipCommand(MessageSender messageSender) {
+        super(COMMAND_DATA, messageSender);
     }
 
     @Override
@@ -25,6 +25,6 @@ public class CoinFlipCommand extends CommandWithFunctionality{
         } else {
             conclusion += "the coin bounced behind the couch, you can't find it!";
         }
-        event.reply(conclusion).queue();
+        messageSender.replyToEvent(event, conclusion);
     }
 }

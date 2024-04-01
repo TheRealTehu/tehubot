@@ -1,8 +1,10 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -31,8 +33,8 @@ public class SendGifCommand extends CommandWithFunctionality {
 
     private final TenorGifService tenorGifService;
 
-    public SendGifCommand(TenorGifService tenorGifService) {
-        super(COMMAND_DATA, List.of(PROMPT_OPTION, CHANNEL_OPTION));
+    public SendGifCommand(TenorGifService tenorGifService, MessageSender messageSender) {
+        super(COMMAND_DATA, List.of(PROMPT_OPTION, CHANNEL_OPTION), messageSender);
         this.tenorGifService = tenorGifService;
     }
 
@@ -46,11 +48,14 @@ public class SendGifCommand extends CommandWithFunctionality {
         MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
         MessageCreateData messageCreateData = new MessageCreateBuilder().addEmbeds(messageEmbed).build();
 
+        TextChannel channel = event.getChannel().asTextChannel();
+
         if (channelOption != null) {
-            channelOption.getAsChannel().asTextChannel().sendMessage(messageCreateData).queue();
-        } else {
-            event.getChannel().asTextChannel().sendMessage(messageCreateData).queue();
+            channel = channelOption.getAsChannel().asTextChannel();
+
         }
-        event.getHook().sendMessage("Gif sent").queue();
+        messageSender.sendMessage(channel, messageCreateData);
+
+        messageSender.sendMessageOnHook(event.getHook(), "Gif sent");
     }
 }

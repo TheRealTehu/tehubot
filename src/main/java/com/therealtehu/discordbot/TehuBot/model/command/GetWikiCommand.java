@@ -2,6 +2,7 @@ package com.therealtehu.discordbot.TehuBot.model.command;
 
 import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
 import com.therealtehu.discordbot.TehuBot.service.WikiTextConverter;
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -25,8 +26,8 @@ public class GetWikiCommand extends CommandWithFunctionality {
 
     private final WikiArticleService wikiArticleService;
 
-    public GetWikiCommand(WikiArticleService wikiArticleService) {
-        super(COMMAND_DATA, List.of(TITLE_OPTION));
+    public GetWikiCommand(WikiArticleService wikiArticleService, MessageSender messageSender) {
+        super(COMMAND_DATA, List.of(TITLE_OPTION), messageSender);
         this.wikiArticleService = wikiArticleService;
     }
 
@@ -47,6 +48,6 @@ public class GetWikiCommand extends CommandWithFunctionality {
                 .setDescription(plainText)
                 .build();
 
-        event.getHook().sendMessageEmbeds(messageEmbed).queue();
+        messageSender.sendMessageEmbedOnHook(event.getHook(), messageEmbed);
     }
 }
