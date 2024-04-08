@@ -11,15 +11,19 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+@Component
 public class SendGifCommand extends CommandWithFunctionality {
+    private static final int MIN_OPTION_LENGTH = 1;
+    private static final int MAX_OPTION_LENGTH = 100;
     private static final OptionData PROMPT_OPTION = new OptionData(
             OptionType.STRING,
             "gifprompt",
             "The keyword you would like to use.",
-            true).setMinLength(1).setMaxLength(100);
+            true).setMinLength(MIN_OPTION_LENGTH).setMaxLength(MAX_OPTION_LENGTH);
 
     private static final OptionData CHANNEL_OPTION = new OptionData(
             OptionType.CHANNEL,
@@ -28,10 +32,9 @@ public class SendGifCommand extends CommandWithFunctionality {
             false).setChannelTypes(ChannelType.TEXT, ChannelType.NEWS);
 
     private static final String COMMAND_NAME = "sendgif";
-
     private static final String COMMAND_DESCRIPTION = "Send a gif from Tenor";
     private final TenorGifService tenorGifService;
-
+    @Autowired
     public SendGifCommand(TenorGifService tenorGifService, MessageSender messageSender) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(PROMPT_OPTION, CHANNEL_OPTION), messageSender);
         this.tenorGifService = tenorGifService;
