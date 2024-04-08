@@ -1,12 +1,11 @@
 package com.therealtehu.discordbot.TehuBot.listeners;
 
+import com.therealtehu.discordbot.TehuBot.model.button.ButtonWithFunctionality;
+import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
 import com.therealtehu.discordbot.TehuBot.model.command.*;
 import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerJoinEvent;
 import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerNewMemberEvent;
-import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
-import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
-import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,31 +14,39 @@ import java.util.List;
 
 @Configuration
 public class ListenerUtils {
-    private final TenorGifService tenorGifService;
-    private final WikiArticleService wikiArticleService;
-    private final MessageSender messageSender;
-
-    @Autowired
-    public ListenerUtils(TenorGifService tenorGifService, WikiArticleService wikiArticleService, MessageSender messageSender) {
-        this.tenorGifService = tenorGifService;
-        this.wikiArticleService = wikiArticleService;
-        this.messageSender = messageSender;
-    }
-
     @Bean
-    public List<CommandWithFunctionality> getCommands() {
+    @Autowired
+    public List<CommandWithFunctionality> getCommands(CoinFlipCommand coinFlipCommand, DiceRollCommand diceRollCommand,
+                                                      SendGifCommand sendGifCommand, GetWikiCommand getWikiCommand) {
         return List.of(
-                new CoinFlipCommand(messageSender),
-                new DiceRollCommand(messageSender),
-                new SendGifCommand(tenorGifService, messageSender),
-                new GetWikiCommand(wikiArticleService, messageSender)
+                coinFlipCommand,
+                diceRollCommand,
+                sendGifCommand,
+                getWikiCommand
         );
     }
     @Bean
-    public List<EventHandler> getEventHandlers() {
+    @Autowired
+    public List<EventHandler> getEventHandlers(ServerJoinEvent serverJoinEvent, ServerNewMemberEvent serverNewMemberEvent) {
         return List.of(
-                new ServerJoinEvent(messageSender),
-                new ServerNewMemberEvent(tenorGifService, messageSender)
+                serverJoinEvent,
+                serverNewMemberEvent
+        );
+    }
+
+    @Bean
+    @Autowired
+    public List<ButtonWithFunctionality> getServerJoinEventButtons(AlwaysInCommandChannelButton alwaysInCommandChannelButton,
+                                                                   CreateOneChannelForAllButton createOneChannelForAllButton,
+                                                                   CreateChannelsForCategoriesButton createChannelsForCategoriesButton,
+                                                                   SpecifyOneChannelForAllButton specifyOneChannelForAllButton,
+                                                                   SpecifyChannelsForCategoriesButton specifyChannelsForCategoriesButton) {
+        return List.of(
+                alwaysInCommandChannelButton,
+                createOneChannelForAllButton,
+                createChannelsForCategoriesButton,
+                specifyOneChannelForAllButton,
+                specifyChannelsForCategoriesButton
         );
     }
 }
