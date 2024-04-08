@@ -4,23 +4,25 @@ import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+@Component
 public class DiceRollCommand extends CommandWithFunctionality{
     private static final OptionData SIDES_OPTION = new OptionData(
             OptionType.INTEGER,
             "sides",
             "The number of sides of the die. Default: 6 (Should be between 3 and 100)",
             false).setMinValue(3).setMaxValue(100);
-    private static final CommandDataImpl COMMAND_DATA =
-            (CommandDataImpl) Commands.slash("diceroll", "Roll an N-sided dice (3 <= N <= 100)");
 
+    private static final String COMMAND_NAME = "diceroll";
+
+    private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice (3 <= N <= 100)";
+    @Autowired
     public DiceRollCommand(MessageSender messageSender) {
-        super(COMMAND_DATA, List.of(SIDES_OPTION), messageSender);
+        super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(SIDES_OPTION), messageSender);
     }
 
     @Override

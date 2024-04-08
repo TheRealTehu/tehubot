@@ -2,14 +2,13 @@ package com.therealtehu.discordbot.TehuBot.model.command;
 
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CoinFlipCommand extends CommandWithFunctionality{
-    private static final CommandDataImpl COMMAND_DATA =
-            (CommandDataImpl) Commands.slash("coinflip", "Flip a coin to help with decisions");
+    private static final String COMMAND_NAME = "coinflip";
+    private static final String COMMAND_DESCRIPTION = "Flip a coin to help with decisions";
     public CoinFlipCommand(MessageSender messageSender) {
-        super(COMMAND_DATA, messageSender);
+        super(COMMAND_NAME, COMMAND_DESCRIPTION, messageSender);
     }
 
     @Override

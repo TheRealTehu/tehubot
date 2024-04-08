@@ -8,11 +8,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
 import java.util.List;
 
@@ -28,13 +26,14 @@ public class SendGifCommand extends CommandWithFunctionality {
             "gifchannel",
             "The channel where the gif should be sent.",
             false).setChannelTypes(ChannelType.TEXT, ChannelType.NEWS);
-    private static final CommandDataImpl COMMAND_DATA =
-            (CommandDataImpl) Commands.slash("sendgif", "Send a gif from Tenor");
 
+    private static final String COMMAND_NAME = "sendgif";
+
+    private static final String COMMAND_DESCRIPTION = "Send a gif from Tenor";
     private final TenorGifService tenorGifService;
 
     public SendGifCommand(TenorGifService tenorGifService, MessageSender messageSender) {
-        super(COMMAND_DATA, List.of(PROMPT_OPTION, CHANNEL_OPTION), messageSender);
+        super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(PROMPT_OPTION, CHANNEL_OPTION), messageSender);
         this.tenorGifService = tenorGifService;
     }
 

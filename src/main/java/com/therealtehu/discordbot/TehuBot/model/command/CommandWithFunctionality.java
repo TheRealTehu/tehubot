@@ -10,13 +10,13 @@ import java.util.List;
 public abstract class CommandWithFunctionality extends CommandDataImpl {
 
     protected final MessageSender messageSender;
-    public CommandWithFunctionality(CommandDataImpl commandData, MessageSender messageSender) {
-        super(commandData.getName(), commandData.getDescription());
+    public CommandWithFunctionality(String commandName, String commandDescription, MessageSender messageSender) {
+        super(commandName, commandDescription);
         this.messageSender = messageSender;
     }
 
-    public CommandWithFunctionality(CommandDataImpl commandData, List<OptionData> options, MessageSender messageSender) {
-        super(commandData.getName(), commandData.getDescription());
+    public CommandWithFunctionality(String commandName, String commandDescription, List<OptionData> options, MessageSender messageSender) {
+        super(commandName, commandDescription);
         super.addOptions(options);
         this.messageSender = messageSender;
     }

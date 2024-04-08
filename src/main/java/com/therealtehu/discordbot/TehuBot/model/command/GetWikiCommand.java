@@ -7,9 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
 import java.awt.*;
 import java.util.List;
@@ -21,13 +19,15 @@ public class GetWikiCommand extends CommandWithFunctionality {
             "The title of the wiki article you would like to find.",
             true).setMinLength(1).setMaxLength(100);
 
-    private static final CommandDataImpl COMMAND_DATA =
-            (CommandDataImpl) Commands.slash("getwiki", "Get a wiki article.");
+    private static final String COMMAND_NAME = "getwiki";
 
+    private static final String COMMAND_DESCRIPTION = "Get a wiki article.";
     private final WikiArticleService wikiArticleService;
 
+    private static final int MAX_MESSAGE_LENGTH = 4095;
+
     public GetWikiCommand(WikiArticleService wikiArticleService, MessageSender messageSender) {
-        super(COMMAND_DATA, List.of(TITLE_OPTION), messageSender);
+        super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(TITLE_OPTION), messageSender);
         this.wikiArticleService = wikiArticleService;
     }
 
@@ -37,8 +37,8 @@ public class GetWikiCommand extends CommandWithFunctionality {
         String title = event.getOption("wikititle").getAsString();
         String articleWikiText = wikiArticleService.getWikiArticle(title);
         String plainText = WikiTextConverter.convertToPlainText(articleWikiText);
-        if(plainText.length() > 4095) {
-            plainText = plainText.substring(0, 4093) + "...";
+        if(plainText.length() > MAX_MESSAGE_LENGTH) {
+            plainText = plainText.substring(0, MAX_MESSAGE_LENGTH - 2) + "...";
         } else if(plainText.startsWith("<!--")) {
             plainText = "Wiki API too busy, please try again later!";
         }
