@@ -19,7 +19,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
             OptionType.INTEGER,
             "sides",
             "The number of sides of the die. Default: "+ DEFAULT_DICE_SIDES + " (Should be between "
-                    + MIN_DICE_SIDES + " and " + MAX_DICE_SIDES + " 100)",
+                    + MIN_DICE_SIDES + " and " + MAX_DICE_SIDES + ")",
             false).setMinValue(MIN_DICE_SIDES).setMaxValue(MAX_DICE_SIDES);
     private static final String COMMAND_NAME = "diceroll";
     private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice ("
