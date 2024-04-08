@@ -3,10 +3,13 @@ package com.therealtehu.discordbot.TehuBot.model.command;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CoinFlipCommand extends CommandWithFunctionality{
     private static final String COMMAND_NAME = "coinflip";
     private static final String COMMAND_DESCRIPTION = "Flip a coin to help with decisions";
+    @Autowired
     public CoinFlipCommand(MessageSender messageSender) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, messageSender);
     }
