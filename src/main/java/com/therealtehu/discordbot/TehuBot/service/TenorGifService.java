@@ -13,6 +13,9 @@ import java.io.IOException;
 
 @Service
 public class TenorGifService {
+    private static final String TENOR_SEARCH_URL = "https://tenor.googleapis.com/v2/search?q=%s&key=%s&random=true&limit=1";
+    private static final String LETTERS_NUMBERS_REGEX = ".*[a-zA-Z0-9].*";
+    private static final String ERROR_SEARCH_TERM = "Error";
     @Value("${tenor.api.key}")
     private String API_KEY;
     private final WebClient webClient;
@@ -22,15 +25,15 @@ public class TenorGifService {
     }
 
     public MessageEmbed getGifAsEmbed(String searchTerm) {
-        if(!searchTerm.matches(".*[a-zA-Z0-9].*")) {
-            searchTerm = "Error";
+        if(!searchTerm.matches(LETTERS_NUMBERS_REGEX)) {
+            searchTerm = ERROR_SEARCH_TERM;
         }
         return new EmbedBuilder()
                 .setImage(searchGifUrlOnTenor(searchTerm))
                 .build();
     }
     private String searchGifUrlOnTenor(String searchTerm) {
-        String URL = String.format("https://tenor.googleapis.com/v2/search?q=%s&key=%s&random=true&limit=1", searchTerm, API_KEY);
+        String URL = String.format(TENOR_SEARCH_URL, searchTerm, API_KEY);
         String response = webClient
                 .get()
                 .uri(URL)

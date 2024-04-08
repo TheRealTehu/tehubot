@@ -1,7 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.event.guild;
 
-import com.therealtehu.discordbot.TehuBot.model.button.*;
-import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
+import com.therealtehu.discordbot.TehuBot.model.button.ButtonWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.event.EventName;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,14 +21,9 @@ public class ServerJoinEvent extends EventHandler {
     private final List<ButtonWithFunctionality> buttons;
 
     @Autowired
-    public ServerJoinEvent(MessageSender messageSender) {
+    public ServerJoinEvent(List<ButtonWithFunctionality> buttons, MessageSender messageSender) {
         super(EventName.SERVER_JOIN.getEventName(), messageSender);
-        buttons = new ArrayList<>();
-        buttons.add(new AlwaysInCommandChannelButton());
-        buttons.add(new CreateOneChannelForAllButton());
-        buttons.add(new CreateChannelsForCategoriesButton());
-        buttons.add(new SpecifyOneChannelForAllButton());
-        buttons.add(new SpecifyChannelsForCategoriesButton());
+        this.buttons = buttons;
     }
     @Override
     public void handle(Event event) {

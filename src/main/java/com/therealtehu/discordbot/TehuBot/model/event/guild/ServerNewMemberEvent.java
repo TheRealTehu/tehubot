@@ -8,12 +8,14 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ServerNewMemberEvent extends EventHandler {
     private final TenorGifService tenorGifService;
 
+    @Autowired
     public ServerNewMemberEvent(TenorGifService tenorGifService, MessageSender messageSender) {
         super(EventName.SERVER_NEW_MEMBER.getEventName(), messageSender);
         this.tenorGifService = tenorGifService;

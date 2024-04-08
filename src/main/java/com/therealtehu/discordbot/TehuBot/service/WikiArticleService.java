@@ -12,6 +12,7 @@ import java.io.IOException;
 public class WikiArticleService {
     private static final String MEDIAWIKI_USER_AGENT = "TehuBotDiscord/1.0 (https://github.com/TheRealTehu)";
     private static final String BASE_URL = "https://en.wikipedia.org/w/api.php";
+    private static final String URL_QUERY = "?action=query&format=json&prop=extracts&explaintext=false&titles=";
     private final WebClient webClient;
 
     public WikiArticleService() {
@@ -23,7 +24,7 @@ public class WikiArticleService {
 
     public String getWikiArticle(String title) {
         String response = webClient.get()
-                .uri("?action=query&format=json&prop=extracts&explaintext=false&titles=" + title)
+                .uri(URL_QUERY + title)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
