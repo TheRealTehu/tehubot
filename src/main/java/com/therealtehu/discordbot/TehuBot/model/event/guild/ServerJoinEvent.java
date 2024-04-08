@@ -23,14 +23,9 @@ public class ServerJoinEvent extends EventHandler {
     private final List<ButtonWithFunctionality> buttons;
 
     @Autowired
-    public ServerJoinEvent(MessageSender messageSender) {
+    public ServerJoinEvent(List<ButtonWithFunctionality> buttons, MessageSender messageSender) {
         super(EventName.SERVER_JOIN.getEventName(), messageSender);
-        buttons = new ArrayList<>();
-        buttons.add(new AlwaysInCommandChannelButton());
-        buttons.add(new CreateOneChannelForAllButton());
-        buttons.add(new CreateChannelsForCategoriesButton());
-        buttons.add(new SpecifyOneChannelForAllButton());
-        buttons.add(new SpecifyChannelsForCategoriesButton());
+        this.buttons = buttons;
     }
     @Override
     public void handle(Event event) {
