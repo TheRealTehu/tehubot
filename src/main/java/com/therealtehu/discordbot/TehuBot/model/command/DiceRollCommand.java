@@ -11,15 +11,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 @Component
 public class DiceRollCommand extends CommandWithFunctionality{
+    private static final int MIN_DICE_SIDES = 3;
+    private static final int MAX_DICE_SIDES = 100;
+
+    private static final int DEFAULT_DICE_SIDES = 6;
     private static final OptionData SIDES_OPTION = new OptionData(
             OptionType.INTEGER,
             "sides",
-            "The number of sides of the die. Default: 6 (Should be between 3 and 100)",
-            false).setMinValue(3).setMaxValue(100);
-
+            "The number of sides of the die. Default: "+ DEFAULT_DICE_SIDES + " (Should be between "
+                    + MIN_DICE_SIDES + " and " + MAX_DICE_SIDES + " 100)",
+            false).setMinValue(MIN_DICE_SIDES).setMaxValue(MAX_DICE_SIDES);
     private static final String COMMAND_NAME = "diceroll";
-
-    private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice (3 <= N <= 100)";
+    private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice ("
+            + MIN_DICE_SIDES + " <= N <= "+ MAX_DICE_SIDES + ")";
     @Autowired
     public DiceRollCommand(MessageSender messageSender) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(SIDES_OPTION), messageSender);
@@ -28,7 +32,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
         OptionMapping optionData = event.getOption("sides");
-        int numberOfSides = 6;
+        int numberOfSides = DEFAULT_DICE_SIDES;
         if(optionData != null) {
             numberOfSides = optionData.getAsInt();
         }
