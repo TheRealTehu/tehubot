@@ -1,11 +1,14 @@
 package com.therealtehu.discordbot.TehuBot.listeners;
 
+import com.therealtehu.discordbot.TehuBot.listeners.event.EventListener;
 import com.therealtehu.discordbot.TehuBot.model.button.ButtonWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
 import com.therealtehu.discordbot.TehuBot.model.command.*;
 import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerJoinEvent;
 import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerNewMemberEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-public class ListenerUtils {
+public class ListenerConfiguration {
     @Bean
     @Autowired
     public List<CommandWithFunctionality> getCommands(CoinFlipCommand coinFlipCommand, DiceRollCommand diceRollCommand,
@@ -48,5 +51,10 @@ public class ListenerUtils {
                 specifyOneChannelForAllButton,
                 specifyChannelsForCategoriesButton
         );
+    }
+
+    @Bean
+    public Logger getEventListenerLogger() {
+        return LoggerFactory.getLogger(EventListener.class);
     }
 }

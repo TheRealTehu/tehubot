@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +17,11 @@ import java.util.Optional;
 public class EventListener extends ListenerAdapter {
     private final List<EventHandler> eventHandlers;
 
-    private final Logger logger = LoggerFactory.getLogger(EventListener.class);
+    private final Logger logger;
     @Autowired
-    public EventListener(List<EventHandler> eventHandlers) {
+    public EventListener(List<EventHandler> eventHandlers, Logger logger) {
         this.eventHandlers = eventHandlers;
+        this.logger = logger;
     }
 
     @Override
