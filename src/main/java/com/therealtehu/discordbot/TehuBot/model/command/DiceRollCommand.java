@@ -1,6 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -13,7 +14,6 @@ import java.util.List;
 public class DiceRollCommand extends CommandWithFunctionality{
     private static final int MIN_DICE_SIDES = 3;
     private static final int MAX_DICE_SIDES = 100;
-
     private static final int DEFAULT_DICE_SIDES = 6;
     private static final OptionData SIDES_OPTION = new OptionData(
             OptionType.INTEGER,
@@ -24,9 +24,11 @@ public class DiceRollCommand extends CommandWithFunctionality{
     private static final String COMMAND_NAME = "diceroll";
     private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice ("
             + MIN_DICE_SIDES + " <= N <= "+ MAX_DICE_SIDES + ")";
+    private final RandomNumberGenerator randomNumberGenerator;
     @Autowired
-    public DiceRollCommand(MessageSender messageSender) {
+    public DiceRollCommand(MessageSender messageSender, RandomNumberGenerator randomNumberGenerator) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(SIDES_OPTION), messageSender);
+        this.randomNumberGenerator = randomNumberGenerator;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
         if(optionData != null) {
             numberOfSides = optionData.getAsInt();
         }
-        int rolledNumber = (int) (Math.random() * numberOfSides) + 1;
+        int rolledNumber = randomNumberGenerator.getRandomNumber(1, numberOfSides);
 
         String message = event.getMember().getAsMention() + " rolled a " + numberOfSides
                 + " sided die and the result is: " + rolledNumber + "!";
