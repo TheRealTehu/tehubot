@@ -34,10 +34,12 @@ public class SendGifCommand extends CommandWithFunctionality {
     private static final String COMMAND_NAME = "sendgif";
     private static final String COMMAND_DESCRIPTION = "Send a gif from Tenor";
     private final TenorGifService tenorGifService;
+    private final MessageCreateBuilder messageCreateBuilder;
     @Autowired
-    public SendGifCommand(TenorGifService tenorGifService, MessageSender messageSender) {
+    public SendGifCommand(TenorGifService tenorGifService, MessageSender messageSender, MessageCreateBuilder messageCreateBuilder) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(PROMPT_OPTION, CHANNEL_OPTION), messageSender);
         this.tenorGifService = tenorGifService;
+        this.messageCreateBuilder = messageCreateBuilder;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class SendGifCommand extends CommandWithFunctionality {
         event.deferReply().setEphemeral(true).queue();
 
         MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
-        MessageCreateData messageCreateData = new MessageCreateBuilder().addEmbeds(messageEmbed).build();
+        MessageCreateData messageCreateData = messageCreateBuilder.addEmbeds(messageEmbed).build();
 
         TextChannel channel = event.getChannel().asTextChannel();
 
