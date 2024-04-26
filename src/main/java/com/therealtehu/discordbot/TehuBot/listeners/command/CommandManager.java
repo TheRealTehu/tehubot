@@ -1,6 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.listeners.command;
 
-import com.therealtehu.discordbot.TehuBot.model.command.CommandWithFunctionality;
+import com.therealtehu.discordbot.TehuBot.model.action.command.CommandWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;

@@ -1,4 +1,4 @@
-package com.therealtehu.discordbot.TehuBot.model.event;
+package com.therealtehu.discordbot.TehuBot.model.action.event;
 
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.Event;

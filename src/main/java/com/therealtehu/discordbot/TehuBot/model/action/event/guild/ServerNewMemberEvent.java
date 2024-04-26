@@ -1,7 +1,7 @@
-package com.therealtehu.discordbot.TehuBot.model.event.guild;
+package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 
-import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
-import com.therealtehu.discordbot.TehuBot.model.event.EventName;
+import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
+import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.MessageEmbed;

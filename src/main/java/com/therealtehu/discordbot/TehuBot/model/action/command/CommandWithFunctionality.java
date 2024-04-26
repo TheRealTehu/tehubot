@@ -1,4 +1,4 @@
-package com.therealtehu.discordbot.TehuBot.model.command;
+package com.therealtehu.discordbot.TehuBot.model.action.command;
 
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
