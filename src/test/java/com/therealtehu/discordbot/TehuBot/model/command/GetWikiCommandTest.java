@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
+import com.therealtehu.discordbot.TehuBot.model.action.command.GetWikiCommand;
 import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
 import com.therealtehu.discordbot.TehuBot.service.WikiTextConverter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;

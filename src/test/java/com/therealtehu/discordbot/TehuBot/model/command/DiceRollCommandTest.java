@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
+import com.therealtehu.discordbot.TehuBot.model.action.command.DiceRollCommand;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.entities.Member;

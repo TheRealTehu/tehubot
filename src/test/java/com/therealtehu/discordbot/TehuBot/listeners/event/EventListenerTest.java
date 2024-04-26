@@ -1,7 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.listeners.event;
 
-import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
-import com.therealtehu.discordbot.TehuBot.model.event.EventName;
+import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
+import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import org.junit.jupiter.api.Test;

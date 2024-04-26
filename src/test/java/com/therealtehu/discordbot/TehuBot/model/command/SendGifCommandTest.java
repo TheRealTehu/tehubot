@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.command;
 
+import com.therealtehu.discordbot.TehuBot.model.action.command.SendGifCommand;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.MessageEmbed;
