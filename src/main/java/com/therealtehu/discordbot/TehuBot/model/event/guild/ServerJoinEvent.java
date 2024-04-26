@@ -19,11 +19,14 @@ import java.util.List;
 public class ServerJoinEvent extends EventHandler {
     private static final String GREETING_TEXT = "Hey! I'm TehuBot! I'm new on this server, a server admin please go through my initial setup!\n Where should I post?\n";
     private final List<ButtonWithFunctionality> buttons;
+    private final MessageCreateBuilder messageCreateBuilder;
 
     @Autowired
-    public ServerJoinEvent(List<ButtonWithFunctionality> buttons, MessageSender messageSender) {
+    public ServerJoinEvent(List<ButtonWithFunctionality> buttons, MessageSender messageSender,
+                           MessageCreateBuilder messageCreateBuilder) {
         super(EventName.SERVER_JOIN.getEventName(), messageSender);
         this.buttons = buttons;
+        this.messageCreateBuilder = messageCreateBuilder;
     }
     @Override
     public void handle(Event event) {
@@ -31,7 +34,7 @@ public class ServerJoinEvent extends EventHandler {
             ActionRow actionRow = ActionRow.of(buttons);
 
             TextChannel channel = guildJoinEvent.getGuild().getDefaultChannel().asTextChannel();
-            MessageCreateData messageCreateData = new MessageCreateBuilder()
+            MessageCreateData messageCreateData = messageCreateBuilder
                     .addContent(GREETING_TEXT)
                     .addComponents(actionRow).build();
             messageSender.sendMessage(channel, messageCreateData);
