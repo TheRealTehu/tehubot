@@ -1,4 +1,4 @@
-package com.therealtehu.discordbot.TehuBot.model.event;
+package com.therealtehu.discordbot.TehuBot.model.action.event;
 
 public enum EventName {
     SERVER_JOIN("serverjoin"),

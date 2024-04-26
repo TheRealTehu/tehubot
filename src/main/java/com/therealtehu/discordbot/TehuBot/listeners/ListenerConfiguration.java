@@ -1,12 +1,12 @@
 package com.therealtehu.discordbot.TehuBot.listeners;
 
 import com.therealtehu.discordbot.TehuBot.listeners.event.EventListener;
+import com.therealtehu.discordbot.TehuBot.model.action.command.*;
+import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
+import com.therealtehu.discordbot.TehuBot.model.action.event.guild.ServerJoinEvent;
+import com.therealtehu.discordbot.TehuBot.model.action.event.guild.ServerNewMemberEvent;
 import com.therealtehu.discordbot.TehuBot.model.button.ButtonWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
-import com.therealtehu.discordbot.TehuBot.model.command.*;
-import com.therealtehu.discordbot.TehuBot.model.event.EventHandler;
-import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerJoinEvent;
-import com.therealtehu.discordbot.TehuBot.model.event.guild.ServerNewMemberEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
