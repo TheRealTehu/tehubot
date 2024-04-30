@@ -1,6 +1,5 @@
-package com.therealtehu.discordbot.TehuBot.model.event.guild;
+package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 
-import com.therealtehu.discordbot.TehuBot.model.action.event.guild.ServerJoinEvent;
 import com.therealtehu.discordbot.TehuBot.model.button.ButtonWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.button.setup.AlwaysInCommandChannelButton;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
