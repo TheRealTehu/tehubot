@@ -34,7 +34,7 @@ class ServerNewMemberEventTest {
     }
 
     @Test
-    void handle() {
+    void handleServerNewMember() {
         when(mockMemberJoinEvent.getMember()).thenReturn(mockMember);
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockMemberJoinEvent.getGuild()).thenReturn(mockGuild);
