@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,8 +21,9 @@ public class TenorGifService {
     private String API_KEY;
     private final WebClient webClient;
 
-    public TenorGifService() {
-        this.webClient = WebClient.create();
+    @Autowired
+    public TenorGifService(WebClient webClient) {
+        this.webClient = webClient;
     }
 
     public MessageEmbed getGifAsEmbed(String searchTerm) {
