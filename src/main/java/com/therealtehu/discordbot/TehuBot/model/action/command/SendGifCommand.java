@@ -51,6 +51,7 @@ public class SendGifCommand extends CommandWithFunctionality {
 
         MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
         MessageCreateData messageCreateData = messageCreateBuilder.addEmbeds(messageEmbed).build();
+        messageCreateBuilder.clear();
 
         TextChannel channel = event.getChannel().asTextChannel();
 
