@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class TenorGifServiceTest {
@@ -37,6 +38,22 @@ class TenorGifServiceTest {
         MessageEmbed actual = tenorGifService.getGifAsEmbed("Test");
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void getGifAsEmbedWhenUnsupportedSearchTermIsGivenThenErrorGifMessageIsSent() {
+        when(mockWebClient.get()).thenReturn(mockRequestHeaderUriSpec);
+        when(mockRequestHeaderUriSpec.uri(anyString())).thenReturn(mockRequestHeaderUriSpec);
+        when(mockRequestHeaderUriSpec.retrieve()).thenReturn(mockResponseSpec);
+        when(mockResponseSpec.bodyToMono(String.class)).thenReturn(Mono.just(exampleJsonResponse));
+
+        MessageEmbed expected = new EmbedBuilder()
+                .setImage("https://example.com/example.gif")
+                .build();
+        MessageEmbed actual = tenorGifService.getGifAsEmbed("-( )+");
+
+        assertEquals(expected, actual);
+        verify(mockRequestHeaderUriSpec).uri("https://tenor.googleapis.com/v2/search?q=Error&key=null&random=true&limit=1");
     }
 
     private final String exampleJsonResponse= """
