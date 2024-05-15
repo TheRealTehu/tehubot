@@ -15,8 +15,9 @@ public class WikiArticleService {
     private static final String URL_QUERY = "?action=query&format=json&prop=extracts&explaintext=false&titles=";
     private final WebClient webClient;
 
-    public WikiArticleService() {
-        this.webClient = WebClient.builder()
+    public WikiArticleService(WebClient webClient) {
+        this.webClient = webClient
+                .mutate()
                 .baseUrl(BASE_URL)
                 .defaultHeader(HttpHeaders.USER_AGENT, MEDIAWIKI_USER_AGENT)
                 .build();
