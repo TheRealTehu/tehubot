@@ -59,6 +59,7 @@ public class SendGifCommand extends CommandWithFunctionality {
             channel = channelOption.getAsChannel().asTextChannel();
 
         }
+
         messageSender.sendMessage(channel, messageCreateData);
 
         messageSender.sendMessageOnHook(event.getHook(), "Gif sent");
