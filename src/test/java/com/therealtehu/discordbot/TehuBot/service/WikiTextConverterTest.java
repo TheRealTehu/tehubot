@@ -35,7 +35,7 @@ class WikiTextConverterTest {
     @Test
     void convertToPlainTextWhenContainsInternalLinkChangesInternalLinkMarker() {
         String internalLinkText = "Contains [[Link|Text]].";
-        String expected = "Contains Text.";
+        String expected = "Contains [Text](Link).";
         String actual = WikiTextConverter.convertToPlainText(internalLinkText);
 
         assertEquals(expected, actual);
@@ -44,7 +44,7 @@ class WikiTextConverterTest {
     @Test
     void convertToPlainTextWhenContainsExternalLinkChangesExternalLinkMarker() {
         String externalLinkText = "Contains [https://www.example.com link].";
-        String expected = "Contains link.";
+        String expected = "Contains [link](https://www.example.com).";
         String actual = WikiTextConverter.convertToPlainText(externalLinkText);
 
         assertEquals(expected, actual);
@@ -67,9 +67,9 @@ class WikiTextConverterTest {
         String textWithItalicAllMarkers = "Contains ''bold'', '''italic''', [[Link|Text]], [https://www.example.com link] and == heading ==.";
 
         String textAfterBoldAndHeadingMarkers = "Contains *bold*, also contains **heading **.";
-        String textAfterInternalAndExternalMarkers = "Contains Text, also contains link.";
+        String textAfterInternalAndExternalMarkers = "Contains [Text](Link), also contains [link](https://www.example.com).";
         String textAfterItalicAndBoldMarkers = "Contains _italic_, also contains *bold*.";
-        String textAfterAllMarkers = "Contains *bold*, _italic_, Text, link and **heading **.";
+        String textAfterAllMarkers = "Contains *bold*, _italic_, [Text](Link), [link](https://www.example.com) and **heading **.";
 
         assertEquals(textAfterBoldAndHeadingMarkers, WikiTextConverter.convertToPlainText(textWithBoldAndHeadingMarkers));
         assertEquals(textAfterInternalAndExternalMarkers, WikiTextConverter.convertToPlainText(textWithInternalAndExternalLinkMarkers));
