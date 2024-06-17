@@ -21,7 +21,7 @@ public class GetWikiCommand extends CommandWithFunctionality {
     private static final int MAX_MESSAGE_LENGTH = 4095;
     private static final OptionData TITLE_OPTION = new OptionData(
             OptionType.STRING,
-            "wikititle",
+            OptionName.GET_WIKI_TITLE_OPTION.getOptionName(),
             "The title of the wiki article you would like to find.",
             true).setMinLength(MIN_TITLE_LENGTH).setMaxLength(MAX_TITLE_LENGTH);
 
@@ -37,7 +37,7 @@ public class GetWikiCommand extends CommandWithFunctionality {
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
-        String title = event.getOption("wikititle").getAsString();
+        String title = event.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName()).getAsString();
         String articleWikiText = wikiArticleService.getWikiArticle(title);
         String plainText = WikiTextConverter.convertToPlainText(articleWikiText);
         if(plainText.length() > MAX_MESSAGE_LENGTH) {

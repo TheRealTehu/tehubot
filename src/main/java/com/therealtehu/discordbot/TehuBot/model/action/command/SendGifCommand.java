@@ -21,13 +21,13 @@ public class SendGifCommand extends CommandWithFunctionality {
     private static final int MAX_OPTION_LENGTH = 100;
     private static final OptionData PROMPT_OPTION = new OptionData(
             OptionType.STRING,
-            "gifprompt",
+            OptionName.SEND_GIF_PROMPT_OPTION.getOptionName(),
             "The keyword you would like to use.",
             true).setMinLength(MIN_OPTION_LENGTH).setMaxLength(MAX_OPTION_LENGTH);
 
     private static final OptionData CHANNEL_OPTION = new OptionData(
             OptionType.CHANNEL,
-            "gifchannel",
+            OptionName.SEND_GIF_CHANNEL_OPTION.getOptionName(),
             "The channel where the gif should be sent.",
             false).setChannelTypes(ChannelType.TEXT, ChannelType.NEWS);
 
@@ -44,8 +44,8 @@ public class SendGifCommand extends CommandWithFunctionality {
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        String prompt = event.getOption("gifprompt").getAsString();
-        OptionMapping channelOption = event.getOption("gifchannel");
+        String prompt = event.getOption(OptionName.SEND_GIF_PROMPT_OPTION.getOptionName()).getAsString();
+        OptionMapping channelOption = event.getOption(OptionName.SEND_GIF_CHANNEL_OPTION.getOptionName());
 
         event.deferReply().setEphemeral(true).queue();
 
