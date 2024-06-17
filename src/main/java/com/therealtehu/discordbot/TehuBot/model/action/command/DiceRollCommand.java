@@ -17,7 +17,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
     private static final int DEFAULT_DICE_SIDES = 6;
     private static final OptionData SIDES_OPTION = new OptionData(
             OptionType.INTEGER,
-            "sides",
+            OptionName.DICE_ROLL_SIDES_OPTION.getOptionName(),
             "The number of sides of the die. Default: "+ DEFAULT_DICE_SIDES + " (Should be between "
                     + MIN_DICE_SIDES + " and " + MAX_DICE_SIDES + ")",
             false).setMinValue(MIN_DICE_SIDES).setMaxValue(MAX_DICE_SIDES);
@@ -33,7 +33,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        OptionMapping optionData = event.getOption("sides");
+        OptionMapping optionData = event.getOption(OptionName.DICE_ROLL_SIDES_OPTION.getOptionName());
         int numberOfSides = DEFAULT_DICE_SIDES;
         if(optionData != null) {
             numberOfSides = optionData.getAsInt();
