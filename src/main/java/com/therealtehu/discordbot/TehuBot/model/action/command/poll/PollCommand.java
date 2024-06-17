@@ -1,6 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command.poll;
 
 import com.therealtehu.discordbot.TehuBot.model.action.command.CommandWithFunctionality;
+import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.entities.Role;
@@ -75,15 +76,15 @@ public class PollCommand extends CommandWithFunctionality {
     }
 
     private boolean isAnonymous(SlashCommandInteractionEvent event) {
-        OptionMapping anonymousvote = event.getOption("anonymousvote");
-        if (anonymousvote == null) {
+        OptionMapping anonymousVote = event.getOption(OptionName.POLL_ANONYMOUS_OPTION.getOptionName());
+        if (anonymousVote == null) {
             return false;
         }
-        return anonymousvote.getAsBoolean();
+        return anonymousVote.getAsBoolean();
     }
 
     private Optional<Role> getMinimumROle(SlashCommandInteractionEvent event) {
-        OptionMapping minimumRole = event.getOption("minrole");
+        OptionMapping minimumRole = event.getOption(OptionName.POLL_MINIMUM_ROLE_OPTION.getOptionName());
         if (minimumRole == null) {
             return Optional.empty();
         }
@@ -91,7 +92,7 @@ public class PollCommand extends CommandWithFunctionality {
     }
 
     private int getNumberOfVotes(SlashCommandInteractionEvent event) {
-        OptionMapping numberOfVotes = event.getOption("numberofvotes");
+        OptionMapping numberOfVotes = event.getOption(OptionName.POLL_NUMBER_OF_VOTES_OPTION.getOptionName());
         if (numberOfVotes == null) {
             return PollUtil.getDefaultNumberOfVotes();
         }
@@ -99,7 +100,7 @@ public class PollCommand extends CommandWithFunctionality {
     }
 
     private Optional<LocalDateTime> getTimeLimit(SlashCommandInteractionEvent event) throws DateTimeException {
-        OptionMapping timeLimit = event.getOption("timelimit");
+        OptionMapping timeLimit = event.getOption(OptionName.POLL_TIME_LIMIT_OPTION.getOptionName());
         if (timeLimit == null) {
             return Optional.empty();
         }
