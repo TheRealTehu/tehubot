@@ -24,7 +24,6 @@ public class PollCommand extends CommandWithFunctionality {
     private static final String COMMAND_DESCRIPTION = "Start a vote on the server";
     private final RandomNumberGenerator randomNumberGenerator;
 
-
     @Autowired
     public PollCommand(MessageSender messageSender, RandomNumberGenerator randomNumberGenerator) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, PollUtil.getOptions(), messageSender);
@@ -53,7 +52,7 @@ public class PollCommand extends CommandWithFunctionality {
         }
         List<Emoji> emojis = getEmojisToUse(event.getGuild().getEmojis(), answers.size());
         for (int i = 0; i < answers.size(); i++) {
-            answers.set(i, emojis.get(i) + " " + answers.get(i));
+            answers.set(i, emojis.get(i).getAsReactionCode() + " " + answers.get(i));
         }
         return answers;
     }
