@@ -183,10 +183,6 @@ public class PollUtil {
 
     private static final List<OptionData> options = List.of(
             DESCRIPTION_OPTION,
-            TIME_LIMIT_OPTION,
-            NUMBER_OF_VOTES_OPTION,
-            MINIMUM_ROLE_OPTION,
-            ANONYMOUS_OPTION,
             ANSWER_1_OPTION,
             ANSWER_2_OPTION,
             ANSWER_3_OPTION,
@@ -206,7 +202,11 @@ public class PollUtil {
             ANSWER_17_OPTION,
             ANSWER_18_OPTION,
             ANSWER_19_OPTION,
-            ANSWER_20_OPTION
+            ANSWER_20_OPTION,
+            TIME_LIMIT_OPTION,
+            NUMBER_OF_VOTES_OPTION,
+            MINIMUM_ROLE_OPTION,
+            ANONYMOUS_OPTION
     );
 
     private static final List<String> EMOJIS = List.of(
