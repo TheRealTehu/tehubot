@@ -7,9 +7,6 @@ public class VideoData{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    private long videoId;
-
     private String title;
 
     private String uploader;
@@ -22,9 +19,8 @@ public class VideoData{
     public VideoData() {
     }
 
-    public VideoData(long id, long videoId, String title, String uploader, String videoUrl, Guild guild) {
+    public VideoData(long id, String title, String uploader, String videoUrl, Guild guild) {
         this.id = id;
-        this.videoId = videoId;
         this.title = title;
         this.uploader = uploader;
         this.videoUrl = videoUrl;
@@ -37,14 +33,6 @@ public class VideoData{
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getVideoId() {
-        return videoId;
-    }
-
-    public void setVideoId(long videId) {
-        this.videoId = videId;
     }
 
     public String getTitle() {
