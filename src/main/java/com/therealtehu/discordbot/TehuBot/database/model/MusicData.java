@@ -12,14 +12,18 @@ public class MusicData {
     private String author;
     private int numberOfPlay;
 
+    @ManyToOne
+    private Guild guild;
+
     public MusicData() {
     }
 
-    public MusicData(long id, String title, String author, int numberOfPlay) {
+    public MusicData(long id, String title, String author, int numberOfPlay, Guild guild) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.numberOfPlay = numberOfPlay;
+        this.guild = guild;
     }
 
     public long getId() {
@@ -52,5 +56,13 @@ public class MusicData {
 
     public void setNumberOfPlay(int numberOfPlay) {
         this.numberOfPlay = numberOfPlay;
+    }
+
+    public Guild getGuild() {
+        return guild;
+    }
+
+    public void setGuild(Guild guild) {
+        this.guild = guild;
     }
 }
