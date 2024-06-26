@@ -11,7 +11,7 @@ public class SteamRouletteData {
     @ManyToOne
     private Guild guild;
 
-    @OneToOne
+    @ManyToOne
     private Member member;
 
     private String gameTitle;
