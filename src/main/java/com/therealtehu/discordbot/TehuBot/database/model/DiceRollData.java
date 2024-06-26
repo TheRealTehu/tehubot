@@ -1,9 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.database.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class DiceRollData {
@@ -11,13 +8,17 @@ public class DiceRollData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ManyToOne
+    private Guild guild;
+
     private int rolledNumber;
 
     public DiceRollData() {
     }
 
-    public DiceRollData(long id, int rolledNumber) {
+    public DiceRollData(long id, Guild guild, int rolledNumber) {
         this.id = id;
+        this.guild = guild;
         this.rolledNumber = rolledNumber;
     }
 
@@ -35,5 +36,13 @@ public class DiceRollData {
 
     public void setRolledNumber(int rolledNumber) {
         this.rolledNumber = rolledNumber;
+    }
+
+    public Guild getGuild() {
+        return guild;
+    }
+
+    public void setGuild(Guild guild) {
+        this.guild = guild;
     }
 }
