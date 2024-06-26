@@ -13,7 +13,7 @@ public class CatHoroscopeData {
     @ManyToOne
     private Guild guild;
 
-    @OneToOne
+    @ManyToOne
     private Member member;
 
     @OneToOne
