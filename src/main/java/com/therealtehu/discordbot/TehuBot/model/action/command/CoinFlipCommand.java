@@ -1,8 +1,9 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command;
 
 import com.therealtehu.discordbot.TehuBot.database.model.CoinFlipData;
-import com.therealtehu.discordbot.TehuBot.database.model.Guild;
+import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.repository.CoinFlipRepository;
+import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -53,7 +54,7 @@ public class CoinFlipCommand extends CommandWithFunctionality{
     private void saveToDatabase(SlashCommandInteractionEvent event, String dbData) {
         CoinFlipData coinFlipData = new CoinFlipData();
         coinFlipData.setFlippedSide(dbData);
-        Guild guild = guildRepository.findGuildByGuildId(event.getGuild().getIdLong());
+        GuildData guild = guildRepository.findByGuildId(event.getGuild().getIdLong());
         coinFlipData.setGuild(guild);
         coinFlipRepository.save(coinFlipData);
     }

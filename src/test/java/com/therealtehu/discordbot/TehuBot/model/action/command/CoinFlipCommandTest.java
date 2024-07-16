@@ -1,6 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command;
 
 import com.therealtehu.discordbot.TehuBot.database.repository.CoinFlipRepository;
+import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.entities.Member;
