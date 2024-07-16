@@ -1,6 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.database.model.poll;
 
-import com.therealtehu.discordbot.TehuBot.database.model.Guild;
+import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class PollData {
     private List<PollAnswer> answers;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     private String pollDescription;
 
@@ -33,7 +33,7 @@ public class PollData {
     public PollData() {
     }
 
-    public PollData(long id, String publicId, List<PollAnswer> answers, Guild guild,
+    public PollData(long id, String publicId, List<PollAnswer> answers, GuildData guild,
                     String pollDescription, LocalDateTime deadLine, boolean isAnonymous,
                     String minimumRole, int numberOfVotesPerMember) {
         this.id = id;
@@ -71,11 +71,11 @@ public class PollData {
         this.answers = answers;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 

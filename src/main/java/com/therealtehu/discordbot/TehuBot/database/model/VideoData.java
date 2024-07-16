@@ -14,12 +14,12 @@ public class VideoData{
     private String videoUrl;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     public VideoData() {
     }
 
-    public VideoData(long id, String title, String uploader, String videoUrl, Guild guild) {
+    public VideoData(long id, String title, String uploader, String videoUrl, GuildData guild) {
         this.id = id;
         this.title = title;
         this.uploader = uploader;
@@ -59,11 +59,11 @@ public class VideoData{
         this.videoUrl = videoUrl;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 }

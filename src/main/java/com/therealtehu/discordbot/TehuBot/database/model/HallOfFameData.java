@@ -9,7 +9,7 @@ public class HallOfFameData {
     private long id;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     @ManyToOne
     private Member member;
@@ -23,7 +23,7 @@ public class HallOfFameData {
     public HallOfFameData() {
     }
 
-    public HallOfFameData(long id, Guild guild, Member member, long channelId, String massageLink, int numberOfEmojis) {
+    public HallOfFameData(long id, GuildData guild, Member member, long channelId, String massageLink, int numberOfEmojis) {
         this.id = id;
         this.guild = guild;
         this.member = member;
@@ -40,11 +40,11 @@ public class HallOfFameData {
         this.id = id;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 

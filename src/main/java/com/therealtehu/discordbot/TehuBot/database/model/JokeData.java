@@ -13,12 +13,12 @@ public class JokeData {
     private int numberOfReactions;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     public JokeData() {
     }
 
-    public JokeData(long id, String jokeText, int numberOfReactions, Guild guild) {
+    public JokeData(long id, String jokeText, int numberOfReactions, GuildData guild) {
         this.id = id;
         this.jokeText = jokeText;
         this.numberOfReactions = numberOfReactions;
@@ -49,11 +49,11 @@ public class JokeData {
         this.numberOfReactions = numberOfReactions;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 }
