@@ -3,7 +3,7 @@ package com.therealtehu.discordbot.TehuBot.database.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Guild {
+public class GuildData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -19,11 +19,11 @@ public class Guild {
     private long botChatChannelId;
     private long steamRouletteChannelId;
 
-    public Guild(){}
+    public GuildData(){}
 
-    public Guild(long id, long guildId, long defaultTextChannelId, long wikiChannelId, long pollChannelId,
-                 long gameChannelId, long hallOfFameChannelId, long catHoroscopeChannelId, long jokeChannelId,
-                 long botChatChannelId, long steamRouletteChannelId) {
+    public GuildData(long id, long guildId, long defaultTextChannelId, long wikiChannelId, long pollChannelId,
+                     long gameChannelId, long hallOfFameChannelId, long catHoroscopeChannelId, long jokeChannelId,
+                     long botChatChannelId, long steamRouletteChannelId) {
         this.id = id;
         this.guildId = guildId;
         this.defaultTextChannelId = defaultTextChannelId;

@@ -9,14 +9,14 @@ public class CoinFlipData {
     private long id;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     private String flippedSide;
 
     public CoinFlipData() {
     }
 
-    public CoinFlipData(long id, Guild guild, String flippedSide) {
+    public CoinFlipData(long id, GuildData guild, String flippedSide) {
         this.id = id;
         this.guild = guild;
         this.flippedSide = flippedSide;
@@ -38,11 +38,11 @@ public class CoinFlipData {
         this.flippedSide = flippedSide;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 }

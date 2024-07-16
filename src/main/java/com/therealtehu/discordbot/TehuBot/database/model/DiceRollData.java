@@ -9,14 +9,14 @@ public class DiceRollData {
     private long id;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     private int rolledNumber;
 
     public DiceRollData() {
     }
 
-    public DiceRollData(long id, Guild guild, int rolledNumber) {
+    public DiceRollData(long id, GuildData guild, int rolledNumber) {
         this.id = id;
         this.guild = guild;
         this.rolledNumber = rolledNumber;
@@ -38,11 +38,11 @@ public class DiceRollData {
         this.rolledNumber = rolledNumber;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 }

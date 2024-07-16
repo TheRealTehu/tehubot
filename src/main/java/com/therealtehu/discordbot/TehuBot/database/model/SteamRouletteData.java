@@ -9,7 +9,7 @@ public class SteamRouletteData {
     private long id;
 
     @ManyToOne
-    private Guild guild;
+    private GuildData guild;
 
     @ManyToOne
     private Member member;
@@ -19,7 +19,7 @@ public class SteamRouletteData {
     public SteamRouletteData() {
     }
 
-    public SteamRouletteData(long id, Guild guild, Member member, String gameTitle) {
+    public SteamRouletteData(long id, GuildData guild, Member member, String gameTitle) {
         this.id = id;
         this.guild = guild;
         this.member = member;
@@ -34,11 +34,11 @@ public class SteamRouletteData {
         this.id = id;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 

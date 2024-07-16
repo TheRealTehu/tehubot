@@ -10,7 +10,7 @@ public class GuildStatisticsData {
     private long id;
 
     @OneToOne
-    private Guild guild;
+    private GuildData guild;
 
     private int numberOfWikisChecked;
 
@@ -33,7 +33,7 @@ public class GuildStatisticsData {
     public GuildStatisticsData() {
     }
 
-    public GuildStatisticsData(long id, Guild guild, int numberOfWikisChecked, int numberOfPolls,
+    public GuildStatisticsData(long id, GuildData guild, int numberOfWikisChecked, int numberOfPolls,
                                int numberOfGifsSent, int numberOfDiceRolls, int numberOfCoinFlips,
                                int numberOfCatHoroscopes, int numberOfSteamRouletteSpins,
                                int numberOfSongsListenedTo, int numberOfVideosPlayed) {
@@ -58,11 +58,11 @@ public class GuildStatisticsData {
         this.id = id;
     }
 
-    public Guild getGuild() {
+    public GuildData getGuild() {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public void setGuild(GuildData guild) {
         this.guild = guild;
     }
 
