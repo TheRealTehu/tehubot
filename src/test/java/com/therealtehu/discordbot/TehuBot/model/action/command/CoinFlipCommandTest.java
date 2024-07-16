@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command;
 
+import com.therealtehu.discordbot.TehuBot.database.repository.CoinFlipRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.entities.Member;
@@ -19,11 +20,16 @@ class CoinFlipCommandTest {
     private final RandomNumberGenerator mockRandomNumberGenerator = Mockito.mock(RandomNumberGenerator.class);
     private final SlashCommandInteractionEvent mockCommandEvent = Mockito.mock(SlashCommandInteractionEvent.class);
 
+    private final CoinFlipRepository mockCoinFlipRepository = Mockito.mock(CoinFlipRepository.class);
+
+    private final GuildRepository mockGuildRepository = Mockito.mock(GuildRepository.class);
+
     private final Member mockMember = Mockito.mock(Member.class);
 
     @BeforeEach
     void setup() {
-        coinFlipCommand = new CoinFlipCommand(mockMessageSender, mockRandomNumberGenerator);
+        coinFlipCommand = new CoinFlipCommand(mockMessageSender, mockRandomNumberGenerator,
+                mockCoinFlipRepository, mockGuildRepository);
     }
 
     @Test
