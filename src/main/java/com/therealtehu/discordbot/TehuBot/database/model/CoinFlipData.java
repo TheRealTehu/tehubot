@@ -2,6 +2,8 @@ package com.therealtehu.discordbot.TehuBot.database.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class CoinFlipData {
     @Id
@@ -44,5 +46,18 @@ public class CoinFlipData {
 
     public void setGuild(GuildData guild) {
         this.guild = guild;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CoinFlipData that = (CoinFlipData) o;
+        return id == that.id && Objects.equals(guild, that.guild) && Objects.equals(flippedSide, that.flippedSide);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, guild, flippedSide);
     }
 }
