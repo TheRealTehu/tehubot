@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Component
 public class CoinFlipCommand extends CommandWithFunctionality {
@@ -60,11 +61,11 @@ public class CoinFlipCommand extends CommandWithFunctionality {
     private void saveToDatabase(SlashCommandInteractionEvent event, String dbData) {
         CoinFlipData coinFlipData = new CoinFlipData();
         coinFlipData.setFlippedSide(dbData);
-        GuildData guild = guildRepository.findByGuildId(event.getGuild().getIdLong());
-        if (guild == null) {
+        Optional<GuildData> guild = guildRepository.findByGuildId(event.getGuild().getIdLong());
+        if (guild.isEmpty()) {
             throw new NoSuchElementException("DATABASE ERROR: Guild not found!");
         }
-        coinFlipData.setGuild(guild);
+        coinFlipData.setGuild(guild.get());
         coinFlipRepository.save(coinFlipData);
     }
 }

@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +47,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -64,7 +66,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -83,7 +85,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -102,7 +104,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -122,7 +124,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -141,7 +143,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -160,7 +162,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -179,7 +181,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(mockGuildData);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
@@ -196,7 +198,7 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(null);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.empty());
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
