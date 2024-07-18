@@ -13,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class CoinFlipCommandTest {
 
@@ -186,5 +186,22 @@ class CoinFlipCommandTest {
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
         verify(mockGuildRepository).findByGuildId(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+    }
+
+    @Test
+    void executeCommandWhenGuildIsNotInDatabaseShouldWriteOutErrorMessage() {
+        String expectedMessage = "DATABASE ERROR: Guild not found!";
+        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(0);
+        when(mockCommandEvent.getMember()).thenReturn(mockMember);
+        when(mockMember.getAsMention()).thenReturn("Member as mention");
+        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
+        when(mockGuild.getIdLong()).thenReturn(1L);
+        when(mockGuildRepository.findByGuildId(1L)).thenReturn(null);
+
+        coinFlipCommand.executeCommand(mockCommandEvent);
+
+        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
+        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockCoinFlipRepository, times(0)).save(any());
     }
 }
