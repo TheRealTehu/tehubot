@@ -10,13 +10,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.NoSuchElementException;
+
 @Component
-public class CoinFlipCommand extends CommandWithFunctionality{
+public class CoinFlipCommand extends CommandWithFunctionality {
     private static final String COMMAND_NAME = "coinflip";
     private static final String COMMAND_DESCRIPTION = "Flip a coin to help with decisions";
     private final RandomNumberGenerator randomNumberGenerator;
     private final CoinFlipRepository coinFlipRepository;
     private final GuildRepository guildRepository;
+
     @Autowired
     public CoinFlipCommand(MessageSender messageSender, RandomNumberGenerator randomNumberGenerator,
                            CoinFlipRepository coinFlipRepository, GuildRepository guildRepository) {
@@ -32,7 +35,7 @@ public class CoinFlipCommand extends CommandWithFunctionality{
         String message = event.getMember().getAsMention() + " has flipped a coin and ";
         String conclusion = "";
         String dbData = "";
-        if(decision < 49) {
+        if (decision < 49) {
             conclusion += "it was HEAD!";
             dbData = "Head";
         } else if (decision < 98) {
@@ -46,15 +49,21 @@ public class CoinFlipCommand extends CommandWithFunctionality{
             dbData = "Lost";
         }
         message += conclusion;
-
-        saveToDatabase(event, dbData);
-        messageSender.replyToEvent(event, message);
+        try {
+            saveToDatabase(event, dbData);
+            messageSender.replyToEvent(event, message);
+        } catch (NoSuchElementException e) {
+            messageSender.replyToEvent(event, e.getMessage());
+        }
     }
 
     private void saveToDatabase(SlashCommandInteractionEvent event, String dbData) {
         CoinFlipData coinFlipData = new CoinFlipData();
         coinFlipData.setFlippedSide(dbData);
         GuildData guild = guildRepository.findByGuildId(event.getGuild().getIdLong());
+        if (guild == null) {
+            throw new NoSuchElementException("DATABASE ERROR: Guild not found!");
+        }
         coinFlipData.setGuild(guild);
         coinFlipRepository.save(coinFlipData);
     }
