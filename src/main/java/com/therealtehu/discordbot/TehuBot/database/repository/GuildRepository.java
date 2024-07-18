@@ -4,7 +4,9 @@ import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface GuildRepository extends JpaRepository<GuildData, Long> {
-    GuildData findByGuildId(long guildId);
+    Optional<GuildData> findByGuildId(long guildId);
 }
