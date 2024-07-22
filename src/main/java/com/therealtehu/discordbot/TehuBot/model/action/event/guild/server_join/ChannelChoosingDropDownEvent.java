@@ -6,6 +6,7 @@ import com.therealtehu.discordbot.TehuBot.model.action.event.DropDownEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
@@ -25,13 +26,22 @@ public class ChannelChoosingDropDownEvent extends EventHandler implements DropDo
 
     @Override
     public void handle(Event event) {
-        if(event instanceof EntitySelectInteractionEvent dropDownEvent) {
+        if (event instanceof EntitySelectInteractionEvent dropDownEvent) {
             if (dropDownEvent.getComponentId().equals(ServerJoinEvent.DROP_DOWN_EVENT_ID)) {
-                GuildChannel channel = dropDownEvent.getMentions().getChannels().getFirst();
-                GuildData guildData = new GuildData();
-                guildData.setBotChatChannelId(channel.getIdLong());
+                if(dropDownEvent.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                    GuildChannel channel = dropDownEvent.getMentions().getChannels().get(0);
+                    GuildData guildData = new GuildData();
+                    guildData.setGuildId(dropDownEvent.getGuild().getIdLong());
+                    guildData.setBotChatChannelId(channel.getIdLong());
 
-                guildRepository.save(guildData);
+                    guildRepository.save(guildData);
+
+                    dropDownEvent.reply("Setup finished!")
+                            .and(dropDownEvent.getChannel().deleteMessageById(dropDownEvent.getMessageIdLong()))
+                            .queue();
+                } else {
+                    dropDownEvent.reply("Only admins can do the setup!").queue();
+                }
             }
 
         }
