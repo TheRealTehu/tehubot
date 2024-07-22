@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join;
 
+import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
@@ -42,6 +43,11 @@ public class ServerJoinEvent extends EventHandler {
             if (guildRepository.existsById(guildJoinEvent.getGuild().getIdLong())) {
                 messageSender.sendMessage(channel, "Welcome back! Previous setup loaded!");
             } else {
+                GuildData guildData = new GuildData();
+                guildData.setGuildId(guildData.getGuildId());
+
+                guildRepository.save(guildData);
+
                 MessageCreateData messageCreateData = messageCreateBuilder
                         .addContent(GREETING_TEXT)
                         .addActionRow(channelDropDown)

@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionE
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ChannelChoosingDropDownEvent extends EventHandler implements DropDownEvent {
 
@@ -30,15 +32,19 @@ public class ChannelChoosingDropDownEvent extends EventHandler implements DropDo
             if (dropDownEvent.getComponentId().equals(ServerJoinEvent.DROP_DOWN_EVENT_ID)) {
                 if(dropDownEvent.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                     GuildChannel channel = dropDownEvent.getMentions().getChannels().get(0);
-                    GuildData guildData = new GuildData();
-                    guildData.setGuildId(dropDownEvent.getGuild().getIdLong());
-                    guildData.setBotChatChannelId(channel.getIdLong());
+                    Optional<GuildData> foundGuildData = guildRepository.findByGuildId(dropDownEvent.getGuild().getIdLong());
+                    if(foundGuildData.isPresent()) {
+                        GuildData guildData = foundGuildData.get();
+                        guildData.setBotChatChannelId(channel.getIdLong());
+                        guildRepository.save(guildData);
 
-                    guildRepository.save(guildData);
+                        dropDownEvent.reply("Setup finished!")
+                                .and(dropDownEvent.getChannel().deleteMessageById(dropDownEvent.getMessageIdLong()))
+                                .queue();
 
-                    dropDownEvent.reply("Setup finished!")
-                            .and(dropDownEvent.getChannel().deleteMessageById(dropDownEvent.getMessageIdLong()))
-                            .queue();
+                    } else {
+                        dropDownEvent.reply("Guild not found in database!").queue();
+                    }
                 } else {
                     dropDownEvent.reply("Only admins can do the setup!").queue();
                 }
