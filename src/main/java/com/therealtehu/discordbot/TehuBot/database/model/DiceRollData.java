@@ -2,6 +2,8 @@ package com.therealtehu.discordbot.TehuBot.database.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class DiceRollData {
     @Id
@@ -52,5 +54,18 @@ public class DiceRollData {
 
     public void setNumberOfSides(int numberOfSides) {
         this.numberOfSides = numberOfSides;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DiceRollData that = (DiceRollData) o;
+        return id == that.id && Objects.equals(guild, that.guild);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, guild);
     }
 }
