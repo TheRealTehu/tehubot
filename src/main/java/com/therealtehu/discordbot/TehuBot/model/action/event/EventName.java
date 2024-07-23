@@ -2,7 +2,8 @@ package com.therealtehu.discordbot.TehuBot.model.action.event;
 
 public enum EventName {
     SERVER_JOIN("serverjoin"),
-    SERVER_NEW_MEMBER("servernewmember");
+    SERVER_NEW_MEMBER("servernewmember"),
+    CHANNEL_CHOOSING_DROPDOWN("channelchossingdropdown");
 
     private final String eventName;
 

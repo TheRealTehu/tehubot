@@ -3,10 +3,9 @@ package com.therealtehu.discordbot.TehuBot.listeners;
 import com.therealtehu.discordbot.TehuBot.listeners.event.EventListener;
 import com.therealtehu.discordbot.TehuBot.model.action.command.*;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
-import com.therealtehu.discordbot.TehuBot.model.action.event.guild.ServerJoinEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.guild.ServerNewMemberEvent;
-import com.therealtehu.discordbot.TehuBot.model.button.ButtonWithFunctionality;
-import com.therealtehu.discordbot.TehuBot.model.button.setup.*;
+import com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join.ChannelChoosingDropDownEvent;
+import com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join.ServerJoinEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +29,13 @@ public class ListenerConfiguration {
     }
     @Bean
     @Autowired
-    public List<EventHandler> getEventHandlers(ServerJoinEvent serverJoinEvent, ServerNewMemberEvent serverNewMemberEvent) {
+    public List<EventHandler> getEventHandlers(ServerJoinEvent serverJoinEvent, ServerNewMemberEvent serverNewMemberEvent,
+                                               ChannelChoosingDropDownEvent channelChoosingDropDownEvent) {
         return List.of(
                 serverJoinEvent,
-                serverNewMemberEvent
-        );
-    }
+                serverNewMemberEvent,
+                channelChoosingDropDownEvent
 
-    @Bean
-    @Autowired
-    public List<ButtonWithFunctionality> getServerJoinEventButtons(AlwaysInCommandChannelButton alwaysInCommandChannelButton,
-                                                                   CreateOneChannelForAllButton createOneChannelForAllButton,
-                                                                   CreateChannelsForCategoriesButton createChannelsForCategoriesButton,
-                                                                   SpecifyOneChannelForAllButton specifyOneChannelForAllButton,
-                                                                   SpecifyChannelsForCategoriesButton specifyChannelsForCategoriesButton) {
-        return List.of(
-                alwaysInCommandChannelButton,
-                createOneChannelForAllButton,
-                createChannelsForCategoriesButton,
-                specifyOneChannelForAllButton,
-                specifyChannelsForCategoriesButton
         );
     }
 
