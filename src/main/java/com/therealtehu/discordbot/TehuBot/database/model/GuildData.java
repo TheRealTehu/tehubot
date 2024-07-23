@@ -2,6 +2,8 @@ package com.therealtehu.discordbot.TehuBot.database.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class GuildData {
     @Id
@@ -37,4 +39,16 @@ public class GuildData {
         this.botChatChannelId = botChatChannelId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GuildData guildData = (GuildData) o;
+        return id == guildData.id && guildId == guildData.guildId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, guildId);
+    }
 }
