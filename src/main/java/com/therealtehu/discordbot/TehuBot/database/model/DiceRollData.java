@@ -7,18 +7,18 @@ public class DiceRollData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @ManyToOne
     private GuildData guild;
-
+    private int numberOfSides;
     private int rolledNumber;
 
     public DiceRollData() {
     }
 
-    public DiceRollData(long id, GuildData guild, int rolledNumber) {
+    public DiceRollData(long id, GuildData guild, int numberOfSides, int rolledNumber) {
         this.id = id;
         this.guild = guild;
+        this.numberOfSides = numberOfSides;
         this.rolledNumber = rolledNumber;
     }
 
@@ -44,5 +44,13 @@ public class DiceRollData {
 
     public void setGuild(GuildData guild) {
         this.guild = guild;
+    }
+
+    public int getNumberOfSides() {
+        return numberOfSides;
+    }
+
+    public void setNumberOfSides(int numberOfSides) {
+        this.numberOfSides = numberOfSides;
     }
 }
