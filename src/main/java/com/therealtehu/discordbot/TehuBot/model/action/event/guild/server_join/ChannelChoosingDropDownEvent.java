@@ -43,7 +43,9 @@ public class ChannelChoosingDropDownEvent extends EventHandler implements DropDo
                                 .queue();
 
                     } else {
-                        dropDownEvent.reply("Guild not found in database!").queue();
+                        dropDownEvent.reply("Guild not found in database!")
+                                .and(dropDownEvent.getChannel().deleteMessageById(dropDownEvent.getMessageIdLong()))
+                                .queue();
                     }
                 } else {
                     dropDownEvent.reply("Only admins can do the setup!").queue();
