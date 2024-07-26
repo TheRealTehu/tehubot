@@ -19,12 +19,15 @@ public class ListenerConfiguration {
     @Bean
     @Autowired
     public List<CommandWithFunctionality> getCommands(CoinFlipCommand coinFlipCommand, DiceRollCommand diceRollCommand,
-                                                      SendGifCommand sendGifCommand, GetWikiCommand getWikiCommand) {
+                                                      SendGifCommand sendGifCommand, GetWikiCommand getWikiCommand,
+                                                      GuildStatisticsCommand guildStatisticsCommand, SetupCommand setupCommand) {
         return List.of(
                 coinFlipCommand,
                 diceRollCommand,
                 sendGifCommand,
-                getWikiCommand
+                getWikiCommand,
+                guildStatisticsCommand,
+                setupCommand
         );
     }
     @Bean
