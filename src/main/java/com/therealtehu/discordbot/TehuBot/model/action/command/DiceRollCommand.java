@@ -66,7 +66,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
     }
 
     private void saveToDatabase(int numberOfSides, int rolledNumber, SlashCommandInteractionEvent event) {
-        Optional<GuildData> guild = guildRepository.findByGuildId(event.getGuild().getIdLong());
+        Optional<GuildData> guild = guildRepository.findById(event.getGuild().getIdLong());
         if(guild.isEmpty()) {
             throw new NoSuchElementException("DATABASE ERROR: Guild not found!");
         }

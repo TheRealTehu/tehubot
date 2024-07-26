@@ -7,30 +7,19 @@ import java.util.Objects;
 @Entity
 public class GuildData {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(unique = true)
-    private long guildId;
+    private Long id;
     private long botChatChannelId;
     public GuildData(){}
 
-    public GuildData(long id, long guildId, long botChatChannelId) {
+    public GuildData(long id, long botChatChannelId) {
         this.id = id;
-        this.guildId = guildId;
         this.botChatChannelId = botChatChannelId;
     }
-
     public long getId() {
         return id;
     }
-    public void setId(long id) {
-        this.id = id;
-    }
-    public long getGuildId() {
-        return guildId;
-    }
-    public void setGuildId(long guildId) {
-        this.guildId = guildId;
+    public void setId(long guildId) {
+        this.id = guildId;
     }
     public long getBotChatChannelId() {
         return botChatChannelId;
@@ -44,11 +33,11 @@ public class GuildData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GuildData guildData = (GuildData) o;
-        return id == guildData.id && guildId == guildData.guildId;
+        return id == guildData.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, guildId);
+        return Objects.hash(id);
     }
 }
