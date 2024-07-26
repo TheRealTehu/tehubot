@@ -46,10 +46,10 @@ class ServerJoinEventTest {
         when(mockDefaultGuildChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
 
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.empty());
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
 
         GuildData expectedGuildData = new GuildData();
-        expectedGuildData.setGuildId(1L);
+        expectedGuildData.setId(1L);
 
         when(mockMessageCreateBuilder.addContent(GREETING_TEXT)).thenReturn(mockMessageCreateBuilder);
         when(mockMessageCreateBuilder.addActionRow(channelDropDown)).thenReturn(mockMessageCreateBuilder);
@@ -71,8 +71,8 @@ class ServerJoinEventTest {
 
         when(mockGuild.getIdLong()).thenReturn(1L);
         GuildData guildData = new GuildData();
-        guildData.setGuildId(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(guildData));
+        guildData.setId(1L);
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(guildData));
 
         serverJoinEvent.handle(mockGuildJoinEvent);
 

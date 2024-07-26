@@ -47,8 +47,8 @@ class DiceRollCommandTest {
 
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        GuildData guildData = new GuildData(1L,1L,1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(guildData));
+        GuildData guildData = new GuildData(1L,1L);
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(guildData));
 
         DiceRollData diceRollData = new DiceRollData();
         diceRollData.setGuild(guildData);
@@ -75,8 +75,8 @@ class DiceRollCommandTest {
 
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        GuildData guildData = new GuildData(1L,1L,1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(guildData));
+        GuildData guildData = new GuildData(1L,1L);
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(guildData));
 
         DiceRollData diceRollData = new DiceRollData();
         diceRollData.setGuild(guildData);
@@ -101,7 +101,7 @@ class DiceRollCommandTest {
 
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.empty());
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
 
         diceRollCommand.executeCommand(mockCommandEvent);
 
