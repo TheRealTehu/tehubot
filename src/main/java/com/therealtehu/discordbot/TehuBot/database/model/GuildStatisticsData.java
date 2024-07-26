@@ -1,61 +1,53 @@
 package com.therealtehu.discordbot.TehuBot.database.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Immutable;
 
 @Entity
+@Immutable
+@Table(name = "GUILD_STATISTICS_DATA")
 public class GuildStatisticsData {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+    private long guildId;
     @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
     private GuildData guild;
-
-    private int numberOfWikisChecked;
-
-    private int numberOfPolls;
-
-    private int numberOfGifsSent;
-
     private int numberOfDiceRolls;
-
     private int numberOfCoinFlips;
+    //private int numberOfWikisChecked;
+    //private int numberOfPolls;
+    //private int numberOfGifsSent;
 
-    private int numberOfCatHoroscopes;
-
-    private int numberOfSteamRouletteSpins;
-
-    private int numberOfSongsListenedTo;
-
-    private int numberOfVideosPlayed;
-
+    //    private int numberOfCatHoroscopes;
+//    private int numberOfSteamRouletteSpins;
+//    private int numberOfSongsListenedTo;
+//    private int numberOfVideosPlayed;
     public GuildStatisticsData() {
     }
-
-    public GuildStatisticsData(long id, GuildData guild, int numberOfWikisChecked, int numberOfPolls,
-                               int numberOfGifsSent, int numberOfDiceRolls, int numberOfCoinFlips,
+    public GuildStatisticsData(long guildId, GuildData guild, /*int numberOfWikisChecked, int numberOfPolls,
+                               int numberOfGifsSent, */int numberOfDiceRolls, int numberOfCoinFlips/*,
                                int numberOfCatHoroscopes, int numberOfSteamRouletteSpins,
-                               int numberOfSongsListenedTo, int numberOfVideosPlayed) {
-        this.id = id;
+                               int numberOfSongsListenedTo, int numberOfVideosPlayed*/) {
+        this.guildId = guildId;
         this.guild = guild;
-        this.numberOfWikisChecked = numberOfWikisChecked;
-        this.numberOfPolls = numberOfPolls;
-        this.numberOfGifsSent = numberOfGifsSent;
         this.numberOfDiceRolls = numberOfDiceRolls;
         this.numberOfCoinFlips = numberOfCoinFlips;
+        /*this.numberOfWikisChecked = numberOfWikisChecked;
+        this.numberOfPolls = numberOfPolls;
+        this.numberOfGifsSent = numberOfGifsSent;
         this.numberOfCatHoroscopes = numberOfCatHoroscopes;
         this.numberOfSteamRouletteSpins = numberOfSteamRouletteSpins;
         this.numberOfSongsListenedTo = numberOfSongsListenedTo;
-        this.numberOfVideosPlayed = numberOfVideosPlayed;
+        this.numberOfVideosPlayed = numberOfVideosPlayed;*/
     }
 
-    public long getId() {
-        return id;
+    public long getGuildId() {
+        return guildId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setGuildId(long id) {
+        this.guildId = id;
     }
 
     public GuildData getGuild() {
@@ -65,7 +57,7 @@ public class GuildStatisticsData {
     public void setGuild(GuildData guild) {
         this.guild = guild;
     }
-
+/*
     public int getNumberOfWikisChecked() {
         return numberOfWikisChecked;
     }
@@ -89,7 +81,7 @@ public class GuildStatisticsData {
     public void setNumberOfGifsSent(int numberOfGifsSent) {
         this.numberOfGifsSent = numberOfGifsSent;
     }
-
+*/
     public int getNumberOfDiceRolls() {
         return numberOfDiceRolls;
     }
@@ -105,7 +97,7 @@ public class GuildStatisticsData {
     public void setNumberOfCoinFlips(int numberOfCoinFlips) {
         this.numberOfCoinFlips = numberOfCoinFlips;
     }
-
+/*
     public int getNumberOfCatHoroscopes() {
         return numberOfCatHoroscopes;
     }
@@ -136,5 +128,22 @@ public class GuildStatisticsData {
 
     public void setNumberOfVideosPlayed(int numberOfVideosPlayed) {
         this.numberOfVideosPlayed = numberOfVideosPlayed;
+    }
+*/
+    @Override
+    public String toString() {
+        return "GuildStatisticsData{" +
+                "id=" + guildId +
+                ", guild=" + guild +
+                ", numberOfDiceRolls=" + numberOfDiceRolls +
+                ", numberOfCoinFlips=" + numberOfCoinFlips /*+
+                ", numberOfWikisChecked=" + numberOfWikisChecked +
+                ", numberOfPolls=" + numberOfPolls +
+                ", numberOfGifsSent=" + numberOfGifsSent +
+                ", numberOfCatHoroscopes=" + numberOfCatHoroscopes +
+                ", numberOfSteamRouletteSpins=" + numberOfSteamRouletteSpins +
+                ", numberOfSongsListenedTo=" + numberOfSongsListenedTo +
+                ", numberOfVideosPlayed=" + numberOfVideosPlayed */+
+                '}';
     }
 }
