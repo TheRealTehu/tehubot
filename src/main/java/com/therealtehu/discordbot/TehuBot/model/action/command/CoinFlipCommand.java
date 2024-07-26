@@ -35,7 +35,7 @@ public class CoinFlipCommand extends CommandWithFunctionality {
         int decision = randomNumberGenerator.getRandomNumber(100);
         String message = event.getMember().getAsMention() + " has flipped a coin and ";
         String conclusion = "";
-        String dbData = "";
+        String dbData;
         if (decision < 49) {
             conclusion += "it was HEAD!";
             dbData = "Head";
@@ -61,7 +61,7 @@ public class CoinFlipCommand extends CommandWithFunctionality {
     private void saveToDatabase(SlashCommandInteractionEvent event, String dbData) {
         CoinFlipData coinFlipData = new CoinFlipData();
         coinFlipData.setFlippedSide(dbData);
-        Optional<GuildData> guild = guildRepository.findByGuildId(event.getGuild().getIdLong());
+        Optional<GuildData> guild = guildRepository.findById(event.getGuild().getIdLong());
         if (guild.isEmpty()) {
             throw new NoSuchElementException("DATABASE ERROR: Guild not found!");
         }

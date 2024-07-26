@@ -40,11 +40,11 @@ public class ServerJoinEvent extends EventHandler {
     public void handle(Event event) {
         if (event instanceof GuildJoinEvent guildJoinEvent) {
             TextChannel channel = guildJoinEvent.getGuild().getDefaultChannel().asTextChannel();
-            if (guildRepository.findByGuildId(guildJoinEvent.getGuild().getIdLong()).isPresent()) {
+            if (guildRepository.findById(guildJoinEvent.getGuild().getIdLong()).isPresent()) {
                 messageSender.sendMessage(channel, "Welcome back! Previous setup loaded!");
             } else {
                 GuildData guildData = new GuildData();
-                guildData.setGuildId(guildJoinEvent.getGuild().getIdLong());
+                guildData.setId(guildJoinEvent.getGuild().getIdLong());
 
                 guildRepository.save(guildData);
 

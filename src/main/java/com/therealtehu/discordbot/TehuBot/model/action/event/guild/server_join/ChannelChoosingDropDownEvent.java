@@ -32,7 +32,7 @@ public class ChannelChoosingDropDownEvent extends EventHandler implements DropDo
             if (dropDownEvent.getComponentId().equals(ServerJoinEvent.DROP_DOWN_EVENT_ID)) {
                 if(dropDownEvent.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                     GuildChannel channel = dropDownEvent.getMentions().getChannels().get(0);
-                    Optional<GuildData> foundGuildData = guildRepository.findByGuildId(dropDownEvent.getGuild().getIdLong());
+                    Optional<GuildData> foundGuildData = guildRepository.findById(dropDownEvent.getGuild().getIdLong());
                     if(foundGuildData.isPresent()) {
                         GuildData guildData = foundGuildData.get();
                         guildData.setBotChatChannelId(channel.getIdLong());

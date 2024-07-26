@@ -55,12 +55,12 @@ class ChannelChoosingDropDownEventTest {
         when(mockEntitySelectInteractionEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
         GuildData actualGuildData = new GuildData();
-        actualGuildData.setGuildId(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(actualGuildData));
+        actualGuildData.setId(1L);
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(actualGuildData));
         when(mockGuildChannel.getIdLong()).thenReturn(100L);
 
         GuildData expectedGuildData = new GuildData();
-        expectedGuildData.setGuildId(1L);
+        expectedGuildData.setId(1L);
         expectedGuildData.setBotChatChannelId(100L);
 
         when(mockEntitySelectInteractionEvent.getChannel()).thenReturn(mockMessageChannelUnion);
@@ -87,7 +87,7 @@ class ChannelChoosingDropDownEventTest {
 
         when(mockEntitySelectInteractionEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.empty());
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
 
         when(mockEntitySelectInteractionEvent.getChannel()).thenReturn(mockMessageChannelUnion);
         when(mockEntitySelectInteractionEvent.getMessageIdLong()).thenReturn(30L);

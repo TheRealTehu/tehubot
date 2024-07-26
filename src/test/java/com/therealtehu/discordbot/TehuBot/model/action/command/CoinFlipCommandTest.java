@@ -19,9 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CoinFlipCommandTest {
-
     private CoinFlipCommand coinFlipCommand;
-
     private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
     private final RandomNumberGenerator mockRandomNumberGenerator = Mockito.mock(RandomNumberGenerator.class);
     private final SlashCommandInteractionEvent mockCommandEvent = Mockito.mock(SlashCommandInteractionEvent.class);
@@ -47,12 +45,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -66,12 +64,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -85,12 +83,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -104,12 +102,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -124,12 +122,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -143,12 +141,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -162,12 +160,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -181,12 +179,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.of(mockGuildData));
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository).save(expectedCoinFlipData);
     }
 
@@ -198,12 +196,12 @@ class CoinFlipCommandTest {
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findByGuildId(1L)).thenReturn(Optional.empty());
+        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
 
         coinFlipCommand.executeCommand(mockCommandEvent);
 
         verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findByGuildId(1L);
+        verify(mockGuildRepository).findById(1L);
         verify(mockCoinFlipRepository, times(0)).save(any());
     }
 }
