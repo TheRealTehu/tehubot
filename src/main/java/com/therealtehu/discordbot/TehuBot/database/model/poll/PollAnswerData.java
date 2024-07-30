@@ -4,9 +4,10 @@ import com.therealtehu.discordbot.TehuBot.database.model.Member;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-public class PollAnswer {
+public class PollAnswerData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -21,10 +22,10 @@ public class PollAnswer {
     @ManyToMany
     private List<Member> members;
 
-    public PollAnswer() {
+    public PollAnswerData() {
     }
 
-    public PollAnswer(long id, PollData pollData, String answerText, String answerEmoji, List<Member> members) {
+    public PollAnswerData(long id, PollData pollData, String answerText, String answerEmoji, List<Member> members) {
         this.id = id;
         this.pollData = pollData;
         this.answerText = answerText;
@@ -70,5 +71,29 @@ public class PollAnswer {
 
     public void setMembers(List<Member> members) {
         this.members = members;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PollAnswerData that = (PollAnswerData) o;
+        return id == that.id && Objects.equals(pollData, that.pollData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pollData);
+    }
+
+    @Override
+    public String toString() {
+        return "PollAnswerData{" +
+                "id=" + id +
+                ", pollData public id= " + pollData.getPublicId() +
+                ", answerText='" + answerText + '\'' +
+                ", answerEmoji='" + answerEmoji + '\'' +
+                ", members=" + members +
+                '}';
     }
 }

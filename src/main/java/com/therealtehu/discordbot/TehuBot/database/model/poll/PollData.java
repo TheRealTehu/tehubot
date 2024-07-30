@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class PollData {
@@ -15,7 +16,7 @@ public class PollData {
     private String publicId;
 
     @OneToMany
-    private List<PollAnswer> answers;
+    private List<PollAnswerData> answers;
 
     @ManyToOne
     private GuildData guild;
@@ -33,7 +34,7 @@ public class PollData {
     public PollData() {
     }
 
-    public PollData(long id, String publicId, List<PollAnswer> answers, GuildData guild,
+    public PollData(long id, String publicId, List<PollAnswerData> answers, GuildData guild,
                     String pollDescription, LocalDateTime deadLine, boolean isAnonymous,
                     String minimumRole, int numberOfVotesPerMember) {
         this.id = id;
@@ -63,11 +64,11 @@ public class PollData {
         this.publicId = publicId;
     }
 
-    public List<PollAnswer> getAnswers() {
+    public List<PollAnswerData> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<PollAnswer> answers) {
+    public void setAnswers(List<PollAnswerData> answers) {
         this.answers = answers;
     }
 
@@ -117,5 +118,33 @@ public class PollData {
 
     public void setNumberOfVotesPerMember(int numberOfVotesPerMember) {
         this.numberOfVotesPerMember = numberOfVotesPerMember;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PollData pollData = (PollData) o;
+        return id == pollData.id && Objects.equals(publicId, pollData.publicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, publicId);
+    }
+
+    @Override
+    public String toString() {
+        return "PollData{" +
+                "id=" + id +
+                ", publicId='" + publicId + '\'' +
+                ", answers=" + answers +
+                ", guild=" + guild +
+                ", pollDescription='" + pollDescription + '\'' +
+                ", deadLine=" + deadLine +
+                ", isAnonymous=" + isAnonymous +
+                ", minimumRole='" + minimumRole + '\'' +
+                ", numberOfVotesPerMember=" + numberOfVotesPerMember +
+                '}';
     }
 }
