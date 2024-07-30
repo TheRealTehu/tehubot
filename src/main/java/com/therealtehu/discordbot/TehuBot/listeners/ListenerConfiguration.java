@@ -2,7 +2,7 @@ package com.therealtehu.discordbot.TehuBot.listeners;
 
 import com.therealtehu.discordbot.TehuBot.listeners.event.EventListener;
 import com.therealtehu.discordbot.TehuBot.model.action.command.*;
-import com.therealtehu.discordbot.TehuBot.model.action.command.poll.PollCommand;
+import com.therealtehu.discordbot.TehuBot.model.action.command.poll.CreatePollCommand;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.guild.ServerNewMemberEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join.ChannelChoosingDropDownEvent;
@@ -21,14 +21,14 @@ public class ListenerConfiguration {
     @Autowired
     public List<CommandWithFunctionality> getCommands(CoinFlipCommand coinFlipCommand, DiceRollCommand diceRollCommand,
                                                       SendGifCommand sendGifCommand, GetWikiCommand getWikiCommand,
-                                                      PollCommand pollCommand, GuildStatisticsCommand guildStatisticsCommand,
+                                                      CreatePollCommand createPollCommand, GuildStatisticsCommand guildStatisticsCommand,
                                                       SetupCommand setupCommand) {
         return List.of(
                 coinFlipCommand,
                 diceRollCommand,
                 sendGifCommand,
                 getWikiCommand,
-                pollCommand,
+                createPollCommand,
                 getWikiCommand,
                 guildStatisticsCommand,
                 setupCommand
