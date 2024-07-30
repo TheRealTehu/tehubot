@@ -1,7 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command.poll;
 
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
-import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -17,6 +16,9 @@ public class PollUtil {
     protected static DateTimeFormatter getDateFormatter() {
         return DateTimeFormatter.ofPattern(TIME_FORMAT);
     }
+    protected static int getMaxNumberOfVoteOptions() {
+        return MAX_NUMBER_OF_VOTE_OPTIONS;
+    }
 
     protected static int getDefaultNumberOfVotes() {
         return DEFAULT_NUMBER_OF_VOTES;
@@ -31,6 +33,7 @@ public class PollUtil {
     private static final String TIME_FORMAT = "yyyy-mm-dd HH:mm";
     private static final int TIME_OPTION_LENGTH = TIME_FORMAT.length();
     private static final int DEFAULT_NUMBER_OF_VOTES = 1;
+    private static final int MAX_NUMBER_OF_VOTE_OPTIONS = 20;
 
     private static final OptionData DESCRIPTION_OPTION = new OptionData(
             OptionType.STRING,
