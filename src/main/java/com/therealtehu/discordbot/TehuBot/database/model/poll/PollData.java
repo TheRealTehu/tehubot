@@ -3,7 +3,7 @@ package com.therealtehu.discordbot.TehuBot.database.model.poll;
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ public class PollData {
 
     private String pollDescription;
 
-    private LocalDateTime deadLine;
+    private OffsetDateTime deadLine;
 
     private boolean isAnonymous;
 
@@ -35,7 +35,7 @@ public class PollData {
     }
 
     public PollData(long id, String publicId, List<PollAnswerData> answers, GuildData guild,
-                    String pollDescription, LocalDateTime deadLine, boolean isAnonymous,
+                    String pollDescription, OffsetDateTime deadLine, boolean isAnonymous,
                     String minimumRole, int numberOfVotesPerMember) {
         this.id = id;
         this.publicId = publicId;
@@ -88,11 +88,11 @@ public class PollData {
         this.pollDescription = pollDescription;
     }
 
-    public LocalDateTime getDeadLine() {
+    public OffsetDateTime getDeadLine() {
         return deadLine;
     }
 
-    public void setDeadLine(LocalDateTime deadLine) {
+    public void setDeadLine(OffsetDateTime deadLine) {
         this.deadLine = deadLine;
     }
 
