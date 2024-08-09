@@ -30,7 +30,7 @@ public class PollUtil {
 
     private static final int MIN_DESC_LENGTH = 3;
     private static final int MAX_DESC_LENGTH = 100;
-    private static final String TIME_FORMAT = "yyyy-mm-dd HH:mm";
+    private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
     private static final int TIME_OPTION_LENGTH = TIME_FORMAT.length();
     private static final int DEFAULT_NUMBER_OF_VOTES = 1;
     private static final int MAX_NUMBER_OF_VOTE_OPTIONS = 20;
@@ -44,7 +44,7 @@ public class PollUtil {
     private static final OptionData TIME_LIMIT_OPTION = new OptionData(
             OptionType.STRING,
             OptionName.POLL_TIME_LIMIT_OPTION.getOptionName(),
-            "The end date of the poll in the following format: " + TIME_FORMAT,
+            "The end date of the poll in UTC time in the following format: " + TIME_FORMAT,
             false).setMinLength(TIME_OPTION_LENGTH).setMaxLength(TIME_OPTION_LENGTH);
 
     private static final OptionData NUMBER_OF_VOTES_OPTION = new OptionData(
