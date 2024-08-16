@@ -3,9 +3,12 @@ package com.therealtehu.discordbot.TehuBot.listeners.event;
 import com.therealtehu.discordbot.TehuBot.model.action.event.DropDownEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
+import com.therealtehu.discordbot.TehuBot.model.action.event.poll.MessageReactionEventWithText;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -46,6 +49,27 @@ public class EventListener extends ListenerAdapter {
         Optional<EventHandler> dropDownEvent = getDropDownEventHandler(event.getComponentId());
         dropDownEvent.ifPresentOrElse(eventHandler -> eventHandler.handle(event),
                 sendErrorMessage(EventName.CHANNEL_CHOOSING_DROPDOWN.getEventName()));
+    }
+
+    @Override
+    public void onMessageReactionAdd(MessageReactionAddEvent event) {
+        event.retrieveMessage().queue(message -> {
+            if(message.getContentRaw().startsWith("__poll id:__")) {
+                Optional<EventHandler> pollVoteEvent = getEventHandler(EventName.POLL_VOTE.getEventName());
+                pollVoteEvent.ifPresentOrElse(eventHandler ->
+                                eventHandler.handle(new MessageReactionEventWithText(event, message.getContentRaw())),
+                        sendErrorMessage(EventName.POLL_VOTE.getEventName()));
+            }
+        });
+    }
+
+    @Override
+    public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
+        //TODO
+        if (!event.getUser().isBot()) {
+            super.onMessageReactionRemove(event);
+            throw new UnsupportedOperationException();
+        }
     }
 
     private Optional<EventHandler> getEventHandler(String eventHandlerName) {
