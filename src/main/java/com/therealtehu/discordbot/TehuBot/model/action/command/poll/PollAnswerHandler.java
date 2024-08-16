@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -58,19 +59,16 @@ public class PollAnswerHandler {
     }
 
     private List<Emoji> getEmojisToUse(List<RichCustomEmoji> guildEmojis, int size) {
-        if (size < guildEmojis.size()) {
-            return guildEmojis.stream().limit(size).map(emoji -> (Emoji) emoji).toList();
-        } else {
-            List<Emoji> emojisToUse = new ArrayList<>(guildEmojis);
-            List<String> unicodeEmojis = PollUtil.getEmojis();
-            while (emojisToUse.size() < size) {
-                int pick = randomNumberGenerator.getRandomNumber(unicodeEmojis.size());
-                Emoji unicodeEmoji = Emoji.fromUnicode(unicodeEmojis.get(pick));
-                if (!emojisToUse.contains(unicodeEmoji)) {
-                    emojisToUse.add(unicodeEmoji);
-                }
+        List<Emoji> emojisToUse = new ArrayList<>(guildEmojis);
+        List<String> unicodeEmojis = PollUtil.getEmojis();
+        while (emojisToUse.size() < size) {
+            int pick = randomNumberGenerator.getRandomNumber(unicodeEmojis.size());
+            Emoji unicodeEmoji = Emoji.fromUnicode(unicodeEmojis.get(pick));
+            if (!emojisToUse.contains(unicodeEmoji)) {
+                emojisToUse.add(unicodeEmoji);
             }
-            return emojisToUse;
         }
+        Collections.shuffle(guildEmojis);
+        return emojisToUse;
     }
 }
