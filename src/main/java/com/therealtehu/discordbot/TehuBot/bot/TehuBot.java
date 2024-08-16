@@ -17,7 +17,7 @@ public class TehuBot {
     @Autowired
     public TehuBot(@Value("${discord.bot.token}") String token, EventListener eventListener, CommandManager commandManager) {
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
-        builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
+        builder.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
         builder.addEventListeners(eventListener, commandManager);
         builder.setStatus(OnlineStatus.ONLINE);
         builder.setActivity(Activity.playing("Useful Little Bot"));
