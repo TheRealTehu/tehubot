@@ -16,7 +16,7 @@ public class PollUtil {
     protected static DateTimeFormatter getDateFormatter() {
         return DateTimeFormatter.ofPattern(TIME_FORMAT);
     }
-    protected static int getMaxNumberOfVoteOptions() {
+    public static int getMaxNumberOfVoteOptions() {
         return MAX_NUMBER_OF_VOTE_OPTIONS;
     }
 
@@ -24,7 +24,7 @@ public class PollUtil {
         return DEFAULT_NUMBER_OF_VOTES;
     }
 
-    protected static List<String> getEmojis() {
+    public static List<String> getEmojis() {
         return EMOJIS;
     }
 
