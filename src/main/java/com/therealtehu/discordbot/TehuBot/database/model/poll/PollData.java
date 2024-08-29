@@ -12,31 +12,25 @@ public class PollData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private String publicId;
-
     @OneToMany
     private List<PollAnswerData> answers;
-
     @ManyToOne
     private GuildData guild;
-
     private String pollDescription;
-
     private OffsetDateTime deadLine;
-
     private boolean isAnonymous;
-
     private String minimumRole;
-
     private int numberOfVotesPerMember;
+
+    private boolean isClosed;
 
     public PollData() {
     }
 
     public PollData(long id, String publicId, List<PollAnswerData> answers, GuildData guild,
                     String pollDescription, OffsetDateTime deadLine, boolean isAnonymous,
-                    String minimumRole, int numberOfVotesPerMember) {
+                    String minimumRole, int numberOfVotesPerMember, boolean isClosed) {
         this.id = id;
         this.publicId = publicId;
         this.answers = answers;
@@ -46,6 +40,7 @@ public class PollData {
         this.isAnonymous = isAnonymous;
         this.minimumRole = minimumRole;
         this.numberOfVotesPerMember = numberOfVotesPerMember;
+        this.isClosed = isClosed;
     }
 
     public long getId() {
@@ -120,6 +115,14 @@ public class PollData {
         this.numberOfVotesPerMember = numberOfVotesPerMember;
     }
 
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -145,6 +148,7 @@ public class PollData {
                 ", isAnonymous=" + isAnonymous +
                 ", minimumRole='" + minimumRole + '\'' +
                 ", numberOfVotesPerMember=" + numberOfVotesPerMember +
+                ", isClosed=" + isClosed +
                 '}';
     }
 }
