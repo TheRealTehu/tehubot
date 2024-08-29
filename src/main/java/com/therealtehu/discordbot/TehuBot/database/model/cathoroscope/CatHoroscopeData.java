@@ -1,7 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.database.model.cathoroscope;
 
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
-import com.therealtehu.discordbot.TehuBot.database.model.Member;
+import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,7 +14,7 @@ public class CatHoroscopeData {
     private GuildData guild;
 
     @ManyToOne
-    private Member member;
+    private MemberData memberData;
 
     @OneToOne
     private CatBreed catBreed;
@@ -22,10 +22,10 @@ public class CatHoroscopeData {
     public CatHoroscopeData() {
     }
 
-    public CatHoroscopeData(long id, GuildData guild, Member member, CatBreed catBreed) {
+    public CatHoroscopeData(long id, GuildData guild, MemberData memberData, CatBreed catBreed) {
         this.id = id;
         this.guild = guild;
-        this.member = member;
+        this.memberData = memberData;
         this.catBreed = catBreed;
     }
 
@@ -45,12 +45,12 @@ public class CatHoroscopeData {
         this.guild = guild;
     }
 
-    public Member getMember() {
-        return member;
+    public MemberData getMember() {
+        return memberData;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(MemberData memberData) {
+        this.memberData = memberData;
     }
 
     public CatBreed getCatBreed() {

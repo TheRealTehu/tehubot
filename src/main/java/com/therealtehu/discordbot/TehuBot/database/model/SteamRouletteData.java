@@ -12,17 +12,17 @@ public class SteamRouletteData {
     private GuildData guild;
 
     @ManyToOne
-    private Member member;
+    private MemberData memberData;
 
     private String gameTitle;
 
     public SteamRouletteData() {
     }
 
-    public SteamRouletteData(long id, GuildData guild, Member member, String gameTitle) {
+    public SteamRouletteData(long id, GuildData guild, MemberData memberData, String gameTitle) {
         this.id = id;
         this.guild = guild;
-        this.member = member;
+        this.memberData = memberData;
         this.gameTitle = gameTitle;
     }
 
@@ -42,12 +42,12 @@ public class SteamRouletteData {
         this.guild = guild;
     }
 
-    public Member getMember() {
-        return member;
+    public MemberData getMember() {
+        return memberData;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(MemberData memberData) {
+        this.memberData = memberData;
     }
 
     public String getGameTitle() {

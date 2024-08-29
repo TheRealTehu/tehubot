@@ -12,7 +12,7 @@ public class HallOfFameData {
     private GuildData guild;
 
     @ManyToOne
-    private Member member;
+    private MemberData memberData;
 
     private long channelId;
 
@@ -23,10 +23,10 @@ public class HallOfFameData {
     public HallOfFameData() {
     }
 
-    public HallOfFameData(long id, GuildData guild, Member member, long channelId, String massageLink, int numberOfEmojis) {
+    public HallOfFameData(long id, GuildData guild, MemberData memberData, long channelId, String massageLink, int numberOfEmojis) {
         this.id = id;
         this.guild = guild;
-        this.member = member;
+        this.memberData = memberData;
         this.channelId = channelId;
         this.massageLink = massageLink;
         this.numberOfEmojis = numberOfEmojis;
@@ -48,12 +48,12 @@ public class HallOfFameData {
         this.guild = guild;
     }
 
-    public Member getMember() {
-        return member;
+    public MemberData getMember() {
+        return memberData;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(MemberData memberData) {
+        this.memberData = memberData;
     }
 
     public long getChannelId() {

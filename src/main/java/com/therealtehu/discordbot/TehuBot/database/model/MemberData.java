@@ -2,8 +2,10 @@ package com.therealtehu.discordbot.TehuBot.database.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
-public class Member {
+public class MemberData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -11,9 +13,9 @@ public class Member {
     @Column(unique = true)
     private long userId;
 
-    public Member(){}
+    public MemberData(){}
 
-    public Member(long id, long userId) {
+    public MemberData(long id, long userId) {
         this.id = id;
         this.userId = userId;
     }
@@ -32,5 +34,18 @@ public class Member {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemberData that = (MemberData) o;
+        return id == that.id && userId == that.userId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId);
     }
 }

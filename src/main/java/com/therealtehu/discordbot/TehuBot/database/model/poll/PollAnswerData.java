@@ -1,6 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.database.model.poll;
 
-import com.therealtehu.discordbot.TehuBot.database.model.Member;
+import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -20,17 +20,17 @@ public class PollAnswerData {
     private String answerEmoji;
 
     @ManyToMany
-    private List<Member> members;
+    private List<MemberData> memberData;
 
     public PollAnswerData() {
     }
 
-    public PollAnswerData(long id, PollData pollData, String answerText, String answerEmoji, List<Member> members) {
+    public PollAnswerData(long id, PollData pollData, String answerText, String answerEmoji, List<MemberData> memberData) {
         this.id = id;
         this.pollData = pollData;
         this.answerText = answerText;
         this.answerEmoji = answerEmoji;
-        this.members = members;
+        this.memberData = memberData;
     }
 
     public long getId() {
@@ -65,12 +65,12 @@ public class PollAnswerData {
         this.answerEmoji = answerEmoji;
     }
 
-    public List<Member> getMembers() {
-        return members;
+    public List<MemberData> getMembers() {
+        return memberData;
     }
 
-    public void setMembers(List<Member> members) {
-        this.members = members;
+    public void setMembers(List<MemberData> memberData) {
+        this.memberData = memberData;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class PollAnswerData {
                 ", pollData public id= " + pollData.getPublicId() +
                 ", answerText='" + answerText + '\'' +
                 ", answerEmoji='" + answerEmoji + '\'' +
-                ", members=" + members +
+                ", members=" + memberData +
                 '}';
     }
 }
