@@ -1,5 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 
+import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
+import com.therealtehu.discordbot.TehuBot.database.repository.MemberRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
@@ -14,11 +16,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServerNewMemberEvent extends EventHandler {
     private final TenorGifService tenorGifService;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    public ServerNewMemberEvent(TenorGifService tenorGifService, MessageSender messageSender) {
+    public ServerNewMemberEvent(TenorGifService tenorGifService, MessageSender messageSender, MemberRepository memberRepository) {
         super(EventName.SERVER_NEW_MEMBER.getEventName(), messageSender);
         this.tenorGifService = tenorGifService;
+        this.memberRepository = memberRepository;
     }
 
     @Override
@@ -30,6 +34,12 @@ public class ServerNewMemberEvent extends EventHandler {
             MessageEmbed gif = tenorGifService.getGifAsEmbed("Welcome");
 
             messageSender.sendMessageWithMessageEmbed(channel, message, gif);
+
+            if(!memberRepository.existsByUserId(guildMemberJoinEvent.getMember().getIdLong())) {
+                MemberData memberData = new MemberData();
+                memberData.setUserId(guildMemberJoinEvent.getMember().getIdLong());
+                memberRepository.save(memberData);
+            }
         }
     }
 }
