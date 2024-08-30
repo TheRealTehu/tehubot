@@ -3,9 +3,9 @@ package com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join;
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
-import com.therealtehu.discordbot.TehuBot.database.repository.MemberRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
+import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -23,7 +23,7 @@ public class ServerJoinEvent extends EventHandler {
     private static final String GREETING_TEXT = "Hey! I'm TehuBot! I'm new on this server, a server admin please go through my initial setup!\n Where should I post?\n";
     private final MessageCreateBuilder messageCreateBuilder;
     protected static final String DROP_DOWN_EVENT_ID = "choose-bot-channel";
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final GuildRepository guildRepository;
 
     private static final EntitySelectMenu channelDropDown = EntitySelectMenu
@@ -34,10 +34,10 @@ public class ServerJoinEvent extends EventHandler {
 
     @Autowired
     public ServerJoinEvent(MessageSender messageSender, MessageCreateBuilder messageCreateBuilder,
-                           MemberRepository memberRepository, GuildRepository guildRepository) {
+                           MemberService memberService, GuildRepository guildRepository) {
         super(EventName.SERVER_JOIN.getEventName(), messageSender);
         this.messageCreateBuilder = messageCreateBuilder;
-        this.memberRepository = memberRepository;
+        this.memberService = memberService;
 
         this.guildRepository = guildRepository;
     }
@@ -66,11 +66,7 @@ public class ServerJoinEvent extends EventHandler {
 
     private void addMembersToDatabase(GuildJoinEvent guildJoinEvent) {
         for(Member jpaMember : guildJoinEvent.getGuild().getMembers()) {
-            if(!memberRepository.existsByUserId(jpaMember.getIdLong())) {
-                MemberData memberData = new MemberData();
-                memberData.setUserId(jpaMember.getIdLong());
-                memberRepository.save(memberData);
-            }
+            memberService.addNewMemberIfNotExists(jpaMember);
         }
     }
 }
