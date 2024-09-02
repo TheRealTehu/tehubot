@@ -58,14 +58,7 @@ public class ServerJoinEvent extends EventHandler {
                         .build();
                 messageSender.sendMessage(channel, messageCreateData);
             }
-            addMembersToDatabase(guildJoinEvent);
+            memberService.addMembersFromGuild(guildJoinEvent.getGuild());
         }
-    }
-
-    private void addMembersToDatabase(GuildJoinEvent guildJoinEvent) {
-        guildJoinEvent.getGuild().loadMembers()
-                .onSuccess(memberList -> memberList
-                        .forEach(memberService::addNewMemberIfNotExists)
-                );
     }
 }
