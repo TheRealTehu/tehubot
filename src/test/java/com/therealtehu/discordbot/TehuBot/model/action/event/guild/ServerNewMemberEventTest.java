@@ -1,7 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 
-import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
-import com.therealtehu.discordbot.TehuBot.database.repository.MemberRepository;
+import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ServerNewMemberEventTest {
     private ServerNewMemberEvent serverNewMemberEvent;
@@ -28,11 +27,11 @@ class ServerNewMemberEventTest {
     private final DefaultGuildChannelUnion mockChannelUnion = Mockito.mock(DefaultGuildChannelUnion.class);
     private final TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
     private final MessageEmbed mockMessageEmbed = Mockito.mock(MessageEmbed.class);
-    private final MemberRepository mockMemberRepository = Mockito.mock(MemberRepository.class);
+    private final MemberService mockMemberService = Mockito.mock(MemberService.class);
 
     @BeforeEach
     void setup() {
-        serverNewMemberEvent = new ServerNewMemberEvent(mockGifService, mockMessageSender, mockMemberRepository);
+        serverNewMemberEvent = new ServerNewMemberEvent(mockGifService, mockMessageSender, mockMemberService);
     }
 
     @Test
@@ -47,38 +46,10 @@ class ServerNewMemberEventTest {
 
         when(mockGifService.getGifAsEmbed("Welcome")).thenReturn(mockMessageEmbed);
 
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMemberRepository.existsByUserId(1L)).thenReturn(false);
-
-        serverNewMemberEvent.handle(mockMemberJoinEvent);
-
-        MemberData expectedMemberData = new MemberData();
-        expectedMemberData.setUserId(1L);
-
-        verify(mockGifService).getGifAsEmbed("Welcome");
-        verify(mockMessageSender).sendMessageWithMessageEmbed(mockTextChannel, message, mockMessageEmbed);
-        verify(mockMemberRepository).save(expectedMemberData);
-    }
-
-    @Test
-    void handleServerNewMemberWhenMemberIsInDbGreetsMemberAndDoesNotSavesThemToDb() {
-        when(mockMemberJoinEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockMemberJoinEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getDefaultChannel()).thenReturn(mockChannelUnion);
-        when(mockChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
-
-        String message = "Member as mention just joined the channel! Say hi everyone!";
-
-        when(mockGifService.getGifAsEmbed("Welcome")).thenReturn(mockMessageEmbed);
-
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMemberRepository.existsByUserId(1L)).thenReturn(true);
-
         serverNewMemberEvent.handle(mockMemberJoinEvent);
 
         verify(mockGifService).getGifAsEmbed("Welcome");
+        verify(mockMemberService).addNewMemberIfNotExists(mockMember);
         verify(mockMessageSender).sendMessageWithMessageEmbed(mockTextChannel, message, mockMessageEmbed);
-        verify(mockMemberRepository, times(0)).save(any());
     }
 }
