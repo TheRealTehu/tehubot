@@ -16,10 +16,10 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public boolean addNewMemberIfNotExists(Member jpaMember) {
-        if(!memberRepository.existsByUserId(jpaMember.getIdLong())) {
+    public boolean addNewMemberIfNotExists(Member discordMember) {
+        if(!memberRepository.existsByUserId(discordMember.getIdLong())) {
             MemberData memberData = new MemberData();
-            memberData.setUserId(jpaMember.getIdLong());
+            memberData.setUserId(discordMember.getIdLong());
             memberRepository.save(memberData);
             return true;
         }
