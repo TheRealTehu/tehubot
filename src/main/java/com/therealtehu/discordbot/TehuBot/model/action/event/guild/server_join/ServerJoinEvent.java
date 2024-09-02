@@ -6,7 +6,6 @@ import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.Event;
@@ -64,8 +63,9 @@ public class ServerJoinEvent extends EventHandler {
     }
 
     private void addMembersToDatabase(GuildJoinEvent guildJoinEvent) {
-        for(Member jpaMember : guildJoinEvent.getGuild().getMembers()) {
-            memberService.addNewMemberIfNotExists(jpaMember);
-        }
+        guildJoinEvent.getGuild().loadMembers()
+                .onSuccess(memberList -> memberList
+                        .forEach(memberService::addNewMemberIfNotExists)
+                );
     }
 }

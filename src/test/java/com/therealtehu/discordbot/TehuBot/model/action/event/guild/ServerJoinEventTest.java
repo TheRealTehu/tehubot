@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
+import net.dv8tion.jda.api.utils.concurrent.Task;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ class ServerJoinEventTest {
     private final MessageCreateData mockMessageCreateData = Mockito.mock(MessageCreateData.class);
     private final GuildRepository mockGuildRepository = Mockito.mock(GuildRepository.class);
     private final MemberService mockMemberService = Mockito.mock(MemberService.class);
-    private final Member mockMember = Mockito.mock(Member.class);
+    private final Task<List<Member>> mockTask = Mockito.mock(Task.class);
 
     private final EntitySelectMenu channelDropDown = EntitySelectMenu
             .create("choose-bot-channel", EntitySelectMenu.SelectTarget.CHANNEL)
@@ -50,7 +51,7 @@ class ServerJoinEventTest {
     }
 
     @Test
-    void handleServerJoinWhenGuildIsNotInDbWithMemberNotInDbSavesGuildAndReturnsDropDownMenu() {
+    void handleServerJoinWhenGuildIsNotInDbSavesGuildAndReturnsDropDownMenu() {
         when(mockGuildJoinEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getDefaultChannel()).thenReturn(mockDefaultGuildChannelUnion);
         when(mockDefaultGuildChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
@@ -65,51 +66,17 @@ class ServerJoinEventTest {
         when(mockMessageCreateBuilder.addActionRow(channelDropDown)).thenReturn(mockMessageCreateBuilder);
         when(mockMessageCreateBuilder.build()).thenReturn(mockMessageCreateData);
 
-        when(mockGuild.getMembers()).thenReturn(List.of(mockMember));
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMemberService.addNewMemberIfNotExists(mockMember)).thenReturn(false);
+        when(mockGuild.loadMembers()).thenReturn(mockTask);
+        when(mockTask.onSuccess(any())).thenReturn(mockTask);
 
         serverJoinEvent.handle(mockGuildJoinEvent);
 
         verify(mockGuildRepository).save(expectedGuildData);
         verify(mockMessageSender).sendMessage(mockTextChannel, mockMessageCreateData);
-        verify(mockMemberService).addNewMemberIfNotExists(mockMember);
+        verify(mockTask).onSuccess(any());
     }
-
     @Test
-    void handleServerJoinWhenGuildIsNotInDbWithTwoMembersSavesGuildAndReturnsDropDownMenu() {
-        Member mockMember2 = Mockito.mock(Member.class);
-
-        when(mockGuildJoinEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getDefaultChannel()).thenReturn(mockDefaultGuildChannelUnion);
-        when(mockDefaultGuildChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
-
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
-
-        GuildData expectedGuildData = new GuildData();
-        expectedGuildData.setId(1L);
-
-        when(mockMessageCreateBuilder.addContent(GREETING_TEXT)).thenReturn(mockMessageCreateBuilder);
-        when(mockMessageCreateBuilder.addActionRow(channelDropDown)).thenReturn(mockMessageCreateBuilder);
-        when(mockMessageCreateBuilder.build()).thenReturn(mockMessageCreateData);
-
-        when(mockGuild.getMembers()).thenReturn(List.of(mockMember, mockMember2));
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMember2.getIdLong()).thenReturn(2L);
-        when(mockMemberService.addNewMemberIfNotExists(mockMember)).thenReturn(false);
-        when(mockMemberService.addNewMemberIfNotExists(mockMember2)).thenReturn(true);
-
-        serverJoinEvent.handle(mockGuildJoinEvent);
-
-        verify(mockGuildRepository).save(expectedGuildData);
-        verify(mockMessageSender).sendMessage(mockTextChannel, mockMessageCreateData);
-        verify(mockMemberService).addNewMemberIfNotExists(mockMember);
-        verify(mockMemberService).addNewMemberIfNotExists(mockMember2);
-    }
-
-    @Test
-    void handleServerJoinWhenGuildIsInDbWithMemberInDbReturnsMessageThatGuildIsFound() {
+    void handleServerJoinWhenGuildIsInDbReturnsMessageThatGuildIsFound() {
         when(mockGuildJoinEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getDefaultChannel()).thenReturn(mockDefaultGuildChannelUnion);
         when(mockDefaultGuildChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
@@ -119,14 +86,12 @@ class ServerJoinEventTest {
         guildData.setId(1L);
         when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(guildData));
 
-        when(mockGuild.getMembers()).thenReturn(List.of(mockMember));
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMemberService.addNewMemberIfNotExists(mockMember)).thenReturn(true);
+        when(mockGuild.loadMembers()).thenReturn(mockTask);
+        when(mockTask.onSuccess(any())).thenReturn(mockTask);
 
         serverJoinEvent.handle(mockGuildJoinEvent);
 
         verify(mockGuildRepository, times(0)).save(any());
         verify(mockMessageSender).sendMessage(mockTextChannel, "Welcome back! Previous setup loaded!");
-        verify(mockMemberService).addNewMemberIfNotExists(mockMember);
     }
 }
