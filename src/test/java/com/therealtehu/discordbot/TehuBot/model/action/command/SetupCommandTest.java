@@ -2,6 +2,7 @@ package com.therealtehu.discordbot.TehuBot.model.action.command;
 
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
+import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
@@ -23,14 +24,15 @@ class SetupCommandTest {
     private final Guild mockGuild = Mockito.mock(Guild.class);
     private final DefaultGuildChannelUnion mockDefaultGuildChannelUnion = Mockito.mock(DefaultGuildChannelUnion.class);
     private final ReplyCallbackAction mockReply = Mockito.mock(ReplyCallbackAction.class);
+    private final MemberService mockMemberService = Mockito.mock(MemberService.class);
 
     @BeforeEach
     void setup() {
-        setupCommand = new SetupCommand(mockMessageSender, mockGuildRepository);
+        setupCommand = new SetupCommand(mockMessageSender, mockGuildRepository, mockMemberService);
     }
 
     @Test
-    void executeCommandSavesGuildToDbAndRepliesToEvent() {
+    void executeCommandSavesGuildAndMemberToDbAndRepliesToEvent() {
         when(mockEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getIdLong()).thenReturn(1L);
         when(mockGuild.getDefaultChannel()).thenReturn(mockDefaultGuildChannelUnion);
@@ -43,6 +45,7 @@ class SetupCommandTest {
 
         verify(mockGuildRepository).save(expectedGuildData);
         verify(mockEvent).reply("Guild saved to DB");
+        verify(mockMemberService).addMembersFromGuild(mockGuild);
         verify(mockReply).queue();
     }
 }
