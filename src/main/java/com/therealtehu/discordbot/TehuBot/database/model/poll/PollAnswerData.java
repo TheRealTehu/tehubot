@@ -3,6 +3,7 @@ package com.therealtehu.discordbot.TehuBot.database.model.poll;
 import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,10 +20,11 @@ public class PollAnswerData {
 
     private String answerEmoji;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<MemberData> memberData;
 
     public PollAnswerData() {
+        memberData = new ArrayList<>();
     }
 
     public PollAnswerData(long id, PollData pollData, String answerText, String answerEmoji, List<MemberData> memberData) {
@@ -71,6 +73,10 @@ public class PollAnswerData {
 
     public void setMembers(List<MemberData> memberData) {
         this.memberData = memberData;
+    }
+
+    public void addMember(MemberData memberData) {
+        this.memberData.add(memberData);
     }
 
     @Override
