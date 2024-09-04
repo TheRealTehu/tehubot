@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.action.event.poll;
 
+import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollAnswerData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollAnswerRepository;
@@ -12,10 +13,12 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PollAnswerHandler {
@@ -71,5 +74,27 @@ public class PollAnswerHandler {
         }
         Collections.shuffle(guildEmojis);
         return emojisToUse;
+    }
+
+    public boolean removeVote(PollData pollData, MemberData memberData) {
+        //TODO: Remove vote from DB
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean voteExistsForMember(MemberData memberData, PollData pollData) {
+        return pollAnswerRepository.existsByMemberDataAndPollData(memberData, pollData);
+    }
+
+    public int countVotes(PollData pollData, MemberData memberData) {
+        return pollAnswerRepository.countByPollDataAndMemberData(pollData, memberData);
+    }
+
+    @Transactional
+    public Optional<PollAnswerData> getPollAnswerData(PollData pollData, String emoji) {
+        return pollAnswerRepository.findByPollDataAndAnswerEmoji(pollData, emoji);
+    }
+
+    public void saveAnswer(PollAnswerData pollAnswerData) {
+        pollAnswerRepository.save(pollAnswerData);
     }
 }
