@@ -77,8 +77,7 @@ public class PollAnswerHandler {
     }
 
     public boolean removeVote(PollData pollData, MemberData memberData) {
-        //TODO: Remove vote from DB
-        throw new UnsupportedOperationException();
+        return pollAnswerRepository.deleteByPollDataAndMemberData(pollData, memberData);
     }
 
     public boolean voteExistsForMember(MemberData memberData, PollData pollData) {

@@ -11,9 +11,8 @@ import java.util.Optional;
 @Repository
 public interface PollAnswerRepository extends JpaRepository<PollAnswerData, Long> {
     boolean existsByMemberDataAndPollData(MemberData memberData, PollData pollData);
-
     int countByPollDataAndMemberData(PollData pollData, MemberData memberData);
-
     Optional<PollAnswerData> findByPollDataAndAnswerEmoji(PollData pollData, String answerEmoji);
+    boolean deleteByPollDataAndMemberData(PollData pollData, MemberData memberData);
 
 }
