@@ -4,6 +4,8 @@ import com.therealtehu.discordbot.TehuBot.model.action.event.DropDownEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.model.action.event.poll.MessageReactionEventWithText;
+import com.therealtehu.discordbot.TehuBot.service.display.Display;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
@@ -11,7 +13,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,34 +22,33 @@ import java.util.Optional;
 @Service
 public class EventListener extends ListenerAdapter {
     private final List<EventHandler> eventHandlers;
-
-    private final Logger logger;
+    private final Display messageSender;
 
     @Autowired
-    public EventListener(List<EventHandler> eventHandlers, Logger logger) {
+    public EventListener(List<EventHandler> eventHandlers, Display messageSender) {
         this.eventHandlers = eventHandlers;
-        this.logger = logger;
+        this.messageSender = messageSender;
     }
 
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         Optional<EventHandler> serverJoinEventHandler = getEventHandler(EventName.SERVER_JOIN.getEventName());
         serverJoinEventHandler.ifPresentOrElse(eventHandler -> eventHandler.handle(event),
-                sendErrorMessage(EventName.SERVER_JOIN.getEventName()));
+                sendErrorMessage(EventName.SERVER_JOIN.getEventName(), event.getGuild().getDefaultChannel().asTextChannel()));
     }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         Optional<EventHandler> serverNewMemberEvent = getEventHandler(EventName.SERVER_NEW_MEMBER.getEventName());
         serverNewMemberEvent.ifPresentOrElse(eventHandler -> eventHandler.handle(event),
-                sendErrorMessage(EventName.SERVER_NEW_MEMBER.getEventName()));
+                sendErrorMessage(EventName.SERVER_NEW_MEMBER.getEventName(), event.getGuild().getDefaultChannel().asTextChannel()));
     }
 
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         Optional<EventHandler> dropDownEvent = getDropDownEventHandler(event.getComponentId());
         dropDownEvent.ifPresentOrElse(eventHandler -> eventHandler.handle(event),
-                sendErrorMessage(EventName.CHANNEL_CHOOSING_DROPDOWN.getEventName()));
+                sendErrorMessage(EventName.CHANNEL_CHOOSING_DROPDOWN.getEventName(), event.getChannel().asTextChannel()));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class EventListener extends ListenerAdapter {
                 Optional<EventHandler> pollVoteEvent = getEventHandler(EventName.POLL_VOTE.getEventName());
                 pollVoteEvent.ifPresentOrElse(eventHandler ->
                                 eventHandler.handle(new MessageReactionEventWithText(event, message.getContentRaw())),
-                        sendErrorMessage(EventName.POLL_VOTE.getEventName()));
+                        sendErrorMessage(EventName.POLL_VOTE.getEventName(), event.getChannel().asTextChannel()));
             }
         });
     }
@@ -85,7 +85,7 @@ public class EventListener extends ListenerAdapter {
                 .findFirst();
     }
 
-    private Runnable sendErrorMessage(String missingEventHandler) {
-        return () -> logger.error("No suitable EventHandler for: " + missingEventHandler);
+    private Runnable sendErrorMessage(String missingEventHandler, TextChannel channel) {
+        return () -> messageSender.sendMessage(channel, "No suitable EventHandler for: " + missingEventHandler);
     }
 }
