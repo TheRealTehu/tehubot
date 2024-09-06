@@ -29,7 +29,8 @@ public enum OptionName {
     POLL_ANSWER_17_OPTION("answer17"),
     POLL_ANSWER_18_OPTION("answer18"),
     POLL_ANSWER_19_OPTION("answer19"),
-    POLL_ANSWER_20_OPTION("answer20");
+    POLL_ANSWER_20_OPTION("answer20"),
+    POLL_ID_OPTION("pollid");
 
     private final String optionName;
 
