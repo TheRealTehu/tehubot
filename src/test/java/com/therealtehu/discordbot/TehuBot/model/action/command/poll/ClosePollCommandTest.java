@@ -3,6 +3,7 @@ package com.therealtehu.discordbot.TehuBot.model.action.command.poll;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
+import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollResultPrinter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,19 +25,32 @@ class ClosePollCommandTest {
     private final SlashCommandInteractionEvent mockEvent = Mockito.mock(SlashCommandInteractionEvent.class);
     private final Member mockMember = Mockito.mock(Member.class);
     private final OptionMapping mockOptionMapping = Mockito.mock(OptionMapping.class);
+    private final PollResultPrinter mockPollResultPrinter = Mockito.mock(PollResultPrinter.class);
+    private final PollData mockPollData = Mockito.mock(PollData.class);
 
     @BeforeEach
     void setup() {
-        closePollCommand = new ClosePollCommand(mockPollRepository, mockMessageSender);
+        closePollCommand = new ClosePollCommand(mockPollRepository, mockMessageSender, mockPollResultPrinter);
     }
 
     @Test
-    void closePollClosesPollAndSavesChangeToDb() {
-        PollData mockPollData = Mockito.mock(PollData.class);
+    void closePollWhenPollIsOpenClosesPollAndSavesChangeToDbAndPrintsResult() {
+        when(mockPollData.isClosed()).thenReturn(false);
 
         closePollCommand.closePoll(mockPollData);
 
         verify(mockPollRepository).save(mockPollData);
+        verify(mockPollResultPrinter).printResult(mockPollData);
+    }
+
+    @Test
+    void closePollWhenPollIsClosedDoesNothing() {
+        when(mockPollData.isClosed()).thenReturn(true);
+
+        closePollCommand.closePoll(mockPollData);
+
+        verifyNoInteractions(mockPollRepository);
+        verifyNoInteractions(mockPollResultPrinter);
     }
 
     @Test
@@ -47,6 +61,7 @@ class ClosePollCommandTest {
         closePollCommand.executeCommand(mockEvent);
 
         verifyNoInteractions(mockPollRepository);
+        verifyNoInteractions(mockPollResultPrinter);
     }
 
     @Test
@@ -60,10 +75,12 @@ class ClosePollCommandTest {
         closePollCommand.executeCommand(mockEvent);
 
         verify(mockMessageSender).replyToEvent(mockEvent, "ERROR: Could not find poll by id");
+        verify(mockPollRepository, times(0)).save(any());
+        verifyNoInteractions(mockPollResultPrinter);
     }
 
     @Test
-    void executeCommandWhenPollIsInDbThenPollIsClosed() {
+    void executeCommandWhenPollIsInDbThenPollIsClosedAndResultIsPrinted() {
         when(mockEvent.getMember()).thenReturn(mockMember);
         when(mockMember.getPermissions()).thenReturn(EnumSet.of(Permission.MANAGE_EVENTS));
         when(mockEvent.getOption(OptionName.POLL_ID_OPTION.getOptionName())).thenReturn(mockOptionMapping);
@@ -76,5 +93,6 @@ class ClosePollCommandTest {
         verify(mockPollRepository).findByPublicId("poll id");
         verify(mockPollData).setClosed(true);
         verify(mockPollRepository).save(mockPollData);
+        verify(mockPollResultPrinter).printResult(mockPollData);
     }
 }

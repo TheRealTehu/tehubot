@@ -4,6 +4,7 @@ import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.CommandWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
+import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollResultPrinter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -26,11 +27,13 @@ public class ClosePollCommand extends CommandWithFunctionality {
     private static final String COMMAND_NAME = "closepoll";
     private static final String COMMAND_DESCRIPTION = "Close an open poll (only users with MANAGE EVENTS permission can close polls)";
     private final PollRepository pollRepository;
+    private final PollResultPrinter pollResultPrinter;
 
     @Autowired
-    public ClosePollCommand(PollRepository pollRepository, MessageSender messageSender) {
+    public ClosePollCommand(PollRepository pollRepository, MessageSender messageSender, PollResultPrinter pollResultPrinter) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(POLL_ID_OPTION), messageSender);
         this.pollRepository = pollRepository;
+        this.pollResultPrinter = pollResultPrinter; //TODO: Use PollResultPrinter and rewrite tests
     }
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
@@ -42,7 +45,10 @@ public class ClosePollCommand extends CommandWithFunctionality {
         }
     }
     public void closePoll(PollData pollData) {
-        pollData.setClosed(true);
-        pollRepository.save(pollData);
+        if(!pollData.isClosed()) {
+            pollData.setClosed(true);
+            pollRepository.save(pollData);
+            pollResultPrinter.printResult(pollData);
+        }
     }
 }
