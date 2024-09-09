@@ -33,7 +33,7 @@ public class ClosePollCommand extends CommandWithFunctionality {
     public ClosePollCommand(PollRepository pollRepository, MessageSender messageSender, PollResultPrinter pollResultPrinter) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(POLL_ID_OPTION), messageSender);
         this.pollRepository = pollRepository;
-        this.pollResultPrinter = pollResultPrinter; //TODO: Use PollResultPrinter and rewrite tests
+        this.pollResultPrinter = pollResultPrinter;
     }
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
