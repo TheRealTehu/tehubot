@@ -2,10 +2,12 @@ package com.therealtehu.discordbot.TehuBot.database.model.poll;
 
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import jakarta.persistence.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeMap;
 
 @Entity
 public class PollData {
@@ -13,7 +15,7 @@ public class PollData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String publicId;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<PollAnswerData> answers;
     @ManyToOne
     private GuildData guild;
@@ -22,7 +24,6 @@ public class PollData {
     private boolean isAnonymous;
     private String minimumRole;
     private int numberOfVotesPerMember;
-
     private boolean isClosed;
 
     public PollData() {
@@ -121,6 +122,18 @@ public class PollData {
 
     public void setClosed(boolean closed) {
         isClosed = closed;
+    }
+
+    public int getNumberOfVotes() {
+        return answers.stream().mapToInt(PollAnswerData::getNumberOfVotes).sum();
+    }
+
+    public TreeMap<PollAnswerData, Integer> getAnswersInOrder() {
+        TreeMap<PollAnswerData, Integer> answersInOrder = new TreeMap<>();
+        for (PollAnswerData pollAnswerData : answers) {
+            answersInOrder.put(pollAnswerData, pollAnswerData.getNumberOfVotes());
+        }
+        return answersInOrder;
     }
 
     @Override
