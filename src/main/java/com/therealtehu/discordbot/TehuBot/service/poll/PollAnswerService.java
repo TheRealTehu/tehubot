@@ -1,10 +1,9 @@
-package com.therealtehu.discordbot.TehuBot.model.action.event.poll;
+package com.therealtehu.discordbot.TehuBot.service.poll;
 
 import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollAnswerData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollAnswerRepository;
-import com.therealtehu.discordbot.TehuBot.model.action.command.poll.PollUtil;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -12,7 +11,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -20,13 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Component
-public class PollAnswerHandler {
+@Service
+public class PollAnswerService {
     private final RandomNumberGenerator randomNumberGenerator;
     private final PollAnswerRepository pollAnswerRepository;
 
     @Autowired
-    public PollAnswerHandler(RandomNumberGenerator randomNumberGenerator, PollAnswerRepository pollAnswerRepository) {
+    public PollAnswerService(RandomNumberGenerator randomNumberGenerator, PollAnswerRepository pollAnswerRepository) {
         this.randomNumberGenerator = randomNumberGenerator;
         this.pollAnswerRepository = pollAnswerRepository;
     }

@@ -7,8 +7,9 @@ import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.CommandWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
-import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollAnswerHandler;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollUtil;
 import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -28,15 +29,15 @@ import java.util.Optional;
 public class CreatePollCommand extends CommandWithFunctionality {
     private static final String COMMAND_NAME = "createpoll";
     private static final String COMMAND_DESCRIPTION = "Start a vote on the server";
-    private final PollAnswerHandler pollAnswerHandler;
+    private final PollAnswerService pollAnswerService;
     private final PollRepository pollRepository;
     private final GuildRepository guildRepository;
 
     @Autowired
-    public CreatePollCommand(MessageSender messageSender, PollAnswerHandler pollAnswerHandler,
+    public CreatePollCommand(MessageSender messageSender, PollAnswerService pollAnswerService,
                              PollRepository pollRepository, GuildRepository guildRepository) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, PollUtil.getOptions(), messageSender);
-        this.pollAnswerHandler = pollAnswerHandler;
+        this.pollAnswerService = pollAnswerService;
         this.pollRepository = pollRepository;
         this.guildRepository = guildRepository;
     }
@@ -56,7 +57,7 @@ public class CreatePollCommand extends CommandWithFunctionality {
 
                 pollRepository.save(pollData);
 
-                List<PollAnswerData> answerData = pollAnswerHandler.saveAnswers(event, pollData);
+                List<PollAnswerData> answerData = pollAnswerService.saveAnswers(event, pollData);
 
                 pollData.setAnswers(answerData);
 

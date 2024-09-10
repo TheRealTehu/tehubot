@@ -1,4 +1,4 @@
-package com.therealtehu.discordbot.TehuBot.model.action.command.poll;
+package com.therealtehu.discordbot.TehuBot.service.poll;
 
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -9,18 +9,18 @@ import java.util.List;
 
 public class PollUtil {
 
-    protected static List<OptionData> getOptions() {
+    public static List<OptionData> getOptions() {
         return options;
     }
 
-    protected static DateTimeFormatter getDateFormatter() {
+    public static DateTimeFormatter getDateFormatter() {
         return DateTimeFormatter.ofPattern(TIME_FORMAT);
     }
     public static int getMaxNumberOfVoteOptions() {
         return MAX_NUMBER_OF_VOTE_OPTIONS;
     }
 
-    protected static int getDefaultNumberOfVotes() {
+    public static int getDefaultNumberOfVotes() {
         return DEFAULT_NUMBER_OF_VOTES;
     }
 

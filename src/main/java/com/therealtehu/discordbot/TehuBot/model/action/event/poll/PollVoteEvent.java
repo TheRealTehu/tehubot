@@ -8,6 +8,8 @@ import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepositor
 import com.therealtehu.discordbot.TehuBot.model.action.command.poll.ClosePollCommand;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
+import com.therealtehu.discordbot.TehuBot.service.poll.MessageReactionEventWithText;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.Event;
@@ -26,17 +28,17 @@ import java.util.regex.Pattern;
 public class PollVoteEvent extends EventHandler {
     private static final Pattern POLL_ID_PATTERN = Pattern.compile("(?i)poll id:__\\s*([0-9]+-[0-9]+)");
     private final PollRepository pollRepository;
-    private final PollAnswerHandler pollAnswerHandler;
+    private final PollAnswerService pollAnswerService;
     private final ClosePollCommand closePollCommand;
     private final MemberRepository memberRepository;
 
     @Autowired
     protected PollVoteEvent(MessageSender messageSender, PollRepository pollRepository,
-                            PollAnswerHandler pollAnswerHandler, ClosePollCommand closePollCommand,
+                            PollAnswerService pollAnswerService, ClosePollCommand closePollCommand,
                             MemberRepository memberRepository) {
         super(EventName.POLL_VOTE.getEventName(), messageSender);
         this.pollRepository = pollRepository;
-        this.pollAnswerHandler = pollAnswerHandler;
+        this.pollAnswerService = pollAnswerService;
         this.closePollCommand = closePollCommand;
         this.memberRepository = memberRepository;
     }
@@ -83,7 +85,7 @@ public class PollVoteEvent extends EventHandler {
         MemberData memberData = optionalMember.get();
 
         if(pollData.isAnonymous() && isDoubleVote(pollData, memberData)) {
-            pollAnswerHandler.removeVote(pollData, memberData);
+            pollAnswerService.removeVote(pollData, memberData);
             return true;
         }
 
@@ -92,14 +94,14 @@ public class PollVoteEvent extends EventHandler {
             return false;
         }
 
-        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerHandler
+        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerService
                 .getPollAnswerData(pollData, reactionAddEvent.getEmoji().getAsReactionCode());
 
         if(optionalPollAnswerData.isPresent()) {
             PollAnswerData answerData = optionalPollAnswerData.get();
 
             answerData.addMember(memberData);
-            pollAnswerHandler.saveAnswer(answerData);
+            pollAnswerService.saveAnswer(answerData);
 
             return true;
         }
@@ -108,7 +110,7 @@ public class PollVoteEvent extends EventHandler {
     }
 
     private boolean hasRemainingVotes(MemberData memberData, PollData pollData) {
-        return pollAnswerHandler.countVotes(pollData, memberData) < pollData.getNumberOfVotesPerMember();
+        return pollAnswerService.countVotes(pollData, memberData) < pollData.getNumberOfVotesPerMember();
     }
 
     private boolean hasPermissionToVote(MessageReactionEventWithText reactionAddEvent, PollData pollData) {
@@ -131,7 +133,7 @@ public class PollVoteEvent extends EventHandler {
     }
 
     private boolean isDoubleVote(PollData pollData, MemberData memberData) {
-        return pollAnswerHandler.voteExistsForMember(memberData, pollData);
+        return pollAnswerService.voteExistsForMember(memberData, pollData);
     }
 
     private Role findGuildRoleByName(MessageReactionEventWithText reactionAddEvent, PollData pollData) throws NoSuchElementException {

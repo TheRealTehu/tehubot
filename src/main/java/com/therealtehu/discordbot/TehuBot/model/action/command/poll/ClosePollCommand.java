@@ -4,7 +4,7 @@ import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.CommandWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
-import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollResultPrinter;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollResultPrinter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

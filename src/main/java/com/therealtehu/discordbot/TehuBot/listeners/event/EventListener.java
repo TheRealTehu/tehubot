@@ -3,7 +3,7 @@ package com.therealtehu.discordbot.TehuBot.listeners.event;
 import com.therealtehu.discordbot.TehuBot.model.action.event.DropDownEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
-import com.therealtehu.discordbot.TehuBot.model.action.event.poll.MessageReactionEventWithText;
+import com.therealtehu.discordbot.TehuBot.service.poll.MessageReactionEventWithText;
 import com.therealtehu.discordbot.TehuBot.service.display.Display;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;

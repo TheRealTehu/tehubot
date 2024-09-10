@@ -1,4 +1,4 @@
-package com.therealtehu.discordbot.TehuBot.model.action.event.poll;
+package com.therealtehu.discordbot.TehuBot.service.poll;
 
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 

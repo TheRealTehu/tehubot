@@ -6,7 +6,7 @@ import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
-import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollAnswerHandler;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class CreatePollCommandTest {
     private CreatePollCommand createPollCommand;
     private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final PollAnswerHandler mockPollAnswerHandler = Mockito.mock(PollAnswerHandler.class);
+    private final PollAnswerService mockPollAnswerService = Mockito.mock(PollAnswerService.class);
     private final PollRepository mockPollRepository = Mockito.mock(PollRepository.class);
     private final GuildRepository mockGuildRepository = Mockito.mock(GuildRepository.class);
     private final SlashCommandInteractionEvent mockEvent = Mockito.mock(SlashCommandInteractionEvent.class);
@@ -38,7 +38,7 @@ class CreatePollCommandTest {
 
     @BeforeEach
     void setup() {
-        createPollCommand = new CreatePollCommand(mockMessageSender, mockPollAnswerHandler,
+        createPollCommand = new CreatePollCommand(mockMessageSender, mockPollAnswerService,
                 mockPollRepository, mockGuildRepository);
     }
 
@@ -83,7 +83,7 @@ class CreatePollCommandTest {
         expectedPollData.setNumberOfVotesPerMember(1);
         expectedPollData.setMinimumRole(null);
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
         when(mockPollAnswerData.getAnswerEmoji()).thenReturn("Emoji");
         when(mockPollAnswerData.getAnswerText()).thenReturn("Answer text");
 
@@ -105,7 +105,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 
@@ -144,7 +144,7 @@ class CreatePollCommandTest {
         expectedPollData.setNumberOfVotesPerMember(1);
         expectedPollData.setMinimumRole(null);
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
         when(mockPollAnswerData.getAnswerEmoji()).thenReturn("Emoji");
         when(mockPollAnswerData.getAnswerText()).thenReturn("Answer text");
 
@@ -166,7 +166,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 
@@ -188,7 +188,7 @@ class CreatePollCommandTest {
 
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository, times(0)).save(any());
-        verify(mockPollAnswerHandler, times(0)).saveAnswers(eq(mockEvent), any());
+        verify(mockPollAnswerService, times(0)).saveAnswers(eq(mockEvent), any());
         verify(mockMessageSender).replyToEvent(mockEvent, "OPTION ERROR: Invalid time limit format!");
     }
 
@@ -224,7 +224,7 @@ class CreatePollCommandTest {
         expectedPollData.setNumberOfVotesPerMember(2);
         expectedPollData.setMinimumRole(null);
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
         when(mockPollAnswerData.getAnswerEmoji()).thenReturn("Emoji");
         when(mockPollAnswerData.getAnswerText()).thenReturn("Answer text");
 
@@ -246,7 +246,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 
@@ -284,7 +284,7 @@ class CreatePollCommandTest {
         expectedPollData.setNumberOfVotesPerMember(1);
         expectedPollData.setMinimumRole("Admin");
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
         when(mockPollAnswerData.getAnswerEmoji()).thenReturn("Emoji");
         when(mockPollAnswerData.getAnswerText()).thenReturn("Answer text");
 
@@ -306,7 +306,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 
@@ -341,7 +341,7 @@ class CreatePollCommandTest {
         expectedPollData.setNumberOfVotesPerMember(1);
         expectedPollData.setMinimumRole(null);
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
         when(mockPollAnswerData.getAnswerEmoji()).thenReturn("Emoji");
         when(mockPollAnswerData.getAnswerText()).thenReturn("Answer text");
 
@@ -362,7 +362,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 
@@ -394,7 +394,7 @@ class CreatePollCommandTest {
         expectedPollData.setNumberOfVotesPerMember(1);
         expectedPollData.setMinimumRole(null);
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData)).thenReturn(List.of(mockPollAnswerData));
         when(mockPollAnswerData.getAnswerEmoji()).thenReturn("Emoji");
         when(mockPollAnswerData.getAnswerText()).thenReturn("Answer text");
 
@@ -416,7 +416,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 
@@ -456,7 +456,7 @@ class CreatePollCommandTest {
         when(mockPollAnswerData2.getAnswerEmoji()).thenReturn("Emoji2");
         when(mockPollAnswerData2.getAnswerText()).thenReturn("Second answer");
 
-        when(mockPollAnswerHandler.saveAnswers(mockEvent, expectedPollData))
+        when(mockPollAnswerService.saveAnswers(mockEvent, expectedPollData))
                 .thenReturn(List.of(mockPollAnswerData, mockPollAnswerData2));
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -477,7 +477,7 @@ class CreatePollCommandTest {
         verify(mockGuildRepository).findById(id);
         verify(mockPollRepository).findLatestIdForGuild(id);
         verify(mockPollRepository).save(expectedPollData);
-        verify(mockPollAnswerHandler).saveAnswers(mockEvent, expectedPollData);
+        verify(mockPollAnswerService).saveAnswers(mockEvent, expectedPollData);
         verify(mockMessageSender).replyToEvent(mockEvent, expectedText);
     }
 }
