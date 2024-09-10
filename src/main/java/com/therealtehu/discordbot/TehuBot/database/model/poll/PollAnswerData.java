@@ -2,13 +2,14 @@ package com.therealtehu.discordbot.TehuBot.database.model.poll;
 
 import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class PollAnswerData {
+public class PollAnswerData implements Comparable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -79,6 +80,10 @@ public class PollAnswerData {
         this.memberData.add(memberData);
     }
 
+    public int getNumberOfVotes() {
+        return memberData.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,5 +106,15 @@ public class PollAnswerData {
                 ", answerEmoji='" + answerEmoji + '\'' +
                 ", members=" + memberData +
                 '}';
+    }
+
+    @Override
+    public int compareTo(@NotNull Object o) {
+        if(o instanceof PollAnswerData other) {
+            int thisSize = this.memberData != null ? this.memberData.size() : 0;
+            int otherSize = other.memberData != null ? other.memberData.size() : 0;
+            return Integer.compare(otherSize, thisSize);
+        }
+        return 1;
     }
 }
