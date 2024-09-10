@@ -3,7 +3,8 @@ package com.therealtehu.discordbot.TehuBot.model.action.command.poll;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollAnswerData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollAnswerRepository;
-import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollAnswerHandler;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollUtil;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -21,9 +22,9 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class PollAnswerHandlerTest {
+class PollAnswerServiceTest {
 
-    private PollAnswerHandler pollAnswerHandler;
+    private PollAnswerService pollAnswerService;
     private final RandomNumberGenerator mockRandomNumberGenerator = Mockito.mock(RandomNumberGenerator.class);
     private final PollAnswerRepository mockPollAnswerRepository = Mockito.mock(PollAnswerRepository.class);
     private final SlashCommandInteractionEvent mockSlashCommandInteractionEvent = Mockito.mock(SlashCommandInteractionEvent.class);
@@ -33,7 +34,7 @@ class PollAnswerHandlerTest {
 
     @BeforeEach
     void setup() {
-        pollAnswerHandler = new PollAnswerHandler(mockRandomNumberGenerator, mockPollAnswerRepository);
+        pollAnswerService = new PollAnswerService(mockRandomNumberGenerator, mockPollAnswerRepository);
     }
 
     @Test
@@ -52,7 +53,7 @@ class PollAnswerHandlerTest {
         expectedAnswerData.setAnswerEmoji(expectedEmoji.getAsReactionCode());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData);
-        List<PollAnswerData> actualAnswerList = pollAnswerHandler.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
+        List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(expectedAnswerList, actualAnswerList);
@@ -86,7 +87,7 @@ class PollAnswerHandlerTest {
         expectedAnswerData2.setAnswerEmoji(expectedEmoji2.getAsReactionCode());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData, expectedAnswerData2);
-        List<PollAnswerData> actualAnswerList = pollAnswerHandler.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
+        List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(actualAnswerList.size(), 2);
@@ -122,7 +123,7 @@ class PollAnswerHandlerTest {
         expectedAnswerData2.setAnswerEmoji(expectedEmoji2.getAsReactionCode());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData, expectedAnswerData2);
-        List<PollAnswerData> actualAnswerList = pollAnswerHandler.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
+        List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(actualAnswerList.size(), 2);
@@ -146,7 +147,7 @@ class PollAnswerHandlerTest {
         expectedAnswerData.setAnswerEmoji("000");
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData);
-        List<PollAnswerData> actualAnswerList = pollAnswerHandler.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
+        List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
 
         verify(mockRandomNumberGenerator, times(0)).getRandomNumber(anyInt());
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
@@ -184,7 +185,7 @@ class PollAnswerHandlerTest {
         expectedAnswerData2.setAnswerEmoji(expectedEmoji.getAsReactionCode());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData, expectedAnswerData2);
-        List<PollAnswerData> actualAnswerList = pollAnswerHandler.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
+        List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(mockSlashCommandInteractionEvent, mockPollData);
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(actualAnswerList.size(), 2);
