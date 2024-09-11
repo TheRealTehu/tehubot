@@ -11,6 +11,7 @@ public interface MessageSender {
     void sendMessage(TextChannel channel, MessageCreateData message);
     void sendMessageWithMessageEmbed(TextChannel channel, String message, MessageEmbed gif);
     void replyToEvent(SlashCommandInteractionEvent event, String message);
+    void replyToEventEphemeral(SlashCommandInteractionEvent event, String message);
     void sendMessageOnHook(InteractionHook hook, String message);
     void sendMessageEmbedOnHook(InteractionHook hook, MessageEmbed embed);
 

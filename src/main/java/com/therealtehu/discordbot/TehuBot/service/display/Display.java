@@ -29,6 +29,11 @@ public class Display implements MessageSender{
     }
 
     @Override
+    public void replyToEventEphemeral(SlashCommandInteractionEvent event, String message) {
+        event.reply(message).setEphemeral(true).queue();
+    }
+
+    @Override
     public void sendMessageOnHook(InteractionHook hook, String message) {
         hook.sendMessage(message).queue();
     }
