@@ -2,12 +2,11 @@ package com.therealtehu.discordbot.TehuBot.database.model.poll;
 
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import jakarta.persistence.*;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeMap;
+import java.util.PriorityQueue;
 
 @Entity
 public class PollData {
@@ -128,12 +127,8 @@ public class PollData {
         return answers.stream().mapToInt(PollAnswerData::getNumberOfVotes).sum();
     }
 
-    public TreeMap<PollAnswerData, Integer> getAnswersInOrder() {
-        TreeMap<PollAnswerData, Integer> answersInOrder = new TreeMap<>();
-        for (PollAnswerData pollAnswerData : answers) {
-            answersInOrder.put(pollAnswerData, pollAnswerData.getNumberOfVotes());
-        }
-        return answersInOrder;
+    public PriorityQueue<PollAnswerData> getAnswersInOrder() {
+        return new PriorityQueue<>(answers);
     }
 
     @Override
