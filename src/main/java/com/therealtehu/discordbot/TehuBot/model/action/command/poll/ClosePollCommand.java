@@ -4,8 +4,8 @@ import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.CommandWithFunctionality;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
-import com.therealtehu.discordbot.TehuBot.service.poll.PollResultPrinter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollResultPrinter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -35,20 +35,32 @@ public class ClosePollCommand extends CommandWithFunctionality {
         this.pollRepository = pollRepository;
         this.pollResultPrinter = pollResultPrinter;
     }
+
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        if(event.getMember().getPermissions().contains(Permission.MANAGE_EVENTS)) {
+        if (event.getMember().getPermissions().contains(Permission.MANAGE_EVENTS)) {
             String pollId = event.getOption(OptionName.POLL_ID_OPTION.getOptionName()).getAsString();
             Optional<PollData> optionalPollData = pollRepository.findByPublicId(pollId);
-            optionalPollData.ifPresentOrElse(this::closePoll,
-                    () -> messageSender.replyToEvent(event, "ERROR: Could not find poll by id"));
+            if (optionalPollData.isPresent()) {
+                PollData pollData = optionalPollData.get();
+                if (closePoll(pollData)) {
+                    messageSender.replyToEventEphemeral(event, "Poll closed");
+                } else {
+                    messageSender.replyToEventEphemeral(event, "Poll cannot be closed");
+                }
+            } else {
+                messageSender.replyToEvent(event, "ERROR: Could not find poll by id");
+            }
         }
     }
-    public void closePoll(PollData pollData) {
-        if(!pollData.isClosed()) {
+
+    public boolean closePoll(PollData pollData) {
+        if (!pollData.isClosed()) {
             pollData.setClosed(true);
             pollRepository.save(pollData);
             pollResultPrinter.printResult(pollData);
+            return true;
         }
+        return false;
     }
 }
