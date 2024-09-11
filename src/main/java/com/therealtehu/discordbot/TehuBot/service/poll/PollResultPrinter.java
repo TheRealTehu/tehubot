@@ -1,41 +1,61 @@
 package com.therealtehu.discordbot.TehuBot.service.poll;
 
-import com.therealtehu.discordbot.TehuBot.bot.GuildFinder;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollAnswerData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
-import com.therealtehu.discordbot.TehuBot.service.display.Display;
+import com.therealtehu.discordbot.TehuBot.service.GuildFinder;
+import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class PollResultPrinter {
-    private final Display display;
+    private final MessageSender messageSender;
     private final GuildFinder guildFinder;
     private final StringBuilder stringBuilder;
 
-    public PollResultPrinter(Display display, GuildFinder guildFinder) {
-        this.display = display;
+    @Autowired
+    public PollResultPrinter(MessageSender messageSender, GuildFinder guildFinder) {
+        this.messageSender = messageSender;
+        this.guildFinder = guildFinder;
         stringBuilder = new StringBuilder();
-        this.guildFinder = guildFinder; //TODO: Find guild by id and send result
     }
 
     public void printResult(PollData pollData) {
-        int allVotes = pollData.getNumberOfVotes();
-        stringBuilder.append("Poll: ").append(allVotes).append(" has closed with ").append("*")
+        buildResultText(pollData);
+        sendResult(pollData);
+    }
+
+    private void sendResult(PollData pollData) {
+        Optional<Guild> optionalGuild = guildFinder.findGuildBy(pollData.getGuild().getId());
+        optionalGuild.ifPresent(guild -> {
+            TextChannel botTextChannel = guild.getTextChannelById(pollData.getGuild().getBotChatChannelId());
+            messageSender.sendMessage(botTextChannel, stringBuilder.toString());
+        });
+    }
+
+    private void buildResultText(PollData pollData) {
+        buildResultHeader(pollData);
+        buildResultAnswers(pollData);
+    }
+    private void buildResultHeader(PollData pollData) {
+        stringBuilder.append("Poll: ").append(pollData.getPublicId()).append(" has closed with ").append("*")
                 .append(pollData.getNumberOfVotes()).append("*").append(" votes!").append("\n")
                 .append("__").append(pollData.getPollDescription()).append("__").append("\n");
-        for (Map.Entry<PollAnswerData, Integer> entry : pollData.getAnswersInOrder().entrySet()) {
-            stringBuilder.append(entry.getKey().getAnswerText()).append(" ").append(entry.getValue()).append(" (")
-                    .append(calculatePercentage(allVotes, entry.getValue())).append("%)");
+    }
+
+    private void buildResultAnswers(PollData pollData) {
+        for (PollAnswerData answerData : pollData.getAnswersInOrder()) {
+            stringBuilder.append(answerData.getAnswerText()).append(": ").append(answerData.getNumberOfVotes()).append(" (")
+                    .append(calculatePercentage(pollData.getNumberOfVotes(), answerData.getNumberOfVotes()))
+                    .append("%)").append("\n");
         }
-
-        pollData.getGuild().getBotChatChannelId();
-
-        display.sendMessage(pollData);
     }
 
     private Double calculatePercentage(int maxVote, int numberOfVotes) {
-        return ((double) maxVote / 100) * numberOfVotes;
+        return ((double) numberOfVotes / maxVote) * 100;
     }
 }
