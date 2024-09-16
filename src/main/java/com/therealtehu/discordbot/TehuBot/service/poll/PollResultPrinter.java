@@ -15,21 +15,19 @@ import java.util.Optional;
 public class PollResultPrinter {
     private final MessageSender messageSender;
     private final GuildFinder guildFinder;
-    private final StringBuilder stringBuilder;
 
     @Autowired
     public PollResultPrinter(MessageSender messageSender, GuildFinder guildFinder) {
         this.messageSender = messageSender;
         this.guildFinder = guildFinder;
-        stringBuilder = new StringBuilder();
     }
 
     public void printResult(PollData pollData) {
-        buildResultText(pollData);
-        sendResult(pollData);
+        StringBuilder stringBuilder = buildResultText(pollData);
+        sendResult(pollData, stringBuilder);
     }
 
-    private void sendResult(PollData pollData) {
+    private void sendResult(PollData pollData, StringBuilder stringBuilder) {
         Optional<Guild> optionalGuild = guildFinder.findGuildBy(pollData.getGuild().getId());
         optionalGuild.ifPresent(guild -> {
             TextChannel botTextChannel = guild.getTextChannelById(pollData.getGuild().getBotChatChannelId());
@@ -37,25 +35,33 @@ public class PollResultPrinter {
         });
     }
 
-    private void buildResultText(PollData pollData) {
-        buildResultHeader(pollData);
-        buildResultAnswers(pollData);
+    private StringBuilder buildResultText(PollData pollData) {
+        StringBuilder stringBuilder = buildResultHeader(pollData);
+        stringBuilder.append(buildResultAnswers(pollData));
+        return stringBuilder;
     }
-    private void buildResultHeader(PollData pollData) {
+    private StringBuilder buildResultHeader(PollData pollData) {
+        StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Poll: ").append(pollData.getPublicId()).append(" has closed with ").append("*")
                 .append(pollData.getNumberOfVotes()).append("*").append(" votes!").append("\n")
                 .append("__").append(pollData.getPollDescription()).append("__").append("\n");
+        return stringBuilder;
     }
 
-    private void buildResultAnswers(PollData pollData) {
+    private StringBuilder buildResultAnswers(PollData pollData) {
+        StringBuilder stringBuilder = new StringBuilder();
         for (PollAnswerData answerData : pollData.getAnswersInOrder()) {
             stringBuilder.append(answerData.getAnswerText()).append(": ").append(answerData.getNumberOfVotes()).append(" (")
                     .append(calculatePercentage(pollData.getNumberOfVotes(), answerData.getNumberOfVotes()))
                     .append("%)").append("\n");
         }
+        return stringBuilder;
     }
 
     private Double calculatePercentage(int maxVote, int numberOfVotes) {
+        if(maxVote == 0) {
+            return 0.0;
+        }
         return ((double) numberOfVotes / maxVote) * 100;
     }
 }
