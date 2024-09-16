@@ -79,6 +79,9 @@ public class PollAnswerData implements Comparable{
     public void addMember(MemberData memberData) {
         this.memberData.add(memberData);
     }
+    public boolean removeMember(MemberData memberData) {
+        return this.memberData.remove(memberData);
+    }
 
     public int getNumberOfVotes() {
         return memberData.size();
