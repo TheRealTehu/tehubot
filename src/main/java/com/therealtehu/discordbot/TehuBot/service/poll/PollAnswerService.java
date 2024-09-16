@@ -75,12 +75,12 @@ public class PollAnswerService {
         return emojisToUse;
     }
 
-    public boolean removeVote(PollData pollData, MemberData memberData) {
-        return pollAnswerRepository.deleteByPollDataAndMemberData(pollData, memberData);
+    public boolean removeVote(PollData pollData, MemberData memberData, String answerEmoji) {
+        return pollAnswerRepository.deleteByPollDataAndMemberDataAndAnswerEmoji(pollData, memberData, answerEmoji);
     }
 
-    public boolean voteExistsForMember(MemberData memberData, PollData pollData) {
-        return pollAnswerRepository.existsByMemberDataAndPollData(memberData, pollData);
+    public boolean voteExistsForMember(MemberData memberData, PollData pollData, String answerEmoji) {
+        return pollAnswerRepository.existsByMemberDataAndPollDataAndAnswerEmoji(memberData, pollData, answerEmoji);
     }
 
     public int countVotes(PollData pollData, MemberData memberData) {
