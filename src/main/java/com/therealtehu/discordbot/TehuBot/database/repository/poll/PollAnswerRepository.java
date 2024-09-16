@@ -13,6 +13,4 @@ public interface PollAnswerRepository extends JpaRepository<PollAnswerData, Long
     boolean existsByMemberDataAndPollDataAndAnswerEmoji(MemberData memberData, PollData pollData, String answerEmoji);
     int countByPollDataAndMemberData(PollData pollData, MemberData memberData);
     Optional<PollAnswerData> findByPollDataAndAnswerEmoji(PollData pollData, String answerEmoji);
-    boolean deleteByPollDataAndMemberDataAndAnswerEmoji(PollData pollData, MemberData memberData, String answerEmoji);
-
 }
