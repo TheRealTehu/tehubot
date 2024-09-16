@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface PollAnswerRepository extends JpaRepository<PollAnswerData, Long> {
-    boolean existsByMemberDataAndPollData(MemberData memberData, PollData pollData);
+    boolean existsByMemberDataAndPollDataAndAnswerEmoji(MemberData memberData, PollData pollData, String answerEmoji);
     int countByPollDataAndMemberData(PollData pollData, MemberData memberData);
     Optional<PollAnswerData> findByPollDataAndAnswerEmoji(PollData pollData, String answerEmoji);
-    boolean deleteByPollDataAndMemberData(PollData pollData, MemberData memberData);
+    boolean deleteByPollDataAndMemberDataAndAnswerEmoji(PollData pollData, MemberData memberData, String answerEmoji);
 
 }
