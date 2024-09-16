@@ -11,6 +11,7 @@ import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.service.poll.MessageReactionEventWithText;
 import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollUtil;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.Event;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,9 @@ import java.time.ZoneOffset;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class PollVoteEvent extends EventHandler {
-    private static final Pattern POLL_ID_PATTERN = Pattern.compile("(?i)poll id:__\\s*([0-9]+-[0-9]+)");
     private final PollRepository pollRepository;
     private final PollAnswerService pollAnswerService;
     private final ClosePollCommand closePollCommand;
@@ -46,7 +45,7 @@ public class PollVoteEvent extends EventHandler {
     @Override
     public void handle(Event event) {
         if (event instanceof MessageReactionEventWithText reactionAddEvent) {
-            Matcher matcher = POLL_ID_PATTERN.matcher(reactionAddEvent.getImmediateMessage());
+            Matcher matcher = PollUtil.POLL_ID_PATTERN.matcher(reactionAddEvent.getImmediateMessage());
             if (matcher.find()) {
                 String pollId = matcher.group(1);
                 Optional<PollData> optionalPollData = pollRepository.findByPublicId(pollId);

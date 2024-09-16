@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class PollUtil {
 
@@ -16,6 +17,7 @@ public class PollUtil {
     public static DateTimeFormatter getDateFormatter() {
         return DateTimeFormatter.ofPattern(TIME_FORMAT);
     }
+
     public static int getMaxNumberOfVoteOptions() {
         return MAX_NUMBER_OF_VOTE_OPTIONS;
     }
@@ -27,6 +29,8 @@ public class PollUtil {
     public static List<String> getEmojis() {
         return EMOJIS;
     }
+
+    public static final Pattern POLL_ID_PATTERN = Pattern.compile("(?i)poll id:__\\s*([0-9]+-[0-9]+)");
 
     private static final int MIN_DESC_LENGTH = 3;
     private static final int MAX_DESC_LENGTH = 100;
