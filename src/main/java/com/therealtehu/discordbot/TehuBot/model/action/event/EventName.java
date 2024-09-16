@@ -4,7 +4,8 @@ public enum EventName {
     SERVER_JOIN("serverjoin"),
     SERVER_NEW_MEMBER("servernewmember"),
     CHANNEL_CHOOSING_DROPDOWN("channelchossingdropdown"),
-    POLL_VOTE("pollvote");
+    POLL_VOTE("pollvote"),
+    POLL_REMOVE_VOTE("pollremovevote");
 
     private final String eventName;
 
