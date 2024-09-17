@@ -1,5 +1,6 @@
-package com.therealtehu.discordbot.TehuBot.model.action.command.poll;
+package com.therealtehu.discordbot.TehuBot.service.poll;
 
+import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollAnswerData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollAnswerRepository;
@@ -17,7 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -31,6 +35,7 @@ class PollAnswerServiceTest {
     private final PollData mockPollData = Mockito.mock(PollData.class);
     private final OptionMapping mockOptionMapping = Mockito.mock(OptionMapping.class);
     private final Guild mockGuild = Mockito.mock(Guild.class);
+    private final MemberData mockMemberData = Mockito.mock(MemberData.class);
 
     @BeforeEach
     void setup() {
@@ -91,8 +96,8 @@ class PollAnswerServiceTest {
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(actualAnswerList.size(), 2);
-        Assertions.assertTrue(actualAnswerList.contains(expectedAnswerList.get(0)));
-        Assertions.assertTrue(actualAnswerList.contains(expectedAnswerList.get(1)));
+        assertTrue(actualAnswerList.contains(expectedAnswerList.get(0)));
+        assertTrue(actualAnswerList.contains(expectedAnswerList.get(1)));
     }
 
     @Test
@@ -127,8 +132,8 @@ class PollAnswerServiceTest {
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(actualAnswerList.size(), 2);
-        Assertions.assertTrue(actualAnswerList.contains(expectedAnswerList.get(0)));
-        Assertions.assertTrue(actualAnswerList.contains(expectedAnswerList.get(1)));
+        assertTrue(actualAnswerList.contains(expectedAnswerList.get(0)));
+        assertTrue(actualAnswerList.contains(expectedAnswerList.get(1)));
     }
 
     @Test
@@ -189,7 +194,75 @@ class PollAnswerServiceTest {
 
         verify(mockPollAnswerRepository).saveAll(expectedAnswerList);
         Assertions.assertEquals(actualAnswerList.size(), 2);
-        Assertions.assertTrue(actualAnswerList.contains(expectedAnswerList.get(0)));
-        Assertions.assertTrue(actualAnswerList.contains(expectedAnswerList.get(1)));
+        assertTrue(actualAnswerList.contains(expectedAnswerList.get(0)));
+        assertTrue(actualAnswerList.contains(expectedAnswerList.get(1)));
+    }
+
+    @Test
+    void removeVoteWhenVoteIsPresentRemovesVote() {
+        PollAnswerData mockPollAnswerData = Mockito.mock(PollAnswerData.class);
+
+        when(mockPollAnswerRepository.findByPollDataAndAnswerEmoji(mockPollData, "emoji"))
+                .thenReturn(Optional.of(mockPollAnswerData));
+        when(mockPollAnswerData.removeMember(mockMemberData)).thenReturn(true);
+
+        pollAnswerService.removeVote(mockPollData, mockMemberData, "emoji");
+
+        verify(mockPollAnswerRepository).findByPollDataAndAnswerEmoji(mockPollData, "emoji");
+        verify(mockPollAnswerData).removeMember(mockMemberData);
+        verify(mockPollAnswerRepository).save(mockPollAnswerData);
+    }
+
+    @Test
+    void removeVoteWhenPollAnswerDataIsNotPresentDoesNothing() {
+        when(mockPollAnswerRepository.findByPollDataAndAnswerEmoji(mockPollData, "emoji"))
+                .thenReturn(Optional.empty());
+        pollAnswerService.removeVote(mockPollData, mockMemberData, "emoji");
+
+        verify(mockPollAnswerRepository).findByPollDataAndAnswerEmoji(mockPollData, "emoji");
+        verifyNoMoreInteractions(mockPollAnswerRepository);
+    }
+
+    @Test
+    void voteExistsForMemberCallsRepositoryMethod() {
+        when(mockPollAnswerRepository.existsByMemberDataAndPollDataAndAnswerEmoji(mockMemberData, mockPollData, "emoji"))
+                .thenReturn(true);
+
+        boolean actual = pollAnswerService.voteExistsForMember(mockMemberData, mockPollData, "emoji");
+
+        verify(mockPollAnswerRepository).existsByMemberDataAndPollDataAndAnswerEmoji(mockMemberData, mockPollData, "emoji");
+        assertTrue(actual);
+    }
+
+    @Test
+    void countVotesCallsRepositoryMethod() {
+        when(mockPollAnswerRepository.countByPollDataAndMemberData(mockPollData, mockMemberData))
+                .thenReturn(1);
+
+        int actual = pollAnswerService.countVotes(mockPollData, mockMemberData);
+
+        verify(mockPollAnswerRepository).countByPollDataAndMemberData(mockPollData, mockMemberData);
+        assertEquals(1, actual);
+    }
+
+    @Test
+    void getPollAnswerDataCallsRepositoryMethod() {
+        PollAnswerData mockPollAnswerData = Mockito.mock(PollAnswerData.class);
+        when(mockPollAnswerRepository.findByPollDataAndAnswerEmoji(mockPollData, "emoji"))
+                .thenReturn(Optional.of(mockPollAnswerData));
+
+        Optional<PollAnswerData> actual = pollAnswerService.getPollAnswerData(mockPollData, "emoji");
+
+        verify(mockPollAnswerRepository).findByPollDataAndAnswerEmoji(mockPollData, "emoji");
+        assertEquals(Optional.of(mockPollAnswerData), actual);
+    }
+
+    @Test
+    void saveAnswerCallsRepositoryMethod() {
+        PollAnswerData mockPollAnswerData = Mockito.mock(PollAnswerData.class);
+
+        pollAnswerService.saveAnswer(mockPollAnswerData);
+
+        verify(mockPollAnswerRepository).save(mockPollAnswerData);
     }
 }
