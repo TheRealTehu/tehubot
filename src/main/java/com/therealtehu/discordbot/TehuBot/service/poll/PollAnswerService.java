@@ -75,8 +75,13 @@ public class PollAnswerService {
         return emojisToUse;
     }
 
-    public boolean removeVote(PollData pollData, MemberData memberData, String answerEmoji) {
-        return pollAnswerRepository.deleteByPollDataAndMemberDataAndAnswerEmoji(pollData, memberData, answerEmoji);
+    @Transactional
+    public void removeVote(PollData pollData, MemberData memberData, String answerEmoji) {
+        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerRepository.findByPollDataAndAnswerEmoji(pollData, answerEmoji);
+        optionalPollAnswerData.ifPresent(pollAnswerData -> {
+            pollAnswerData.removeMember(memberData);
+            pollAnswerRepository.save(pollAnswerData);
+        });
     }
 
     public boolean voteExistsForMember(MemberData memberData, PollData pollData, String answerEmoji) {
