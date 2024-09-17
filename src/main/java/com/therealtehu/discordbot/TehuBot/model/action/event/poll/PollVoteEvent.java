@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 
 @Component
-public class PollVoteEvent extends EventHandler { //TODO: Check unit tests
+public class PollVoteEvent extends EventHandler {
     private final PollRepository pollRepository;
     private final PollVoteHandler pollVoteHandler;
 
