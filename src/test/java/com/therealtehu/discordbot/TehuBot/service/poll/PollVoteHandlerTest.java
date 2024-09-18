@@ -289,7 +289,7 @@ class PollVoteHandlerTest {
     }
 
     @Test
-    void handleVoteWhenVoteIsNotAnonymousIsNotOverAndMemberNotFoundErrorMessageIsSentAndNothingIsSaved() {
+    void handleVoteWhenVoteIsNotAnonymousIsNotOverAndMemberNotFoundSendsErrorMessageAndNothingIsSaved() {
         when(mockPollData.isAnonymous()).thenReturn(false);
         when(mockPollData.isClosed()).thenReturn(false);
         when(mockPollData.getDeadLine()).thenReturn(null);
@@ -363,6 +363,109 @@ class PollVoteHandlerTest {
     }
 
     @Test
-    void removeVote() {
+    void removeVoteWhenVoteIsNotOverAndMemberHasVoteRemovesVote() {
+        when(mockPollData.isClosed()).thenReturn(false);
+        when(mockPollData.getDeadLine()).thenReturn(null);
+        when(mockEvent.getUserIdLong()).thenReturn(1L);
+        when(mockMemberRepository.findByUserId(1L)).thenReturn(Optional.of(mockMemberData));
+        when(mockEvent.getEmoji()).thenReturn(mockEmojiUnion);
+        when(mockEmojiUnion.getAsReactionCode()).thenReturn("emoji");
+        when(mockPollAnswerService.getPollAnswerData(mockPollData, "emoji"))
+                .thenReturn(Optional.of(mockPollAnswerData));
+
+        boolean actual = pollVoteHandler.removeVote(mockPollData, mockEvent);
+
+        verify(mockMemberRepository).findByUserId(1L);
+        verify(mockPollAnswerService).getPollAnswerData(mockPollData, "emoji");
+        verify(mockPollAnswerData).removeMember(mockMemberData);
+        verify(mockPollAnswerService).saveAnswer(mockPollAnswerData);
+        assertTrue(actual);
+    }
+
+    @Test
+    void removeVoteWhenVoteIsNotOverAndAnswerIsNotFoundDoesNothing() {
+        when(mockPollData.isClosed()).thenReturn(false);
+        when(mockPollData.getDeadLine()).thenReturn(null);
+        when(mockEvent.getUserIdLong()).thenReturn(1L);
+        when(mockMemberRepository.findByUserId(1L)).thenReturn(Optional.of(mockMemberData));
+        when(mockEvent.getEmoji()).thenReturn(mockEmojiUnion);
+        when(mockEmojiUnion.getAsReactionCode()).thenReturn("emoji");
+        when(mockPollAnswerService.getPollAnswerData(mockPollData, "emoji"))
+                .thenReturn(Optional.empty());
+
+        boolean actual = pollVoteHandler.removeVote(mockPollData, mockEvent);
+
+        verify(mockMemberRepository).findByUserId(1L);
+        verify(mockPollAnswerService).getPollAnswerData(mockPollData, "emoji");
+        verifyNoInteractions(mockPollAnswerData);
+        verifyNoMoreInteractions(mockPollAnswerService);
+        assertFalse(actual);
+    }
+
+    @Test
+    void removeVoteWhenVoteIsNotOverAndMemberIsNotFoundSendsErrorMessageAndSavesNothing() {
+        when(mockPollData.isClosed()).thenReturn(false);
+        when(mockPollData.getDeadLine()).thenReturn(null);
+        when(mockEvent.getUserIdLong()).thenReturn(1L);
+        when(mockMemberRepository.findByUserId(1L)).thenReturn(Optional.empty());
+
+        MessageChannelUnion mockMessageChannelUnion = Mockito.mock(MessageChannelUnion.class);
+        TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
+        when(mockEvent.getChannel()).thenReturn(mockMessageChannelUnion);
+        when(mockMessageChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
+
+        boolean actual = pollVoteHandler.removeVote(mockPollData, mockEvent);
+
+        verify(mockMemberRepository).findByUserId(1L);
+        verify(mockMessageSender).sendMessage(mockTextChannel, "ERROR: Could not find user");
+        verifyNoInteractions(mockPollAnswerService);
+        verifyNoInteractions(mockPollAnswerData);
+        assertFalse(actual);
+    }
+
+    @Test
+    void removeVoteWhenVoteIsClosedSavesNothing() {
+        when(mockPollData.isClosed()).thenReturn(true);
+
+        boolean actual = pollVoteHandler.removeVote(mockPollData, mockEvent);
+
+        verifyNoInteractions(mockMemberRepository);
+        verifyNoInteractions(mockPollAnswerService);
+        verifyNoInteractions(mockPollAnswerData);
+        assertFalse(actual);
+    }
+
+    @Test
+    void removeVoteWhenVoteHasDeadlineButIsNotOverAndMemberHasVoteRemovesVote() {
+        when(mockPollData.isClosed()).thenReturn(false);
+        when(mockPollData.getDeadLine()).thenReturn(OffsetDateTime.now(ZoneOffset.UTC).plusMinutes(5));
+        when(mockEvent.getUserIdLong()).thenReturn(1L);
+        when(mockMemberRepository.findByUserId(1L)).thenReturn(Optional.of(mockMemberData));
+        when(mockEvent.getEmoji()).thenReturn(mockEmojiUnion);
+        when(mockEmojiUnion.getAsReactionCode()).thenReturn("emoji");
+        when(mockPollAnswerService.getPollAnswerData(mockPollData, "emoji"))
+                .thenReturn(Optional.of(mockPollAnswerData));
+
+        boolean actual = pollVoteHandler.removeVote(mockPollData, mockEvent);
+
+        verify(mockMemberRepository).findByUserId(1L);
+        verify(mockPollAnswerService).getPollAnswerData(mockPollData, "emoji");
+        verify(mockPollAnswerData).removeMember(mockMemberData);
+        verify(mockPollAnswerService).saveAnswer(mockPollAnswerData);
+        assertTrue(actual);
+    }
+
+    @Test
+    void removeVoteWhenVoteHasDeadlineAndIsOverSavesNothingAndClosesVote() {
+        when(mockPollData.isClosed()).thenReturn(false);
+        when(mockPollData.getDeadLine()).thenReturn(OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+
+        boolean actual = pollVoteHandler.removeVote(mockPollData, mockEvent);
+
+        verify(mockClosePollCommand).closePoll(mockPollData);
+        verifyNoInteractions(mockMemberRepository);
+        verifyNoInteractions(mockPollAnswerService);
+        verifyNoInteractions(mockPollAnswerData);
+        assertFalse(actual);
     }
 }
