@@ -38,14 +38,7 @@ public class PollVoteHandler {
             reactionAddEvent.getReaction().clearReactions().queue();
         }
 
-        if(pollData.isClosed()) {
-            return false;
-        }
-
-        if(pollData.getDeadLine() != null && pollData.getDeadLine().isBefore(OffsetDateTime.now(ZoneOffset.UTC))) {
-            closePollCommand.closePoll(pollData);
-            return false;
-        }
+        if (isVoteOver(pollData)) return false;
 
         Optional<MemberData> optionalMember = memberRepository.findByUserId(reactionAddEvent.getUserIdLong());
         if(optionalMember.isEmpty()) {
@@ -78,6 +71,45 @@ public class PollVoteHandler {
             return true;
         }
 
+        return false;
+    }
+
+    @Transactional
+    public boolean removeVote(PollData pollData, MessageReactionEventWithText reactionRemoveEvent) {
+        if (isVoteOver(pollData)) return false;
+
+        Optional<MemberData> optionalMember = memberRepository.findByUserId(reactionRemoveEvent.getUserIdLong());
+        if (optionalMember.isEmpty()) {
+            messageSender.sendMessage(reactionRemoveEvent.getChannel().asTextChannel(),
+                    "ERROR: Could not find user");
+            return false;
+        }
+
+        MemberData memberData = optionalMember.get();
+
+        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerService
+                .getPollAnswerData(pollData, reactionRemoveEvent.getEmoji().getAsReactionCode());
+
+        if (optionalPollAnswerData.isPresent()) {
+            PollAnswerData answerData = optionalPollAnswerData.get();
+
+            answerData.removeMember(memberData);
+            pollAnswerService.saveAnswer(answerData);
+
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isVoteOver(PollData pollData) {
+        if (pollData.isClosed()) {
+            return true;
+        }
+
+        if (pollData.getDeadLine() != null && pollData.getDeadLine().isBefore(OffsetDateTime.now(ZoneOffset.UTC))) {
+            closePollCommand.closePoll(pollData);
+            return true;
+        }
         return false;
     }
 
