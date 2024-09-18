@@ -65,10 +65,15 @@ public class EventListener extends ListenerAdapter {
 
     @Override
     public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
-        //TODO
-        if (!event.getUser().isBot()) {
-            super.onMessageReactionRemove(event);
-            throw new UnsupportedOperationException();
+        if(event.getUser() != null && !event.getUser().isBot()) {
+            event.retrieveMessage().queue(message -> {
+                if(message.getContentRaw().startsWith("__poll id:__")) {
+                    Optional<EventHandler> pollRemoveVoteEvent = getEventHandler(EventName.POLL_REMOVE_VOTE.getEventName());
+                    pollRemoveVoteEvent.ifPresentOrElse(eventHandler ->
+                                    eventHandler.handle(new MessageReactionEventWithText(event, message.getContentRaw())),
+                            sendErrorMessage(EventName.POLL_REMOVE_VOTE.getEventName(), event.getChannel().asTextChannel()));
+                }
+            });
         }
     }
 
