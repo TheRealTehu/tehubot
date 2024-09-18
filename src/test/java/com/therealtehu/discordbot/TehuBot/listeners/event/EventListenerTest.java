@@ -3,11 +3,13 @@ package com.therealtehu.discordbot.TehuBot.listeners.event;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventHandler;
 import com.therealtehu.discordbot.TehuBot.model.action.event.EventName;
 import com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join.ChannelChoosingDropDownEvent;
+import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollRemoveVoteEvent;
 import com.therealtehu.discordbot.TehuBot.model.action.event.poll.PollVoteEvent;
 import com.therealtehu.discordbot.TehuBot.service.display.Display;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
@@ -15,6 +17,7 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -99,6 +102,7 @@ class EventListenerTest {
 
         verify(mockEventHandler).handle(mockJoinEvent);
     }
+
     @Test
     void onGuildMemberJoinWhenEventHandlerListIsEmptyLogsError() {
         eventListener = new EventListener(List.of(), mockMessageSender);
@@ -180,5 +184,125 @@ class EventListenerTest {
         eventListener.onMessageReactionAdd(mockMessageReactionAddEvent);
 
         verify(mockPollVoteEvent).handle(any());
+    }
+
+    @Test
+    void onMessageReactionRemoveWhenHasUserAndMessageIsAPollThePollHandlerHandlesIt() {
+        MessageReactionRemoveEvent mockMessageReactionRemoveEvent = Mockito.mock(MessageReactionRemoveEvent.class);
+        PollRemoveVoteEvent mockPollRemoveVoteEvent = Mockito.mock(PollRemoveVoteEvent.class);
+
+        eventListener = new EventListener(List.of(mockPollRemoveVoteEvent), mockMessageSender);
+
+        User mockUser = Mockito.mock(User.class);
+        when(mockMessageReactionRemoveEvent.getUser()).thenReturn(mockUser);
+        when(mockUser.isBot()).thenReturn(false);
+
+        when(mockMessageReactionRemoveEvent.retrieveMessage()).thenReturn(mockRestAction);
+        when(mockMessageReactionRemoveEvent.getChannel()).thenReturn(mockMessageChannelUnion);
+        when(mockMessageChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
+
+        MessageReaction mockMessageReaction = Mockito.mock(MessageReaction.class);
+        when(mockMessageReactionRemoveEvent.getReaction()).thenReturn(mockMessageReaction);
+        when(mockMessageReaction.getMessageIdLong()).thenReturn(1L);
+
+        doAnswer(ans -> {
+            Consumer<Message> callback = (Consumer<Message>) ans.getArgument(0);
+            callback.accept(mockMessage);
+            return null;
+        }).when(mockRestAction).queue(any(Consumer.class));
+
+        when(mockPollRemoveVoteEvent.getName()).thenReturn(EventName.POLL_REMOVE_VOTE.getEventName());
+        when(mockMessage.getContentRaw()).thenReturn("__poll id:__");
+
+        eventListener.onMessageReactionRemove(mockMessageReactionRemoveEvent);
+
+        verify(mockPollRemoveVoteEvent).handle(any());
+    }
+
+    @Test
+    void onMessageReactionRemoveWhenHasUserAndMessageIsAPollButNoPollHandlerSendsErrorMessage() {
+        MessageReactionRemoveEvent mockMessageReactionRemoveEvent = Mockito.mock(MessageReactionRemoveEvent.class);
+        PollRemoveVoteEvent mockPollRemoveVoteEvent = Mockito.mock(PollRemoveVoteEvent.class);
+
+        eventListener = new EventListener(List.of(), mockMessageSender);
+
+        User mockUser = Mockito.mock(User.class);
+        when(mockMessageReactionRemoveEvent.getUser()).thenReturn(mockUser);
+        when(mockUser.isBot()).thenReturn(false);
+
+        when(mockMessageReactionRemoveEvent.retrieveMessage()).thenReturn(mockRestAction);
+        when(mockMessageReactionRemoveEvent.getChannel()).thenReturn(mockMessageChannelUnion);
+        when(mockMessageChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
+
+        MessageReaction mockMessageReaction = Mockito.mock(MessageReaction.class);
+        when(mockMessageReactionRemoveEvent.getReaction()).thenReturn(mockMessageReaction);
+        when(mockMessageReaction.getMessageIdLong()).thenReturn(1L);
+
+        doAnswer(ans -> {
+            Consumer<Message> callback = (Consumer<Message>) ans.getArgument(0);
+            callback.accept(mockMessage);
+            return null;
+        }).when(mockRestAction).queue(any(Consumer.class));
+
+        when(mockPollRemoveVoteEvent.getName()).thenReturn(EventName.POLL_REMOVE_VOTE.getEventName());
+        when(mockMessage.getContentRaw()).thenReturn("__poll id:__");
+
+        eventListener.onMessageReactionRemove(mockMessageReactionRemoveEvent);
+
+        verify(mockMessageSender).sendMessage(mockTextChannel, "No suitable EventHandler for: "
+                + EventName.POLL_REMOVE_VOTE.getEventName());
+        verify(mockPollRemoveVoteEvent, times(0)).handle(any());
+    }
+
+    @Test
+    void onMessageReactionRemoveWhenHasUserAndMessageIsNotAPollThePollHandlerDoesNothing() {
+        MessageReactionRemoveEvent mockMessageReactionRemoveEvent = Mockito.mock(MessageReactionRemoveEvent.class);
+        PollRemoveVoteEvent mockPollRemoveVoteEvent = Mockito.mock(PollRemoveVoteEvent.class);
+
+        eventListener = new EventListener(List.of(mockPollRemoveVoteEvent), mockMessageSender);
+
+        User mockUser = Mockito.mock(User.class);
+        when(mockMessageReactionRemoveEvent.getUser()).thenReturn(mockUser);
+        when(mockUser.isBot()).thenReturn(false);
+
+        when(mockMessageReactionRemoveEvent.retrieveMessage()).thenReturn(mockRestAction);
+
+        doAnswer(ans -> {
+            Consumer<Message> callback = (Consumer<Message>) ans.getArgument(0);
+            callback.accept(mockMessage);
+            return null;
+        }).when(mockRestAction).queue(any(Consumer.class));
+
+        when(mockMessage.getContentRaw()).thenReturn("Not a poll");
+
+        eventListener.onMessageReactionRemove(mockMessageReactionRemoveEvent);
+
+        verifyNoInteractions(mockPollRemoveVoteEvent);
+    }
+
+    @Test
+    void onMessageReactionRemoveWhenUserIsABotThePollHandlerDoesNothing() {
+        MessageReactionRemoveEvent mockMessageReactionRemoveEvent = Mockito.mock(MessageReactionRemoveEvent.class);
+        PollRemoveVoteEvent mockPollRemoveVoteEvent = Mockito.mock(PollRemoveVoteEvent.class);
+
+        eventListener = new EventListener(List.of(mockPollRemoveVoteEvent), mockMessageSender);
+
+        User mockUser = Mockito.mock(User.class);
+        when(mockMessageReactionRemoveEvent.getUser()).thenReturn(mockUser);
+        when(mockUser.isBot()).thenReturn(true);
+
+        verifyNoInteractions(mockPollRemoveVoteEvent);
+    }
+
+    @Test
+    void onMessageReactionRemoveWhenUserIsNullThePollHandlerDoesNothing() {
+        MessageReactionRemoveEvent mockMessageReactionRemoveEvent = Mockito.mock(MessageReactionRemoveEvent.class);
+        PollRemoveVoteEvent mockPollRemoveVoteEvent = Mockito.mock(PollRemoveVoteEvent.class);
+
+        eventListener = new EventListener(List.of(mockPollRemoveVoteEvent), mockMessageSender);
+
+        when(mockMessageReactionRemoveEvent.getUser()).thenReturn(null);
+
+        verifyNoInteractions(mockPollRemoveVoteEvent);
     }
 }
