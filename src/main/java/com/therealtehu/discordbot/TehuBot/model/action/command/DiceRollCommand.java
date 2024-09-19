@@ -32,7 +32,6 @@ public class DiceRollCommand extends CommandWithFunctionality{
     private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice ("
             + MIN_DICE_SIDES + " <= N <= "+ MAX_DICE_SIDES + ")";
     private final RandomNumberGenerator randomNumberGenerator;
-
     private final DiceRollRepository diceRollRepository;
     private final GuildRepository guildRepository;
     @Autowired
