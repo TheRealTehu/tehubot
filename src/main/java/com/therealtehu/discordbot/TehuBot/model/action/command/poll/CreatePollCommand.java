@@ -91,7 +91,7 @@ public class CreatePollCommand extends CommandWithFunctionality {
     }
 
     @NotNull
-    private static String formatDeadLine(PollData pollData) {
+    private String formatDeadLine(PollData pollData) {
         return pollData.getDeadLine().format(PollUtil.getDateFormatter());
     }
 
