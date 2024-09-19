@@ -11,88 +11,99 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.EnumSet;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ClosePollCommandTest {
     private ClosePollCommand closePollCommand;
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final PollRepository mockPollRepository = Mockito.mock(PollRepository.class);
-    private final SlashCommandInteractionEvent mockEvent = Mockito.mock(SlashCommandInteractionEvent.class);
-    private final Member mockMember = Mockito.mock(Member.class);
-    private final OptionMapping mockOptionMapping = Mockito.mock(OptionMapping.class);
-    private final PollResultPrinter mockPollResultPrinter = Mockito.mock(PollResultPrinter.class);
-    private final PollData mockPollData = Mockito.mock(PollData.class);
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private PollRepository pollRepositoryMock;
+    @Mock
+    private SlashCommandInteractionEvent eventMock;
+    @Mock
+    private Member memberMock;
+    @Mock
+    private OptionMapping optionMappingMock;
+    @Mock
+    private PollResultPrinter pollResultPrinterMock;
+    @Mock
+    private PollData pollDataMock;
 
     @BeforeEach
     void setup() {
-        closePollCommand = new ClosePollCommand(mockPollRepository, mockMessageSender, mockPollResultPrinter);
+        closePollCommand = new ClosePollCommand(pollRepositoryMock, messageSenderMock, pollResultPrinterMock);
     }
 
     @Test
     void closePollWhenPollIsOpenClosesPollAndSavesChangeToDbAndPrintsResult() {
-        when(mockPollData.isClosed()).thenReturn(false);
+        when(pollDataMock.isClosed()).thenReturn(false);
 
-        closePollCommand.closePoll(mockPollData);
+        closePollCommand.closePoll(pollDataMock);
 
-        verify(mockPollRepository).save(mockPollData);
-        verify(mockPollResultPrinter).printResult(mockPollData);
+        verify(pollRepositoryMock).save(pollDataMock);
+        verify(pollResultPrinterMock).printResult(pollDataMock);
     }
 
     @Test
     void closePollWhenPollIsClosedDoesNothing() {
-        when(mockPollData.isClosed()).thenReturn(true);
+        when(pollDataMock.isClosed()).thenReturn(true);
 
-        closePollCommand.closePoll(mockPollData);
+        closePollCommand.closePoll(pollDataMock);
 
-        verifyNoInteractions(mockPollRepository);
-        verifyNoInteractions(mockPollResultPrinter);
+        verifyNoInteractions(pollRepositoryMock);
+        verifyNoInteractions(pollResultPrinterMock);
     }
 
     @Test
     void executeCommandWhenMemberDoesNotHavePermissionThenPollDoesNotClose() {
-        when(mockEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getPermissions()).thenReturn(EnumSet.of(Permission.UNKNOWN));
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getPermissions()).thenReturn(EnumSet.of(Permission.UNKNOWN));
 
-        closePollCommand.executeCommand(mockEvent);
+        closePollCommand.executeCommand(eventMock);
 
-        verifyNoInteractions(mockPollRepository);
-        verifyNoInteractions(mockPollResultPrinter);
+        verifyNoInteractions(pollRepositoryMock);
+        verifyNoInteractions(pollResultPrinterMock);
     }
 
     @Test
     void executeCommandWhenPollIsNotInDbThenErrorMessageIsSent() {
-        when(mockEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getPermissions()).thenReturn(EnumSet.of(Permission.MANAGE_EVENTS));
-        when(mockEvent.getOption(OptionName.POLL_ID_OPTION.getOptionName())).thenReturn(mockOptionMapping);
-        when((mockOptionMapping.getAsString())).thenReturn("Not used poll id");
-        when(mockPollRepository.findByPublicId("Not used poll id")).thenReturn(Optional.empty());
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getPermissions()).thenReturn(EnumSet.of(Permission.MANAGE_EVENTS));
+        when(eventMock.getOption(OptionName.POLL_ID_OPTION.getOptionName())).thenReturn(optionMappingMock);
+        when((optionMappingMock.getAsString())).thenReturn("Not used poll id");
+        when(pollRepositoryMock.findByPublicId("Not used poll id")).thenReturn(Optional.empty());
 
-        closePollCommand.executeCommand(mockEvent);
+        closePollCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockEvent, "ERROR: Could not find poll by id");
-        verify(mockPollRepository, times(0)).save(any());
-        verifyNoInteractions(mockPollResultPrinter);
+        verify(messageSenderMock).replyToEvent(eventMock, "ERROR: Could not find poll by id");
+        verify(pollRepositoryMock, times(0)).save(any());
+        verifyNoInteractions(pollResultPrinterMock);
     }
 
     @Test
     void executeCommandWhenPollIsInDbThenPollIsClosedAndResultIsPrinted() {
-        when(mockEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getPermissions()).thenReturn(EnumSet.of(Permission.MANAGE_EVENTS));
-        when(mockEvent.getOption(OptionName.POLL_ID_OPTION.getOptionName())).thenReturn(mockOptionMapping);
-        when((mockOptionMapping.getAsString())).thenReturn("poll id");
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getPermissions()).thenReturn(EnumSet.of(Permission.MANAGE_EVENTS));
+        when(eventMock.getOption(OptionName.POLL_ID_OPTION.getOptionName())).thenReturn(optionMappingMock);
+        when((optionMappingMock.getAsString())).thenReturn("poll id");
         PollData mockPollData = Mockito.mock(PollData.class);
-        when(mockPollRepository.findByPublicId("poll id")).thenReturn(Optional.of(mockPollData));
+        when(pollRepositoryMock.findByPublicId("poll id")).thenReturn(Optional.of(mockPollData));
 
-        closePollCommand.executeCommand(mockEvent);
+        closePollCommand.executeCommand(eventMock);
 
-        verify(mockPollRepository).findByPublicId("poll id");
+        verify(pollRepositoryMock).findByPublicId("poll id");
         verify(mockPollData).setClosed(true);
-        verify(mockPollRepository).save(mockPollData);
-        verify(mockPollResultPrinter).printResult(mockPollData);
+        verify(pollRepositoryMock).save(mockPollData);
+        verify(pollResultPrinterMock).printResult(mockPollData);
     }
 }
