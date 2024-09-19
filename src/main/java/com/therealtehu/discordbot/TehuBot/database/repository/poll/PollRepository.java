@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +17,6 @@ public interface PollRepository extends JpaRepository<PollData, Long> {
     Long findLatestIdForGuild(@Param("guildId") long guildId);
 
     Optional<PollData> findByPublicId(String publicId);
+
+    List<PollData> findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(OffsetDateTime currentTime);
 }
