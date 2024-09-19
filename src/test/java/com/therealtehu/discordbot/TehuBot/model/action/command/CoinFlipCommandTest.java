@@ -11,197 +11,208 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CoinFlipCommandTest {
     private CoinFlipCommand coinFlipCommand;
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final RandomNumberGenerator mockRandomNumberGenerator = Mockito.mock(RandomNumberGenerator.class);
-    private final SlashCommandInteractionEvent mockCommandEvent = Mockito.mock(SlashCommandInteractionEvent.class);
-    private final CoinFlipRepository mockCoinFlipRepository = Mockito.mock(CoinFlipRepository.class);
-    private final GuildRepository mockGuildRepository = Mockito.mock(GuildRepository.class);
-    private final Member mockMember = Mockito.mock(Member.class);
-    private final Guild mockGuild = Mockito.mock(Guild.class);
-    private final GuildData mockGuildData = Mockito.mock(GuildData.class);
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private RandomNumberGenerator randomNumberGeneratorMock;
+    @Mock
+    private SlashCommandInteractionEvent eventMock;
+    @Mock
+    private CoinFlipRepository coinFlipRepositoryMock;
+    @Mock
+    private GuildRepository guildRepositoryMock;
+    @Mock
+    private Member memberMock;
+    @Mock
+    private Guild guildMock;
+    @Mock
+    private GuildData guildDataMock;
 
     @BeforeEach
     void setup() {
-        coinFlipCommand = new CoinFlipCommand(mockMessageSender, mockRandomNumberGenerator,
-                mockCoinFlipRepository, mockGuildRepository);
+        coinFlipCommand = new CoinFlipCommand(messageSenderMock, randomNumberGeneratorMock,
+                coinFlipRepositoryMock, guildRepositoryMock);
     }
 
     @Test
     void executeCommandWhenRandomIs0ShouldWriteOutHead() {
         String expectedMessage = "Member as mention has flipped a coin and it was HEAD!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Head");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Head");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(0);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(0);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIsUnder49ShouldWriteOutHead() {
         String expectedMessage = "Member as mention has flipped a coin and it was HEAD!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Head");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Head");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(10);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(10);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIs48ShouldWriteOutHead() {
         String expectedMessage = "Member as mention has flipped a coin and it was HEAD!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Head");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Head");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(48);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(48);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIs49ShouldWriteOutTail() {
         String expectedMessage = "Member as mention has flipped a coin and it was TAIL!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Tail");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Tail");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(49);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(49);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIsUnder98ShouldWriteOutTail() {
         String expectedMessage = "Member as mention has flipped a coin and it was TAIL!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Tail");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Tail");
 
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(67);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(67);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIs98ShouldWriteOutSide() {
         String expectedMessage = "Member as mention has flipped a coin and the coin STOOD ON IT'S SIDE!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Side");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Side");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(98);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(98);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIs99ShouldWriteOutLost() {
         String expectedMessage = "Member as mention has flipped a coin and the coin bounced behind the couch, you can't find it!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Lost");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Lost");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(99);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(99);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenRandomIsOver99ShouldWriteOutLost() {
         String expectedMessage = "Member as mention has flipped a coin and the coin bounced behind the couch, you can't find it!";
-        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, mockGuildData, "Lost");
+        CoinFlipData expectedCoinFlipData = new CoinFlipData(0L, guildDataMock, "Lost");
 
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(110);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(mockGuildData));
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(110);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository).save(expectedCoinFlipData);
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
 
     @Test
     void executeCommandWhenGuildIsNotInDatabaseShouldWriteOutErrorMessage() {
         String expectedMessage = "DATABASE ERROR: Guild not found!";
-        when(mockRandomNumberGenerator.getRandomNumber(100)).thenReturn(0);
-        when(mockCommandEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockCommandEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
+        when(randomNumberGeneratorMock.getRandomNumber(100)).thenReturn(0);
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.empty());
 
-        coinFlipCommand.executeCommand(mockCommandEvent);
+        coinFlipCommand.executeCommand(eventMock);
 
-        verify(mockMessageSender).replyToEvent(mockCommandEvent, expectedMessage);
-        verify(mockGuildRepository).findById(1L);
-        verify(mockCoinFlipRepository, times(0)).save(any());
+        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(guildRepositoryMock).findById(1L);
+        verify(coinFlipRepositoryMock, times(0)).save(any());
     }
 }
