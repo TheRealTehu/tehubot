@@ -57,7 +57,6 @@ public class SendGifCommand extends CommandWithFunctionality {
 
         if (channelOption != null) {
             channel = channelOption.getAsChannel().asTextChannel();
-
         }
 
         messageSender.sendMessage(channel, messageCreateData);

@@ -1,5 +1,6 @@
 package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 
+import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,14 +27,15 @@ class ServerNewMemberEventTest {
     private final DefaultGuildChannelUnion mockChannelUnion = Mockito.mock(DefaultGuildChannelUnion.class);
     private final TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
     private final MessageEmbed mockMessageEmbed = Mockito.mock(MessageEmbed.class);
+    private final MemberService mockMemberService = Mockito.mock(MemberService.class);
 
     @BeforeEach
     void setup() {
-        serverNewMemberEvent = new ServerNewMemberEvent(mockGifService, mockMessageSender);
+        serverNewMemberEvent = new ServerNewMemberEvent(mockGifService, mockMessageSender, mockMemberService);
     }
 
     @Test
-    void handleServerNewMember() {
+    void handleServerNewMemberWhenMemberIsNotInDbGreetsMemberAndSavesThemToDb() {
         when(mockMemberJoinEvent.getMember()).thenReturn(mockMember);
         when(mockMember.getAsMention()).thenReturn("Member as mention");
         when(mockMemberJoinEvent.getGuild()).thenReturn(mockGuild);
@@ -48,6 +49,7 @@ class ServerNewMemberEventTest {
         serverNewMemberEvent.handle(mockMemberJoinEvent);
 
         verify(mockGifService).getGifAsEmbed("Welcome");
+        verify(mockMemberService).addNewMemberIfNotExists(mockMember);
         verify(mockMessageSender).sendMessageWithMessageEmbed(mockTextChannel, message, mockMessageEmbed);
     }
 }

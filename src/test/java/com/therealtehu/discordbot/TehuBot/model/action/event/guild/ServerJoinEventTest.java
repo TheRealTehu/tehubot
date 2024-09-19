@@ -3,6 +3,7 @@ package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.event.guild.server_join.ServerJoinEvent;
+import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -30,17 +32,21 @@ class ServerJoinEventTest {
     private final MessageCreateBuilder mockMessageCreateBuilder = Mockito.mock(MessageCreateBuilder.class);
     private final MessageCreateData mockMessageCreateData = Mockito.mock(MessageCreateData.class);
     private final GuildRepository mockGuildRepository = Mockito.mock(GuildRepository.class);
-
+    private final MemberService mockMemberService = Mockito.mock(MemberService.class);
     private final EntitySelectMenu channelDropDown = EntitySelectMenu
             .create("choose-bot-channel", EntitySelectMenu.SelectTarget.CHANNEL)
             .setChannelTypes(ChannelType.TEXT)
             .setRequiredRange(1, 1)
             .build();
 
+    @BeforeEach
+    void setup() {
+        serverJoinEvent = new ServerJoinEvent(mockMessageSender, mockMessageCreateBuilder,
+                mockMemberService, mockGuildRepository);
+    }
+
     @Test
     void handleServerJoinWhenGuildIsNotInDbSavesGuildAndReturnsDropDownMenu() {
-        serverJoinEvent = new ServerJoinEvent(mockMessageSender, mockMessageCreateBuilder, mockGuildRepository);
-
         when(mockGuildJoinEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getDefaultChannel()).thenReturn(mockDefaultGuildChannelUnion);
         when(mockDefaultGuildChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
@@ -59,12 +65,10 @@ class ServerJoinEventTest {
 
         verify(mockGuildRepository).save(expectedGuildData);
         verify(mockMessageSender).sendMessage(mockTextChannel, mockMessageCreateData);
+        verify(mockMemberService).addMembersFromGuild(mockGuild);
     }
-
     @Test
     void handleServerJoinWhenGuildIsInDbReturnsMessageThatGuildIsFound() {
-        serverJoinEvent = new ServerJoinEvent(mockMessageSender, mockMessageCreateBuilder, mockGuildRepository);
-
         when(mockGuildJoinEvent.getGuild()).thenReturn(mockGuild);
         when(mockGuild.getDefaultChannel()).thenReturn(mockDefaultGuildChannelUnion);
         when(mockDefaultGuildChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
@@ -78,5 +82,6 @@ class ServerJoinEventTest {
 
         verify(mockGuildRepository, times(0)).save(any());
         verify(mockMessageSender).sendMessage(mockTextChannel, "Welcome back! Previous setup loaded!");
+        verify(mockMemberService).addMembersFromGuild(mockGuild);
     }
 }

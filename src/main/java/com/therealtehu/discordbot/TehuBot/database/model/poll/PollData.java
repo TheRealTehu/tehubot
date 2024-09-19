@@ -3,39 +3,34 @@ package com.therealtehu.discordbot.TehuBot.database.model.poll;
 import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.PriorityQueue;
 
 @Entity
 public class PollData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private String publicId;
-
-    @OneToMany
-    private List<PollAnswer> answers;
-
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<PollAnswerData> answers;
     @ManyToOne
     private GuildData guild;
-
     private String pollDescription;
-
-    private LocalDateTime deadLine;
-
+    private OffsetDateTime deadLine;
     private boolean isAnonymous;
-
     private String minimumRole;
-
     private int numberOfVotesPerMember;
+    private boolean isClosed;
 
     public PollData() {
     }
 
-    public PollData(long id, String publicId, List<PollAnswer> answers, GuildData guild,
-                    String pollDescription, LocalDateTime deadLine, boolean isAnonymous,
-                    String minimumRole, int numberOfVotesPerMember) {
+    public PollData(long id, String publicId, List<PollAnswerData> answers, GuildData guild,
+                    String pollDescription, OffsetDateTime deadLine, boolean isAnonymous,
+                    String minimumRole, int numberOfVotesPerMember, boolean isClosed) {
         this.id = id;
         this.publicId = publicId;
         this.answers = answers;
@@ -45,6 +40,7 @@ public class PollData {
         this.isAnonymous = isAnonymous;
         this.minimumRole = minimumRole;
         this.numberOfVotesPerMember = numberOfVotesPerMember;
+        this.isClosed = isClosed;
     }
 
     public long getId() {
@@ -63,11 +59,11 @@ public class PollData {
         this.publicId = publicId;
     }
 
-    public List<PollAnswer> getAnswers() {
+    public List<PollAnswerData> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<PollAnswer> answers) {
+    public void setAnswers(List<PollAnswerData> answers) {
         this.answers = answers;
     }
 
@@ -87,11 +83,11 @@ public class PollData {
         this.pollDescription = pollDescription;
     }
 
-    public LocalDateTime getDeadLine() {
+    public OffsetDateTime getDeadLine() {
         return deadLine;
     }
 
-    public void setDeadLine(LocalDateTime deadLine) {
+    public void setDeadLine(OffsetDateTime deadLine) {
         this.deadLine = deadLine;
     }
 
@@ -117,5 +113,50 @@ public class PollData {
 
     public void setNumberOfVotesPerMember(int numberOfVotesPerMember) {
         this.numberOfVotesPerMember = numberOfVotesPerMember;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
+    public int getNumberOfVotes() {
+        return answers.stream().mapToInt(PollAnswerData::getNumberOfVotes).sum();
+    }
+
+    public PriorityQueue<PollAnswerData> getAnswersInOrder() {
+        return new PriorityQueue<>(answers);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PollData pollData = (PollData) o;
+        return id == pollData.id && Objects.equals(publicId, pollData.publicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, publicId);
+    }
+
+    @Override
+    public String toString() {
+        return "PollData{" +
+                "id=" + id +
+                ", publicId='" + publicId + '\'' +
+                ", answers=" + answers +
+                ", guild=" + guild +
+                ", pollDescription='" + pollDescription + '\'' +
+                ", deadLine=" + deadLine +
+                ", isAnonymous=" + isAnonymous +
+                ", minimumRole='" + minimumRole + '\'' +
+                ", numberOfVotesPerMember=" + numberOfVotesPerMember +
+                ", isClosed=" + isClosed +
+                '}';
     }
 }
