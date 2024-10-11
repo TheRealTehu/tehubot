@@ -53,10 +53,6 @@ public class SendGifCommand extends CommandWithFunctionality {
 
         event.deferReply().setEphemeral(true).queue();
 
-        MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
-        MessageCreateData messageCreateData = messageCreateBuilder.addEmbeds(messageEmbed).build();
-        messageCreateBuilder.clear();
-
         TextChannel channel = event.getChannel().asTextChannel();
 
         if (channelOption != null) {
@@ -65,12 +61,16 @@ public class SendGifCommand extends CommandWithFunctionality {
 
         Member member = event.getMember();
 
-        if (member.hasPermission(channelOption.getAsChannel(), Permission.MESSAGE_SEND)) {
+        if (member.hasPermission(channel, Permission.MESSAGE_SEND)) {
+            MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
+            MessageCreateData messageCreateData = messageCreateBuilder.addEmbeds(messageEmbed).build();
+            messageCreateBuilder.clear();
+
             messageSender.sendMessage(channel, messageCreateData);
 
             messageSender.sendMessageOnHook(event.getHook(), "Gif sent");
         } else {
-            messageSender.replyToEvent(event, "ERROR: " + member.getAsMention() + " doesn't have permission to send message!");
+            messageSender.replyToEventEphemeral(event, "ERROR: Doesn't have permission to send message to channel!");
         }
 
     }
