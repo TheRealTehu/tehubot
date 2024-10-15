@@ -9,65 +9,74 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class PollRemoveVoteEventTest {
     private PollRemoveVoteEvent removeVoteEvent;
-    private final PollRepository mockPollRepository = Mockito.mock(PollRepository.class);
-    private final PollVoteHandler mockPollVoteHandler = Mockito.mock(PollVoteHandler.class);
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final MessageReactionEventWithText mockEvent = Mockito.mock(MessageReactionEventWithText.class);
-    private final PollData mockPollData = Mockito.mock(PollData.class);
+    @Mock
+    private PollRepository pollRepositoryMock;
+    @Mock
+    private PollVoteHandler pollVoteHandlerMock;
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private MessageReactionEventWithText messageReactionEventWithTextMock;
+    @Mock
+    private PollData pollDataMock;
 
     @BeforeEach
     void setup() {
-        removeVoteEvent = new PollRemoveVoteEvent(mockMessageSender, mockPollRepository, mockPollVoteHandler);
+        removeVoteEvent = new PollRemoveVoteEvent(messageSenderMock, pollRepositoryMock, pollVoteHandlerMock);
     }
 
     @Test
     void handleEventWhenHasCorrectPollIdAndPollExistsCallsRemoveVote() {
-        when(mockEvent.getImmediateMessage()).thenReturn("__poll id:__ 987654321-1");
-        when(mockPollRepository.findByPublicId("987654321-1")).thenReturn(Optional.of(mockPollData));
+        when(messageReactionEventWithTextMock.getImmediateMessage()).thenReturn("__poll id:__ 987654321-1");
+        when(pollRepositoryMock.findByPublicId("987654321-1")).thenReturn(Optional.of(pollDataMock));
 
-        removeVoteEvent.handle(mockEvent);
+        removeVoteEvent.handle(messageReactionEventWithTextMock);
 
-        verify(mockPollRepository).findByPublicId("987654321-1");
-        verify(mockPollVoteHandler).removeVote(mockPollData, mockEvent);
+        verify(pollRepositoryMock).findByPublicId("987654321-1");
+        verify(pollVoteHandlerMock).removeVote(pollDataMock, messageReactionEventWithTextMock);
     }
 
     @Test
     void handleEventWhenHasCorrectPollIdButPollDoesNotExistsSendErrorMessage() {
-        when(mockEvent.getImmediateMessage()).thenReturn("__poll id:__ 987654321-1");
-        when(mockPollRepository.findByPublicId("987654321-1")).thenReturn(Optional.empty());
+        when(messageReactionEventWithTextMock.getImmediateMessage()).thenReturn("__poll id:__ 987654321-1");
+        when(pollRepositoryMock.findByPublicId("987654321-1")).thenReturn(Optional.empty());
 
         MessageChannelUnion mockMessageChannelUnion = Mockito.mock(MessageChannelUnion.class);
         TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
-        when(mockEvent.getChannel()).thenReturn(mockMessageChannelUnion);
+        when(messageReactionEventWithTextMock.getChannel()).thenReturn(mockMessageChannelUnion);
         when(mockMessageChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
 
-        removeVoteEvent.handle(mockEvent);
+        removeVoteEvent.handle(messageReactionEventWithTextMock);
 
-        verify(mockPollRepository).findByPublicId("987654321-1");
-        verify(mockMessageSender).sendMessage(mockTextChannel, "ERROR: Could not find poll");
-        verifyNoInteractions(mockPollVoteHandler);
+        verify(pollRepositoryMock).findByPublicId("987654321-1");
+        verify(messageSenderMock).sendMessage(mockTextChannel, "ERROR: Could not find poll");
+        verifyNoInteractions(pollVoteHandlerMock);
     }
 
     @Test
     void handleEventWhenDoesNotHaveCorrectPollIdSendErrorMessage() {
-        when(mockEvent.getImmediateMessage()).thenReturn("No poll id in message");
+        when(messageReactionEventWithTextMock.getImmediateMessage()).thenReturn("No poll id in message");
         MessageChannelUnion mockMessageChannelUnion = Mockito.mock(MessageChannelUnion.class);
         TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
-        when(mockEvent.getChannel()).thenReturn(mockMessageChannelUnion);
+        when(messageReactionEventWithTextMock.getChannel()).thenReturn(mockMessageChannelUnion);
         when(mockMessageChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
 
-        removeVoteEvent.handle(mockEvent);
+        removeVoteEvent.handle(messageReactionEventWithTextMock);
 
-        verify(mockMessageSender).sendMessage(mockTextChannel, "ERROR: Could not find poll id");
-        verifyNoInteractions(mockPollRepository);
-        verifyNoInteractions(mockPollVoteHandler);
+        verify(messageSenderMock).sendMessage(mockTextChannel, "ERROR: Could not find poll id");
+        verifyNoInteractions(pollRepositoryMock);
+        verifyNoInteractions(pollVoteHandlerMock);
     }
 }
