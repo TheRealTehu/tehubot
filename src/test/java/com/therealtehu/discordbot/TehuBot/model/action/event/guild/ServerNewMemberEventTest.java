@@ -1,5 +1,7 @@
 package com.therealtehu.discordbot.TehuBot.model.action.event.guild;
 
+import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
+import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
@@ -11,45 +13,89 @@ import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.Optional;
 
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class ServerNewMemberEventTest {
     private ServerNewMemberEvent serverNewMemberEvent;
-
-    private final TenorGifService mockGifService = Mockito.mock(TenorGifService.class);
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final GuildMemberJoinEvent mockMemberJoinEvent = Mockito.mock(GuildMemberJoinEvent.class);
-    private final Member mockMember = Mockito.mock(Member.class);
-    private final Guild mockGuild = Mockito.mock(Guild.class);
-    private final DefaultGuildChannelUnion mockChannelUnion = Mockito.mock(DefaultGuildChannelUnion.class);
-    private final TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
-    private final MessageEmbed mockMessageEmbed = Mockito.mock(MessageEmbed.class);
-    private final MemberService mockMemberService = Mockito.mock(MemberService.class);
+    @Mock
+    private TenorGifService gifServiceMock;
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private GuildRepository guildRepositoryMock;
+    @Mock
+    private GuildMemberJoinEvent guildMemberJoinEventMock;
+    @Mock
+    private Member memberMock;
+    @Mock
+    private Guild guildMock;
+    @Mock
+    private DefaultGuildChannelUnion channelUnionMock;
+    @Mock
+    private TextChannel textChannelMock;
+    @Mock
+    private MessageEmbed messageEmbedMock;
+    @Mock
+    private MemberService memberServiceMock;
+    @Mock
+    private GuildData guildDataMock;
 
     @BeforeEach
     void setup() {
-        serverNewMemberEvent = new ServerNewMemberEvent(mockGifService, mockMessageSender, mockMemberService);
+        serverNewMemberEvent = new ServerNewMemberEvent(gifServiceMock, messageSenderMock,
+                memberServiceMock, guildRepositoryMock);
     }
 
     @Test
-    void handleServerNewMemberWhenMemberIsNotInDbGreetsMemberAndSavesThemToDb() {
-        when(mockMemberJoinEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.getAsMention()).thenReturn("Member as mention");
-        when(mockMemberJoinEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getDefaultChannel()).thenReturn(mockChannelUnion);
-        when(mockChannelUnion.asTextChannel()).thenReturn(mockTextChannel);
+    void handleServerNewMemberWhenGuildIsInDbGreetsMemberAndSavesThemToDb() {
+        when(guildMemberJoinEventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.getAsMention()).thenReturn("Member as mention");
+
+        when(guildMemberJoinEventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getDefaultChannel()).thenReturn(channelUnionMock);
+        when(channelUnionMock.asTextChannel()).thenReturn(textChannelMock);
+
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
+        when(guildDataMock.getBotChatChannelId()).thenReturn(30L);
+
+        TextChannel otherTextChannel = Mockito.mock(TextChannel.class);
+        when(guildMock.getTextChannelById(30L)).thenReturn(otherTextChannel);
 
         String message = "Member as mention just joined the channel! Say hi everyone!";
 
-        when(mockGifService.getGifAsEmbed("Welcome")).thenReturn(mockMessageEmbed);
+        when(gifServiceMock.getGifAsEmbed("Welcome")).thenReturn(messageEmbedMock);
 
-        serverNewMemberEvent.handle(mockMemberJoinEvent);
+        serverNewMemberEvent.handle(guildMemberJoinEventMock);
 
-        verify(mockGifService).getGifAsEmbed("Welcome");
-        verify(mockMemberService).addNewMemberIfNotExists(mockMember);
-        verify(mockMessageSender).sendMessageWithMessageEmbed(mockTextChannel, message, mockMessageEmbed);
+        verify(gifServiceMock).getGifAsEmbed("Welcome");
+        verify(memberServiceMock).addNewMemberIfNotExists(memberMock);
+        verify(messageSenderMock).sendMessageWithMessageEmbed(otherTextChannel, message, messageEmbedMock);
+        verifyNoMoreInteractions(messageSenderMock);
+    }
+
+    @Test
+    void handleServerNewMemberWhenGuildIsNotInDbSendsErrorMessage() {
+        when(guildMemberJoinEventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getDefaultChannel()).thenReturn(channelUnionMock);
+        when(channelUnionMock.asTextChannel()).thenReturn(textChannelMock);
+
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.empty());
+
+        serverNewMemberEvent.handle(guildMemberJoinEventMock);
+
+        verifyNoInteractions(gifServiceMock);
+        verifyNoInteractions(memberServiceMock);
+        verify(messageSenderMock).sendMessage(textChannelMock, "ERROR: Guild not found in database!");
+        verifyNoMoreInteractions(messageSenderMock);
     }
 }
