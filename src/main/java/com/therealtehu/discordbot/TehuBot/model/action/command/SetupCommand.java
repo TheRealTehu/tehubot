@@ -40,9 +40,9 @@ public class SetupCommand extends CommandWithFunctionality {
 
             memberService.addMembersFromGuild(guild);
 
-            messageSender.replyToEvent(event, "Guild saved to DB");
+            messageSender.reply(event, "Guild saved to DB");
         } else {
-            messageSender.replyToEvent(event, "ERROR: Doesn't have permission to setup guild!");
+            messageSender.reply(event, "ERROR: Doesn't have permission to setup guild!");
         }
     }
 }

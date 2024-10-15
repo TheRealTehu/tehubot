@@ -85,7 +85,7 @@ class ClosePollCommandTest {
 
         closePollCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, "ERROR: Could not find poll by id");
+        verify(messageSenderMock).reply(eventMock, "ERROR: Could not find poll by id");
         verify(pollRepositoryMock, times(0)).save(any());
         verifyNoInteractions(pollResultPrinterMock);
     }

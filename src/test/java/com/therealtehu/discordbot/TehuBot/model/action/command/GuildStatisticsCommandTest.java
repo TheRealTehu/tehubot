@@ -45,7 +45,7 @@ class GuildStatisticsCommandTest {
         guildStatisticsCommand.executeCommand(eventMock);
 
         verify(guildStatisticsRepositoryMock).findByGuildId(1L);
-        verify(messageSenderMock).replyToEvent(eventMock, guildStatisticsData.toString());
+        verify(messageSenderMock).reply(eventMock, guildStatisticsData.toString());
     }
 
     @Test
@@ -57,6 +57,6 @@ class GuildStatisticsCommandTest {
         guildStatisticsCommand.executeCommand(eventMock);
 
         verify(guildStatisticsRepositoryMock).findByGuildId(1L);
-        verify(messageSenderMock).replyToEvent(eventMock, "DATABASE ERROR: Guild not found!");
+        verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
     }
 }

@@ -71,7 +71,7 @@ class DiceRollCommandTest {
 
         verify(randomNumberGeneratorMock).getRandomNumber(1,6);
         verify(diceRollRepositoryMock).save(diceRollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
     }
 
     @Test
@@ -99,7 +99,7 @@ class DiceRollCommandTest {
 
         verify(randomNumberGeneratorMock).getRandomNumber(1,100);
         verify(diceRollRepositoryMock).save(diceRollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
     }
 
     @Test
@@ -119,6 +119,6 @@ class DiceRollCommandTest {
 
         verify(randomNumberGeneratorMock).getRandomNumber(1,100);
         verify(diceRollRepositoryMock, times(0)).save(any());
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
     }
 }

@@ -61,7 +61,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
             message = e.getMessage();
         }
 
-        messageSender.replyToEvent(event, message);
+        messageSender.reply(event, message);
     }
 
     private void saveToDatabase(int numberOfSides, int rolledNumber, SlashCommandInteractionEvent event) {

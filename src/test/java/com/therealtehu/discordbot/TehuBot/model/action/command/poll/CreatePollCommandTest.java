@@ -63,7 +63,7 @@ class CreatePollCommandTest {
         createPollCommand.executeCommand(eventMock);
 
         verify(guildRepositoryMock).findById(id);
-        verify(messageSenderMock).replyToEvent(eventMock, "DATABASE ERROR: Guild not found!");
+        verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
     }
 
     @Test
@@ -117,7 +117,7 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
     @Test
@@ -178,7 +178,7 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
     @Test
@@ -197,7 +197,7 @@ class CreatePollCommandTest {
         verify(guildRepositoryMock).findById(id);
         verify(pollRepositoryMock, times(0)).save(any());
         verify(pollAnswerServiceMock, times(0)).saveAnswers(eq(eventMock), any());
-        verify(messageSenderMock).replyToEvent(eventMock, "OPTION ERROR: Invalid time limit format!");
+        verify(messageSenderMock).reply(eventMock, "OPTION ERROR: Invalid time limit format!");
     }
 
     @Test
@@ -255,7 +255,7 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
     @Test
@@ -315,7 +315,7 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
     @Test
@@ -371,7 +371,7 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
     @Test
@@ -425,7 +425,7 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
     //TODO: Question has two answers
@@ -486,6 +486,6 @@ class CreatePollCommandTest {
         verify(pollRepositoryMock).findLatestIdForGuild(id);
         verify(pollRepositoryMock).save(expectedPollData);
         verify(pollAnswerServiceMock).saveAnswers(eventMock, expectedPollData);
-        verify(messageSenderMock).replyToEvent(eventMock, expectedText);
+        verify(messageSenderMock).reply(eventMock, expectedText);
     }
 }

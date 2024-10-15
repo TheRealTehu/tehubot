@@ -25,9 +25,9 @@ public class GuildStatisticsCommand extends CommandWithFunctionality{
     public void executeCommand(SlashCommandInteractionEvent event) {
         Optional<GuildStatisticsData> guildStatisticsData = guildStatisticsRepository.findByGuildId(event.getGuild().getIdLong());
         if(guildStatisticsData.isPresent()) {
-            messageSender.replyToEvent(event, guildStatisticsData.get().toString());
+            messageSender.reply(event, guildStatisticsData.get().toString());
         } else {
-            messageSender.replyToEvent(event, "DATABASE ERROR: Guild not found!");
+            messageSender.reply(event, "DATABASE ERROR: Guild not found!");
         }
     }
 }

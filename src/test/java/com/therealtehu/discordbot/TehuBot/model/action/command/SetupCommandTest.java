@@ -57,7 +57,7 @@ class SetupCommandTest {
 
         verify(guildRepositoryMock).save(expectedGuildData);
         verify(memberServiceMock).addMembersFromGuild(guildMock);
-        verify(messageSenderMock).replyToEvent(eventMock, "Guild saved to DB");
+        verify(messageSenderMock).reply(eventMock, "Guild saved to DB");
     }
 
     @Test
@@ -69,6 +69,6 @@ class SetupCommandTest {
 
         verifyNoInteractions(guildRepositoryMock);
         verifyNoInteractions(memberServiceMock);
-        verify(messageSenderMock).replyToEvent(eventMock, "ERROR: Doesn't have permission to setup guild!");
+        verify(messageSenderMock).reply(eventMock, "ERROR: Doesn't have permission to setup guild!");
     }
 }

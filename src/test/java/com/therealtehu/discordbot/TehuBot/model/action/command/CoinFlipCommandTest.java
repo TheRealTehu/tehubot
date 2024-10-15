@@ -60,7 +60,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -79,7 +79,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -98,7 +98,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -117,7 +117,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -137,7 +137,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -156,7 +156,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -175,7 +175,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -194,7 +194,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock).save(expectedCoinFlipData);
     }
@@ -211,7 +211,7 @@ class CoinFlipCommandTest {
 
         coinFlipCommand.executeCommand(eventMock);
 
-        verify(messageSenderMock).replyToEvent(eventMock, expectedMessage);
+        verify(messageSenderMock).reply(eventMock, expectedMessage);
         verify(guildRepositoryMock).findById(1L);
         verify(coinFlipRepositoryMock, times(0)).save(any());
     }
