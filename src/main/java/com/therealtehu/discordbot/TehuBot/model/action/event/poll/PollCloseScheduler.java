@@ -24,16 +24,12 @@ public class PollCloseScheduler {
     }
 
     @Scheduled(fixedRate = 60000)
-    public void reportCurrentTime() {
-        log.info("The time is now {}", OffsetDateTime.now(ZoneOffset.UTC));
-    }
-
-    @Scheduled(fixedRate = 60000)
     public void closeExpiredPolls() {
         List<PollData> openPolls = pollRepository
                 .findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(OffsetDateTime.now(ZoneOffset.UTC));
         for (PollData polldata : openPolls) {
             closePollCommand.closePoll(polldata);
         }
+        log.info("Checked open polls at {}", OffsetDateTime.now(ZoneOffset.UTC));
     }
 }
