@@ -21,8 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -44,6 +43,8 @@ class PollAnswerServiceTest {
     private Guild guildMock;
     @Mock
     private MemberData memberDataMock;
+    @Mock
+    private PollAnswerData pollAnswerDataMock;
 
     @BeforeEach
     void setup() {
@@ -254,23 +255,27 @@ class PollAnswerServiceTest {
     }
 
     @Test
-    void getPollAnswerDataCallsRepositoryMethod() {
-        PollAnswerData mockPollAnswerData = Mockito.mock(PollAnswerData.class);
+    void addVoteWhenPollAnswerDataIsPresentAddsMemberToAnswerSavesChangeAndReturnsTrue() {
         when(pollAnswerRepositoryMock.findByPollDataAndAnswerEmoji(pollDataMock, "emoji"))
-                .thenReturn(Optional.of(mockPollAnswerData));
+                .thenReturn(Optional.of(pollAnswerDataMock));
 
-        Optional<PollAnswerData> actual = pollAnswerService.getPollAnswerData(pollDataMock, "emoji");
+        boolean actual = pollAnswerService.addVote(pollDataMock, "emoji", memberDataMock);
 
-        verify(pollAnswerRepositoryMock).findByPollDataAndAnswerEmoji(pollDataMock, "emoji");
-        assertEquals(Optional.of(mockPollAnswerData), actual);
+        verify(pollAnswerDataMock).addMember(memberDataMock);
+        verify(pollAnswerRepositoryMock).save(pollAnswerDataMock);
+        assertTrue(actual);
     }
 
     @Test
-    void saveAnswerCallsRepositoryMethod() {
-        PollAnswerData mockPollAnswerData = Mockito.mock(PollAnswerData.class);
+    void addVoteWhenPollAnswerDataIsNotPresentSavesNothingAndReturnsFalse() {
+        when(pollAnswerRepositoryMock.findByPollDataAndAnswerEmoji(pollDataMock, "emoji"))
+                .thenReturn(Optional.empty());
 
-        pollAnswerService.saveAnswer(mockPollAnswerData);
+        boolean actual = pollAnswerService.addVote(pollDataMock, "emoji", memberDataMock);
 
-        verify(pollAnswerRepositoryMock).save(mockPollAnswerData);
+        verifyNoInteractions(pollAnswerDataMock);
+        verify(pollAnswerRepositoryMock).findByPollDataAndAnswerEmoji(pollDataMock, "emoji");
+        verifyNoMoreInteractions(pollAnswerRepositoryMock);
+        assertFalse(actual);
     }
 }
