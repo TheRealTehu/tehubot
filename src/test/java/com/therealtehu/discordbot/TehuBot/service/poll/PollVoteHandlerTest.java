@@ -58,7 +58,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(pollDataMock.getMinimumRole()).thenReturn(null);
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
@@ -79,7 +80,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
 
         when(pollDataMock.getMinimumRole()).thenReturn("memberRole");
         Guild mockGuild = Mockito.mock(Guild.class);
@@ -111,7 +113,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
 
         when(pollDataMock.getMinimumRole()).thenReturn("memberRole");
         Guild mockGuild = Mockito.mock(Guild.class);
@@ -139,7 +142,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
 
         when(pollDataMock.getMinimumRole()).thenReturn("memberRole");
         Guild mockGuild = Mockito.mock(Guild.class);
@@ -173,7 +177,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(pollDataMock.getMinimumRole()).thenReturn(null);
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
@@ -194,7 +199,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(pollDataMock.getMinimumRole()).thenReturn(null);
 
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
@@ -226,7 +232,8 @@ class PollVoteHandlerTest {
 
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(pollAnswerServiceMock.voteExistsForMember(memberDataMock, pollDataMock, "emoji"))
                 .thenReturn(false);
         when(pollDataMock.getMinimumRole()).thenReturn(null);
@@ -255,7 +262,8 @@ class PollVoteHandlerTest {
         when(mockMessageReaction.clearReactions()).thenReturn(mockRestAction);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(pollAnswerServiceMock.voteExistsForMember(memberDataMock, pollDataMock, "emoji"))
                 .thenReturn(true);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
@@ -276,7 +284,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenThrow(NoSuchElementException.class);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenThrow(NoSuchElementException.class);
 
         MessageChannelUnion mockMessageChannelUnion = Mockito.mock(MessageChannelUnion.class);
         TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
@@ -308,7 +317,8 @@ class PollVoteHandlerTest {
         when(pollDataMock.isAnonymous()).thenReturn(false);
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(OffsetDateTime.now(ZoneOffset.UTC).plusMinutes(5));
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(pollDataMock.getMinimumRole()).thenReturn(null);
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
@@ -341,7 +351,8 @@ class PollVoteHandlerTest {
     void removeVoteWhenVoteIsNotOverAndMemberHasVoteRemovesVote() {
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
         when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
         when(pollAnswerServiceMock.removeVote(pollDataMock, memberDataMock, "emoji"))
@@ -349,7 +360,7 @@ class PollVoteHandlerTest {
 
         boolean actual = pollVoteHandler.removeVote(pollDataMock, reactionEventWithTextMock);
 
-        verify(memberServiceMock).getMemberData(reactionEventWithTextMock);
+        verify(memberServiceMock).getMemberData(1L);
         verify(pollAnswerServiceMock).removeVote(pollDataMock, memberDataMock, "emoji");
         assertTrue(actual);
     }
@@ -358,7 +369,8 @@ class PollVoteHandlerTest {
     void removeVoteWhenVoteIsNotOverAndAnswerIsNotFoundDoesNothing() {
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
         when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
         when(pollAnswerServiceMock.removeVote(pollDataMock, memberDataMock, "emoji"))
@@ -366,7 +378,7 @@ class PollVoteHandlerTest {
 
         boolean actual = pollVoteHandler.removeVote(pollDataMock, reactionEventWithTextMock);
 
-        verify(memberServiceMock).getMemberData(reactionEventWithTextMock);
+        verify(memberServiceMock).getMemberData(1L);
         verify(pollAnswerServiceMock).removeVote(pollDataMock, memberDataMock, "emoji");
         assertFalse(actual);
     }
@@ -375,7 +387,8 @@ class PollVoteHandlerTest {
     void removeVoteWhenVoteIsNotOverAndMemberIsNotFoundSendsErrorMessageAndSavesNothing() {
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(null);
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenThrow(NoSuchElementException.class);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenThrow(NoSuchElementException.class);
 
         MessageChannelUnion mockMessageChannelUnion = Mockito.mock(MessageChannelUnion.class);
         TextChannel mockTextChannel = Mockito.mock(TextChannel.class);
@@ -384,7 +397,7 @@ class PollVoteHandlerTest {
 
         boolean actual = pollVoteHandler.removeVote(pollDataMock, reactionEventWithTextMock);
 
-        verify(memberServiceMock).getMemberData(reactionEventWithTextMock);
+        verify(memberServiceMock).getMemberData(1L);
         verify(messageSenderMock).sendMessage(mockTextChannel, "ERROR: Could not find user");
         verifyNoInteractions(pollAnswerServiceMock);
         assertFalse(actual);
@@ -405,7 +418,8 @@ class PollVoteHandlerTest {
     void removeVoteWhenVoteHasDeadlineButIsNotOverAndMemberHasVoteRemovesVote() {
         when(pollDataMock.isClosed()).thenReturn(false);
         when(pollDataMock.getDeadLine()).thenReturn(OffsetDateTime.now(ZoneOffset.UTC).plusMinutes(5));
-        when(memberServiceMock.getMemberData(reactionEventWithTextMock)).thenReturn(memberDataMock);
+        when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
+        when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
         when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
         when(pollAnswerServiceMock.removeVote(pollDataMock, memberDataMock, "emoji"))
@@ -413,7 +427,7 @@ class PollVoteHandlerTest {
 
         boolean actual = pollVoteHandler.removeVote(pollDataMock, reactionEventWithTextMock);
 
-        verify(memberServiceMock).getMemberData(reactionEventWithTextMock);
+        verify(memberServiceMock).getMemberData(1L);
         verify(pollAnswerServiceMock).removeVote(pollDataMock, memberDataMock, "emoji");
         assertTrue(actual);
     }

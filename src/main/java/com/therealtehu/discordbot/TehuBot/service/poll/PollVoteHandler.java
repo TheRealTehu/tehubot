@@ -40,7 +40,7 @@ public class PollVoteHandler {
 
         MemberData memberData;
         try {
-            memberData = memberService.getMemberData(reactionAddEvent);
+            memberData = memberService.getMemberData(reactionAddEvent.getUserIdLong());
         } catch (NoSuchElementException e) {
             messageSender.sendMessage(reactionAddEvent.getChannel().asTextChannel(),
                     "ERROR: Could not find user");
@@ -67,7 +67,7 @@ public class PollVoteHandler {
         MemberData memberData;
 
         try {
-            memberData = memberService.getMemberData(reactionRemoveEvent);
+            memberData = memberService.getMemberData(reactionRemoveEvent.getUserIdLong());
         } catch (NoSuchElementException e) {
             messageSender.sendMessage(reactionRemoveEvent.getChannel().asTextChannel(),
                     "ERROR: Could not find user");
