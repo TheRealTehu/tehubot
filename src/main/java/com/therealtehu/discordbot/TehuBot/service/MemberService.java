@@ -2,8 +2,6 @@ package com.therealtehu.discordbot.TehuBot.service;
 
 import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
 import com.therealtehu.discordbot.TehuBot.database.repository.MemberRepository;
-import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
-import com.therealtehu.discordbot.TehuBot.service.poll.MessageReactionEventWithText;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,7 @@ public class MemberService {
                 );
     }
 
-    public MemberData getMemberData(long id) throws NoSuchElementException { //TODO: WRITE TESTS
+    public MemberData getMemberData(long id) throws NoSuchElementException {
         Optional<MemberData> optionalMember = memberRepository.findByUserId(id);
         if (optionalMember.isPresent()) {
             return optionalMember.get();
