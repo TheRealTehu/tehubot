@@ -7,48 +7,57 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.utils.concurrent.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
     private MemberService memberService;
-    private final MemberRepository mockMemberRepository = Mockito.mock(MemberRepository.class);
-    private final Member mockMember = Mockito.mock(Member.class);
+    @Mock
+    private MemberRepository memberRepositoryMock;
+    @Mock
+    private Member memberMock;
+    @Mock
+    private MemberData memberDataMock;
 
     @BeforeEach
     void setup() {
-        memberService = new MemberService(mockMemberRepository);
+        memberService = new MemberService(memberRepositoryMock);
     }
 
     @Test
     void addNewMemberIfNotExistsWhenMemberIsInDbReturnsFalse() {
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMemberRepository.existsByUserId(1L)).thenReturn(true);
+        when(memberMock.getIdLong()).thenReturn(1L);
+        when(memberRepositoryMock.existsByUserId(1L)).thenReturn(true);
 
-        assertFalse(memberService.addNewMemberIfNotExists(mockMember));
+        assertFalse(memberService.addNewMemberIfNotExists(memberMock));
 
-        verify(mockMemberRepository, times(1)).existsByUserId(1L);
-        verifyNoMoreInteractions(mockMemberRepository);
+        verify(memberRepositoryMock, times(1)).existsByUserId(1L);
+        verifyNoMoreInteractions(memberRepositoryMock);
     }
 
     @Test
     void addNewMemberIfNotExistsWhenMemberIsNotInDbSavesMemberAndReturnsTrue() {
-        when(mockMember.getIdLong()).thenReturn(1L);
-        when(mockMemberRepository.existsByUserId(1L)).thenReturn(false);
+        when(memberMock.getIdLong()).thenReturn(1L);
+        when(memberRepositoryMock.existsByUserId(1L)).thenReturn(false);
 
-        assertTrue(memberService.addNewMemberIfNotExists(mockMember));
+        assertTrue(memberService.addNewMemberIfNotExists(memberMock));
 
         MemberData expectedMemberData = new MemberData();
         expectedMemberData.setUserId(1L);
 
-        verify(mockMemberRepository, times(1)).existsByUserId(1L);
-        verify(mockMemberRepository).save(expectedMemberData);
+        verify(memberRepositoryMock, times(1)).existsByUserId(1L);
+        verify(memberRepositoryMock).save(expectedMemberData);
     }
 
     @Test
@@ -56,7 +65,7 @@ class MemberServiceTest {
         Guild mockGuild = Mockito.mock(Guild.class);
         Task<List<Member>> mockTask = Mockito.mock(Task.class);
         Member mockMember2 = Mockito.mock(Member.class);
-        List<Member> memberList = List.of(mockMember, mockMember2);
+        List<Member> memberList = List.of(memberMock, mockMember2);
         when(mockGuild.loadMembers()).thenReturn(mockTask);
 
         doAnswer(ans -> {
@@ -65,19 +74,33 @@ class MemberServiceTest {
             return null;
         }).when(mockTask).onSuccess(any(Consumer.class));
 
-        when(mockMember.getIdLong()).thenReturn(1L);
+        when(memberMock.getIdLong()).thenReturn(1L);
         when(mockMember2.getIdLong()).thenReturn(2L);
-        when(mockMemberRepository.existsByUserId(1L)).thenReturn(false);
-        when(mockMemberRepository.existsByUserId(2L)).thenReturn(true);
+        when(memberRepositoryMock.existsByUserId(1L)).thenReturn(false);
+        when(memberRepositoryMock.existsByUserId(2L)).thenReturn(true);
 
         memberService.addMembersFromGuild(mockGuild);
 
         MemberData expectedMemberData = new MemberData();
         expectedMemberData.setUserId(1L);
 
-        verify(mockMemberRepository, times(1)).existsByUserId(1L);
-        verify(mockMemberRepository, times(1)).existsByUserId(2L);
-        verify(mockMemberRepository).save(expectedMemberData);
-        verifyNoMoreInteractions(mockMemberRepository);
+        verify(memberRepositoryMock, times(1)).existsByUserId(1L);
+        verify(memberRepositoryMock, times(1)).existsByUserId(2L);
+        verify(memberRepositoryMock).save(expectedMemberData);
+        verifyNoMoreInteractions(memberRepositoryMock);
+    }
+
+    @Test
+    void getMemberDataWhenMemberIsNotInDbThrowsException() {
+        when(memberRepositoryMock.findByUserId(1L)).thenThrow(NoSuchElementException.class);
+
+        assertThrows(NoSuchElementException.class, () -> memberService.getMemberData(1L));
+    }
+
+    @Test
+    void getMemberDataWhenMemberIsInDbReturnsMemberData() {
+        when(memberRepositoryMock.findByUserId(1L)).thenReturn(Optional.of(memberDataMock));
+
+        assertEquals(memberDataMock, memberService.getMemberData(1L));
     }
 }
