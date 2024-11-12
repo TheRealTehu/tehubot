@@ -4,8 +4,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,24 +16,27 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TenorGifServiceTest {
     private TenorGifService tenorGifService;
-    private final WebClient mockWebClient = Mockito.mock(WebClient.class);
-    private final WebClient.RequestHeadersUriSpec mockRequestHeaderUriSpec =
-            Mockito.mock(WebClient.RequestHeadersUriSpec.class);
-    private final WebClient.ResponseSpec mockResponseSpec = Mockito.mock(WebClient.ResponseSpec.class);
+    @Mock
+    private WebClient webClientMock;
+    @Mock
+    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
+    @Mock
+    private WebClient.ResponseSpec responseSpecMock;
 
     @BeforeEach
     void setup() {
-        tenorGifService = new TenorGifService(mockWebClient);
+        tenorGifService = new TenorGifService(webClientMock);
     }
 
     @Test
     void getGifAsEmbedWhenNormalSearchTermIsGivenThenCorrectMessageIsSent() {
-        when(mockWebClient.get()).thenReturn(mockRequestHeaderUriSpec);
-        when(mockRequestHeaderUriSpec.uri(anyString())).thenReturn(mockRequestHeaderUriSpec);
-        when(mockRequestHeaderUriSpec.retrieve()).thenReturn(mockResponseSpec);
-        when(mockResponseSpec.bodyToMono(String.class)).thenReturn(Mono.just(exampleJsonResponse));
+        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.uri(anyString())).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(String.class)).thenReturn(Mono.just(exampleJsonResponse));
 
         MessageEmbed expected = new EmbedBuilder()
                 .setImage("https://example.com/example.gif")
@@ -42,10 +48,10 @@ class TenorGifServiceTest {
 
     @Test
     void getGifAsEmbedWhenUnsupportedSearchTermIsGivenThenErrorGifMessageIsSent() {
-        when(mockWebClient.get()).thenReturn(mockRequestHeaderUriSpec);
-        when(mockRequestHeaderUriSpec.uri(anyString())).thenReturn(mockRequestHeaderUriSpec);
-        when(mockRequestHeaderUriSpec.retrieve()).thenReturn(mockResponseSpec);
-        when(mockResponseSpec.bodyToMono(String.class)).thenReturn(Mono.just(exampleJsonResponse));
+        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.uri(anyString())).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(String.class)).thenReturn(Mono.just(exampleJsonResponse));
 
         MessageEmbed expected = new EmbedBuilder()
                 .setImage("https://example.com/example.gif")
@@ -53,7 +59,24 @@ class TenorGifServiceTest {
         MessageEmbed actual = tenorGifService.getGifAsEmbed("-( )+");
 
         assertEquals(expected, actual);
-        verify(mockRequestHeaderUriSpec).uri("https://tenor.googleapis.com/v2/search?q=Error&key=null&random=true&limit=1");
+        verify(requestHeadersUriSpecMock).uri("https://tenor.googleapis.com/v2/search?q=Error&key=null&random=true&limit=1");
+    }
+
+    @Test
+    void getGifAsEmbedWhenMonoThrowsExceptionReturnsPredefinedErrorGif() {
+        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.uri(anyString())).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(String.class))
+                .thenReturn(Mono.error(new WebClientResponseException(500, "Internal Server Error", null, null, null)));
+
+        MessageEmbed expected = new EmbedBuilder()
+                .setImage("https://media.tenor.com/FOzbM2mVKG0AAAAC/error-windows-xp.gif")
+                .build();
+
+        MessageEmbed actual = tenorGifService.getGifAsEmbed("anything");
+
+        assertEquals(expected, actual);
     }
 
     private final String exampleJsonResponse= """
