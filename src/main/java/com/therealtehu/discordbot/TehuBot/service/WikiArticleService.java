@@ -2,6 +2,7 @@ package com.therealtehu.discordbot.TehuBot.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,6 +16,7 @@ public class WikiArticleService {
     private static final String URL_QUERY = "?action=query&format=json&prop=extracts&explaintext=false&titles=";
     private final WebClient webClient;
 
+    @Autowired
     public WikiArticleService(WebClient webClient) {
         this.webClient = webClient
                 .mutate()
