@@ -17,7 +17,7 @@ class WikiTextConverterTest {
     @Test
     void convertToPlainTextWhenContainsBoldTextChangesBoldTextMarker() {
         String boldText = "Contains ''bold'' text.";
-        String expected = "Contains *bold* text.";
+        String expected = "Contains **bold** text.";
         String actual = WikiTextConverter.convertToPlainText(boldText);
 
         assertEquals(expected, actual);
@@ -26,7 +26,7 @@ class WikiTextConverterTest {
     @Test
     void convertToPlainTextWhenContainsItalicTextChangesItalicTextMarker() {
         String italicText = "Contains '''italic''' text.";
-        String expected = "Contains _italic_ text.";
+        String expected = "Contains *italic* text.";
         String actual = WikiTextConverter.convertToPlainText(italicText);
 
         assertEquals(expected, actual);
@@ -53,7 +53,7 @@ class WikiTextConverterTest {
     @Test
     void convertToPlainTextWhenContainsHeadingsChangesHeadingsMarker() {
         String headingsText = "Contains == Heading ==.";
-        String expected = "Contains **Heading **.";
+        String expected = "Contains # Heading .";
         String actual = WikiTextConverter.convertToPlainText(headingsText);
 
         assertEquals(expected, actual);
@@ -66,10 +66,10 @@ class WikiTextConverterTest {
         String textWithItalicAndBoldMarkers = "Contains '''italic''', also contains ''bold''.";
         String textWithItalicAllMarkers = "Contains ''bold'', '''italic''', [[Link|Text]], [https://www.example.com link] and == heading ==.";
 
-        String textAfterBoldAndHeadingMarkers = "Contains *bold*, also contains **heading **.";
+        String textAfterBoldAndHeadingMarkers = "Contains **bold**, also contains # heading .";
         String textAfterInternalAndExternalMarkers = "Contains [Text](Link), also contains [link](https://www.example.com).";
-        String textAfterItalicAndBoldMarkers = "Contains _italic_, also contains *bold*.";
-        String textAfterAllMarkers = "Contains *bold*, _italic_, [Text](Link), [link](https://www.example.com) and **heading **.";
+        String textAfterItalicAndBoldMarkers = "Contains *italic*, also contains **bold**.";
+        String textAfterAllMarkers = "Contains **bold**, *italic*, [Text](Link), [link](https://www.example.com) and # heading .";
 
         assertEquals(textAfterBoldAndHeadingMarkers, WikiTextConverter.convertToPlainText(textWithBoldAndHeadingMarkers));
         assertEquals(textAfterInternalAndExternalMarkers, WikiTextConverter.convertToPlainText(textWithInternalAndExternalLinkMarkers));
