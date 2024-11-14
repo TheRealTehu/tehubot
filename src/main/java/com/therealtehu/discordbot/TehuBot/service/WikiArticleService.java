@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
 
 import java.io.IOException;
 
@@ -26,12 +27,16 @@ public class WikiArticleService {
     }
 
     public String getWikiArticle(String title) {
-        String response = webClient.get()
-                .uri(URL_QUERY + title)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-        return extractDescription(response);
+        try {
+            String response = webClient.get()
+                    .uri(URL_QUERY + title)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            return extractDescription(response);
+        } catch (WebClientException e) {
+            return "ERROR: Could not reach Wikipedia!";
+        }
     }
 
     private String extractDescription(String response) {
