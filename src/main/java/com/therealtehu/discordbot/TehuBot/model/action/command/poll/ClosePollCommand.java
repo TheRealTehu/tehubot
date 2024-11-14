@@ -49,7 +49,7 @@ public class ClosePollCommand extends CommandWithFunctionality {
                     messageSender.replyToEventEphemeral(event, "Poll cannot be closed");
                 }
             } else {
-                messageSender.replyToEvent(event, "ERROR: Could not find poll by id");
+                messageSender.reply(event, "ERROR: Could not find poll by id");
             }
         }
     }

@@ -7,6 +7,9 @@ import net.dv8tion.jda.api.entities.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -17,7 +20,7 @@ public class MemberService {
     }
 
     public boolean addNewMemberIfNotExists(Member discordMember) {
-        if(!memberRepository.existsByUserId(discordMember.getIdLong())) {
+        if (!memberRepository.existsByUserId(discordMember.getIdLong())) {
             MemberData memberData = new MemberData();
             memberData.setUserId(discordMember.getIdLong());
             memberRepository.save(memberData);
@@ -31,5 +34,14 @@ public class MemberService {
                 .onSuccess(memberList -> memberList
                         .forEach(this::addNewMemberIfNotExists)
                 );
+    }
+
+    public MemberData getMemberData(long id) throws NoSuchElementException {
+        Optional<MemberData> optionalMember = memberRepository.findByUserId(id);
+        if (optionalMember.isPresent()) {
+            return optionalMember.get();
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 }

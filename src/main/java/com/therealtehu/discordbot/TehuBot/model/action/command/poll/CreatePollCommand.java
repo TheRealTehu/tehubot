@@ -50,7 +50,7 @@ public class CreatePollCommand extends CommandWithFunctionality {
         Optional<GuildData> guildDataOptional = guildRepository.findById(guildId);
 
         if (guildDataOptional.isEmpty()) {
-            messageSender.replyToEvent(event, "DATABASE ERROR: Guild not found!");
+            messageSender.reply(event, "DATABASE ERROR: Guild not found!");
         } else {
             try {
                 PollData pollData = createPollData(event, guildDataOptional.get());
@@ -63,9 +63,9 @@ public class CreatePollCommand extends CommandWithFunctionality {
 
                 String response = createFormattedPoll(pollData);
 
-                messageSender.replyToEvent(event, response);
+                messageSender.reply(event, response);
             } catch (DateTimeParseException e) {
-                messageSender.replyToEvent(event, "OPTION ERROR: Invalid time limit format!");
+                messageSender.reply(event, "OPTION ERROR: Invalid time limit format!");
             }
         }
     }
@@ -91,7 +91,7 @@ public class CreatePollCommand extends CommandWithFunctionality {
     }
 
     @NotNull
-    private static String formatDeadLine(PollData pollData) {
+    private String formatDeadLine(PollData pollData) {
         return pollData.getDeadLine().format(PollUtil.getDateFormatter());
     }
 

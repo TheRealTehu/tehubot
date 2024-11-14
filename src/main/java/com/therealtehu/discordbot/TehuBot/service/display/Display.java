@@ -2,8 +2,10 @@ package com.therealtehu.discordbot.TehuBot.service.display;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +26,13 @@ public class Display implements MessageSender{
         channel.sendMessage(message).addEmbeds(gif).queue();
     }
     @Override
-    public void replyToEvent(SlashCommandInteractionEvent event, String message) {
+    public void reply(IReplyCallback event, String message) {
         event.reply(message).queue();
+    }
+
+    @Override
+    public void replyAndDeleteMessage(IReplyCallback event, String message, MessageChannelUnion channel, Long messageId) {
+        event.reply(message).and(channel.deleteMessageById(messageId)).queue();
     }
 
     @Override
@@ -42,5 +49,4 @@ public class Display implements MessageSender{
     public void sendMessageEmbedOnHook(InteractionHook hook, MessageEmbed embed) {
         hook.sendMessageEmbeds(embed).queue();
     }
-
 }

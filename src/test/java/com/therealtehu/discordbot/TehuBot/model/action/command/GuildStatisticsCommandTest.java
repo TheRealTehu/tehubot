@@ -6,57 +6,57 @@ import com.therealtehu.discordbot.TehuBot.database.repository.GuildStatisticsRep
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+@ExtendWith(MockitoExtension.class)
 class GuildStatisticsCommandTest {
     private GuildStatisticsCommand guildStatisticsCommand;
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final GuildStatisticsRepository mockGuildStatisticsRepository = Mockito.mock(GuildStatisticsRepository.class);
-    private final SlashCommandInteractionEvent mockEvent = Mockito.mock(SlashCommandInteractionEvent.class);
-    private final Guild mockGuild = Mockito.mock(Guild.class);
-    private final GuildData mockGuildData = Mockito.mock(GuildData.class);
-    private final ReplyCallbackAction mockReplyCallbackAction = Mockito.mock(ReplyCallbackAction.class);
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private GuildStatisticsRepository guildStatisticsRepositoryMock;
+    @Mock
+    private SlashCommandInteractionEvent eventMock;
+    @Mock
+    private Guild guildMock;
+    @Mock
+    private GuildData guildDataMock;
 
     @BeforeEach
     void setup() {
-        guildStatisticsCommand = new GuildStatisticsCommand(mockMessageSender, mockGuildStatisticsRepository);
+        guildStatisticsCommand = new GuildStatisticsCommand(messageSenderMock, guildStatisticsRepositoryMock);
     }
 
     @Test
     void executeCommandWhenGuildIsInDbReturnsGuildStatistics() {
-        when(mockEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        GuildStatisticsData guildStatisticsData = new GuildStatisticsData(1L, mockGuildData, 0,0);
-        when(mockGuildStatisticsRepository.findByGuildId(1L)).thenReturn(Optional.of(guildStatisticsData));
-        when(mockEvent.reply(anyString())).thenReturn(mockReplyCallbackAction);
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        GuildStatisticsData guildStatisticsData = new GuildStatisticsData(1L, guildDataMock, 0,0);
+        when(guildStatisticsRepositoryMock.findByGuildId(1L)).thenReturn(Optional.of(guildStatisticsData));
 
-        guildStatisticsCommand.executeCommand(mockEvent);
+        guildStatisticsCommand.executeCommand(eventMock);
 
-        verify(mockGuildStatisticsRepository).findByGuildId(1L);
-        verify(mockEvent).reply(guildStatisticsData.toString());
-        verify(mockReplyCallbackAction).queue();
+        verify(guildStatisticsRepositoryMock).findByGuildId(1L);
+        verify(messageSenderMock).reply(eventMock, guildStatisticsData.toString());
     }
 
     @Test
     void executeCommandWhenGuildIsNotInDbReturnsErrorMessage() {
-        when(mockEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildStatisticsRepository.findByGuildId(1L)).thenReturn(Optional.empty());
-        when(mockEvent.reply(anyString())).thenReturn(mockReplyCallbackAction);
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildStatisticsRepositoryMock.findByGuildId(1L)).thenReturn(Optional.empty());
 
-        guildStatisticsCommand.executeCommand(mockEvent);
+        guildStatisticsCommand.executeCommand(eventMock);
 
-        verify(mockGuildStatisticsRepository).findByGuildId(1L);
-        verify(mockEvent).reply("DATABASE ERROR: Guild not found!");
-        verify(mockReplyCallbackAction).queue();
+        verify(guildStatisticsRepositoryMock).findByGuildId(1L);
+        verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
     }
 }

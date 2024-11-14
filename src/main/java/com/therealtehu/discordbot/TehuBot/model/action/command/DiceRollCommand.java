@@ -32,7 +32,6 @@ public class DiceRollCommand extends CommandWithFunctionality{
     private static final String COMMAND_DESCRIPTION = "Roll an N-sided dice ("
             + MIN_DICE_SIDES + " <= N <= "+ MAX_DICE_SIDES + ")";
     private final RandomNumberGenerator randomNumberGenerator;
-
     private final DiceRollRepository diceRollRepository;
     private final GuildRepository guildRepository;
     @Autowired
@@ -62,7 +61,7 @@ public class DiceRollCommand extends CommandWithFunctionality{
             message = e.getMessage();
         }
 
-        messageSender.replyToEvent(event, message);
+        messageSender.reply(event, message);
     }
 
     private void saveToDatabase(int numberOfSides, int rolledNumber, SlashCommandInteractionEvent event) {

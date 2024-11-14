@@ -5,13 +5,12 @@ import com.therealtehu.discordbot.TehuBot.database.repository.GuildStatisticsRep
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Service
+@Component
 public class GuildStatisticsCommand extends CommandWithFunctionality{
-
     private static final String COMMAND_NAME = "guildstatistics";
     private static final String COMMAND_DESCRIPTION = "Get information about bot use on server.";
     private final GuildStatisticsRepository guildStatisticsRepository;
@@ -26,9 +25,9 @@ public class GuildStatisticsCommand extends CommandWithFunctionality{
     public void executeCommand(SlashCommandInteractionEvent event) {
         Optional<GuildStatisticsData> guildStatisticsData = guildStatisticsRepository.findByGuildId(event.getGuild().getIdLong());
         if(guildStatisticsData.isPresent()) {
-            event.reply(guildStatisticsData.get().toString()).queue();
+            messageSender.reply(event, guildStatisticsData.get().toString());
         } else {
-            event.reply("DATABASE ERROR: Guild not found!").queue();
+            messageSender.reply(event, "DATABASE ERROR: Guild not found!");
         }
     }
 }

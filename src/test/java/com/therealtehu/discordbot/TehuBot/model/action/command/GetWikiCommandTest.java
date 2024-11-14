@@ -11,36 +11,45 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.awt.*;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class GetWikiCommandTest {
     private GetWikiCommand getWikiCommand;
-
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final WikiArticleService mockWikiArticleService = Mockito.mock(WikiArticleService.class);
-    private final SlashCommandInteractionEvent mockCommandEvent = Mockito.mock(SlashCommandInteractionEvent.class);
-    private final OptionMapping mockOption = Mockito.mock(OptionMapping.class);
-    private final InteractionHook mockInteractionHook = Mockito.mock(InteractionHook.class);
-    private final ReplyCallbackAction mockReplyCallbackAction = Mockito.mock(ReplyCallbackAction.class);
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private WikiArticleService wikiArticleServiceMock;
+    @Mock
+    private SlashCommandInteractionEvent eventMock;
+    @Mock
+    private OptionMapping optionMappingMock;
+    @Mock
+    private InteractionHook interactionHookMock;
+    @Mock
+    private ReplyCallbackAction replyCallbackActionMock;
 
     @BeforeEach
     void setup() {
-        getWikiCommand = new GetWikiCommand(mockWikiArticleService, mockMessageSender);
+        getWikiCommand = new GetWikiCommand(wikiArticleServiceMock, messageSenderMock);
     }
 
     @Test
     void executeCommandWhenNormalLengthArticleSendsNormalMessage() {
-        when(mockCommandEvent.getOption(anyString())).thenReturn(mockOption);
-        when(mockOption.getAsString()).thenReturn("Wiki Title");
-        when(mockWikiArticleService.getWikiArticle("Wiki Title")).thenReturn("Wiki text from the API");
-        when(mockCommandEvent.getHook()).thenReturn(mockInteractionHook);
-        when(mockCommandEvent.deferReply()).thenReturn(mockReplyCallbackAction);
+        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+        when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
+        when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("Wiki text from the API");
+        when(eventMock.getHook()).thenReturn(interactionHookMock);
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
             mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
@@ -52,21 +61,21 @@ class GetWikiCommandTest {
                     .setDescription("Wiki text from the API")
                     .build();
 
-            getWikiCommand.executeCommand(mockCommandEvent);
-            verify(mockCommandEvent.deferReply()).queue();
+            getWikiCommand.executeCommand(eventMock);
+            verify(eventMock.deferReply()).queue();
             mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
 
-            verify(mockMessageSender).sendMessageEmbedOnHook(mockCommandEvent.getHook(), expectedMessage);
+            verify(messageSenderMock).sendMessageEmbedOnHook(eventMock.getHook(), expectedMessage);
         }
     }
 
     @Test
     void executeCommandWhenTooLongArticleSendsShortenedMessage() {
-        when(mockCommandEvent.getOption(anyString())).thenReturn(mockOption);
-        when(mockOption.getAsString()).thenReturn("Wiki Title");
-        when(mockWikiArticleService.getWikiArticle("Wiki Title")).thenReturn(textOf4096Characters);
-        when(mockCommandEvent.getHook()).thenReturn(mockInteractionHook);
-        when(mockCommandEvent.deferReply()).thenReturn(mockReplyCallbackAction);
+        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+        when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
+        when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn(textOf4096Characters);
+        when(eventMock.getHook()).thenReturn(interactionHookMock);
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
             mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
@@ -80,21 +89,21 @@ class GetWikiCommandTest {
                     .setDescription(shortenedText)
                     .build();
 
-            getWikiCommand.executeCommand(mockCommandEvent);
-            verify(mockCommandEvent.deferReply()).queue();
+            getWikiCommand.executeCommand(eventMock);
+            verify(eventMock.deferReply()).queue();
             mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
 
-            verify(mockMessageSender).sendMessageEmbedOnHook(mockCommandEvent.getHook(), expectedMessage);
+            verify(messageSenderMock).sendMessageEmbedOnHook(eventMock.getHook(), expectedMessage);
         }
     }
 
     @Test
     void executeCommandWhenApiTooBusySendsPleaseWaitMessage() {
-        when(mockCommandEvent.getOption(anyString())).thenReturn(mockOption);
-        when(mockOption.getAsString()).thenReturn("Wiki Title");
-        when(mockWikiArticleService.getWikiArticle("Wiki Title")).thenReturn("<!-- API NOT AVAILABLE -->");
-        when(mockCommandEvent.getHook()).thenReturn(mockInteractionHook);
-        when(mockCommandEvent.deferReply()).thenReturn(mockReplyCallbackAction);
+        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+        when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
+        when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("<!-- API NOT AVAILABLE -->");
+        when(eventMock.getHook()).thenReturn(interactionHookMock);
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
             mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
@@ -106,11 +115,28 @@ class GetWikiCommandTest {
                     .setDescription("Wiki API too busy, please try again later!")
                     .build();
 
-            getWikiCommand.executeCommand(mockCommandEvent);
-            verify(mockCommandEvent.deferReply()).queue();
+            getWikiCommand.executeCommand(eventMock);
+            verify(eventMock.deferReply()).queue();
             mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
 
-            verify(mockMessageSender).sendMessageEmbedOnHook(mockCommandEvent.getHook(), expectedMessage);
+            verify(messageSenderMock).sendMessageEmbedOnHook(eventMock.getHook(), expectedMessage);
+        }
+    }
+
+    @Test
+    void executeCommandWhenApoErrorOccursSendsErrorMessage() {
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+        when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
+        when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("ERROR: Could not reach Wikipedia!");
+
+        try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
+
+            getWikiCommand.executeCommand(eventMock);
+
+            verify(eventMock.deferReply()).queue();
+            mockWikiTextConverter.verifyNoInteractions();
+            verify(messageSenderMock).reply(eventMock, "ERROR: Could not reach Wikipedia!");
         }
     }
 

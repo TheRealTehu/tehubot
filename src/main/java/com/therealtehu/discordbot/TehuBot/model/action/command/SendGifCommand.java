@@ -2,6 +2,8 @@ package com.therealtehu.discordbot.TehuBot.model.action.command;
 
 import com.therealtehu.discordbot.TehuBot.service.TenorGifService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 @Component
 public class SendGifCommand extends CommandWithFunctionality {
     private static final int MIN_OPTION_LENGTH = 1;
@@ -35,6 +38,7 @@ public class SendGifCommand extends CommandWithFunctionality {
     private static final String COMMAND_DESCRIPTION = "Send a gif from Tenor";
     private final TenorGifService tenorGifService;
     private final MessageCreateBuilder messageCreateBuilder;
+
     @Autowired
     public SendGifCommand(TenorGifService tenorGifService, MessageSender messageSender, MessageCreateBuilder messageCreateBuilder) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(PROMPT_OPTION, CHANNEL_OPTION), messageSender);
@@ -49,18 +53,25 @@ public class SendGifCommand extends CommandWithFunctionality {
 
         event.deferReply().setEphemeral(true).queue();
 
-        MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
-        MessageCreateData messageCreateData = messageCreateBuilder.addEmbeds(messageEmbed).build();
-        messageCreateBuilder.clear();
-
         TextChannel channel = event.getChannel().asTextChannel();
 
         if (channelOption != null) {
             channel = channelOption.getAsChannel().asTextChannel();
         }
 
-        messageSender.sendMessage(channel, messageCreateData);
+        Member member = event.getMember();
 
-        messageSender.sendMessageOnHook(event.getHook(), "Gif sent");
+        if (member.hasPermission(channel, Permission.MESSAGE_SEND)) {
+            MessageEmbed messageEmbed = tenorGifService.getGifAsEmbed(prompt);
+            MessageCreateData messageCreateData = messageCreateBuilder.addEmbeds(messageEmbed).build();
+            messageCreateBuilder.clear();
+
+            messageSender.sendMessage(channel, messageCreateData);
+
+            messageSender.sendMessageOnHook(event.getHook(), "Gif sent");
+        } else {
+            messageSender.replyToEventEphemeral(event, "ERROR: Doesn't have permission to send message to channel!");
+        }
+
     }
 }

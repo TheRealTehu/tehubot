@@ -14,7 +14,9 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,110 +27,104 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ChannelChoosingDropDownEventTest {
     private ChannelChoosingDropDownEvent channelChoosingDropDownEvent;
-    private final GuildRepository mockGuildRepository = Mockito.mock(GuildRepository.class);
-    private final MessageSender mockMessageSender = Mockito.mock(MessageSender.class);
-    private final EntitySelectInteractionEvent mockEntitySelectInteractionEvent = Mockito.mock(EntitySelectInteractionEvent.class);
-    private final Member mockMember = Mockito.mock(Member.class);
-    private final Mentions mockMentions = Mockito.mock(Mentions.class);
-    private final GuildChannel mockGuildChannel = Mockito.mock(GuildChannel.class);
-    private final Guild mockGuild = Mockito.mock(Guild.class);
-    private final MessageChannelUnion mockMessageChannelUnion = Mockito.mock(MessageChannelUnion.class);
-    private final ReplyCallbackAction mockReplyCallbackAction = Mockito.mock(ReplyCallbackAction.class);
-    private final RestAction<Void> mockRestAction = Mockito.mock(RestAction.class);
+    @Mock
+    private GuildRepository guildRepositoryMock;
+    @Mock
+    private MessageSender messageSenderMock;
+    @Mock
+    private EntitySelectInteractionEvent eventMock;
+    @Mock
+    private Member memberMock;
+    @Mock
+    private Mentions mentionsMock;
+    @Mock
+    private GuildChannel guildChannelMock;
+    @Mock
+    private Guild guildMock;
+    @Mock
+    private MessageChannelUnion messageChannelUnionMock;
 
     @BeforeEach
     void setup() {
-        channelChoosingDropDownEvent = new ChannelChoosingDropDownEvent(mockMessageSender, mockGuildRepository);
+        channelChoosingDropDownEvent = new ChannelChoosingDropDownEvent(messageSenderMock, guildRepositoryMock);
     }
 
     @Test
-    void handleEventWhenComponentIdIsForTheEventAndUserIsAdminAndGuildIsInDbUpdatesDbAndRepliesToEventAndDeletesEventMessage() {
-        when(mockEntitySelectInteractionEvent.getComponentId()).thenReturn("choose-bot-channel");
-        when(mockEntitySelectInteractionEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.hasPermission(Permission.ADMINISTRATOR)).thenReturn(true);
+    void handleEventWhenComponentIdIsForTheEventAndUserHasPermissionAndGuildIsInDbUpdatesDbAndRepliesToEventAndDeletesEventMessage() {
+        when(eventMock.getComponentId()).thenReturn("choose-bot-channel");
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MANAGE_SERVER)).thenReturn(true);
 
-        when(mockEntitySelectInteractionEvent.getMentions()).thenReturn(mockMentions);
-        when(mockMentions.getChannels()).thenReturn(List.of(mockGuildChannel));
+        when(eventMock.getMentions()).thenReturn(mentionsMock);
+        when(mentionsMock.getChannels()).thenReturn(List.of(guildChannelMock));
 
-        when(mockEntitySelectInteractionEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
         GuildData actualGuildData = new GuildData();
         actualGuildData.setId(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.of(actualGuildData));
-        when(mockGuildChannel.getIdLong()).thenReturn(100L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(actualGuildData));
+        when(guildChannelMock.getIdLong()).thenReturn(100L);
 
         GuildData expectedGuildData = new GuildData();
         expectedGuildData.setId(1L);
         expectedGuildData.setBotChatChannelId(100L);
 
-        when(mockEntitySelectInteractionEvent.getChannel()).thenReturn(mockMessageChannelUnion);
-        when(mockEntitySelectInteractionEvent.getMessageIdLong()).thenReturn(30L);
-        when(mockEntitySelectInteractionEvent.reply("Setup finished!")).thenReturn(mockReplyCallbackAction);
-        when(mockReplyCallbackAction.and(any())).thenReturn(mockRestAction);
+        when(eventMock.getChannel()).thenReturn(messageChannelUnionMock);
+        when(eventMock.getMessageIdLong()).thenReturn(30L);
 
-        channelChoosingDropDownEvent.handle(mockEntitySelectInteractionEvent);
+        channelChoosingDropDownEvent.handle(eventMock);
 
-        verify(mockGuildRepository).save(expectedGuildData);
-        verify(mockEntitySelectInteractionEvent).reply("Setup finished!");
-        verify(mockReplyCallbackAction).and(mockMessageChannelUnion.deleteMessageById(30L));
-        verify(mockRestAction).queue();
+        verify(guildRepositoryMock).save(expectedGuildData);
+        verify(messageSenderMock).replyAndDeleteMessage(eventMock, "Setup finished!",
+                messageChannelUnionMock, 30L);
     }
 
     @Test
-    void handleEventWhenComponentIdIsForTheEventAndUserIsAdminAndGuildIsNotInDbRepliesToEventWithErrorMessageAndDeletesEventMessage() {
-        when(mockEntitySelectInteractionEvent.getComponentId()).thenReturn("choose-bot-channel");
-        when(mockEntitySelectInteractionEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.hasPermission(Permission.ADMINISTRATOR)).thenReturn(true);
+    void handleEventWhenComponentIdIsForTheEventAndUserHasPermissionAndGuildIsNotInDbRepliesToEventWithErrorMessageAndDeletesEventMessage() {
+        when(eventMock.getComponentId()).thenReturn("choose-bot-channel");
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MANAGE_SERVER)).thenReturn(true);
 
-        when(mockEntitySelectInteractionEvent.getMentions()).thenReturn(mockMentions);
-        when(mockMentions.getChannels()).thenReturn(List.of(mockGuildChannel));
+        when(eventMock.getMentions()).thenReturn(mentionsMock);
+        when(mentionsMock.getChannels()).thenReturn(List.of(guildChannelMock));
 
-        when(mockEntitySelectInteractionEvent.getGuild()).thenReturn(mockGuild);
-        when(mockGuild.getIdLong()).thenReturn(1L);
-        when(mockGuildRepository.findById(1L)).thenReturn(Optional.empty());
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.empty());
 
-        when(mockEntitySelectInteractionEvent.getChannel()).thenReturn(mockMessageChannelUnion);
-        when(mockEntitySelectInteractionEvent.getMessageIdLong()).thenReturn(30L);
-        when(mockEntitySelectInteractionEvent.reply("Guild not found in database!")).thenReturn(mockReplyCallbackAction);
-        when(mockReplyCallbackAction.and(any())).thenReturn(mockRestAction);
+        when(eventMock.getChannel()).thenReturn(messageChannelUnionMock);
+        when(eventMock.getMessageIdLong()).thenReturn(30L);
 
-        channelChoosingDropDownEvent.handle(mockEntitySelectInteractionEvent);
+        channelChoosingDropDownEvent.handle(eventMock);
 
-        verify(mockGuildRepository, times(0)).save(any());
-        verify(mockEntitySelectInteractionEvent).reply("Guild not found in database!");
-        verify(mockReplyCallbackAction).and(mockMessageChannelUnion.deleteMessageById(30L));
-        verify(mockRestAction).queue();
+        verify(guildRepositoryMock, times(0)).save(any());
+        verify(messageSenderMock).replyAndDeleteMessage(eventMock, "ERROR: Guild not found in database!",
+                messageChannelUnionMock, 30L);
     }
 
     @Test
-    void handleEventWhenComponentIdIsForTheEventAndUserIsNotAdminRepliesToEventWithErrorMessage() {
-        when(mockEntitySelectInteractionEvent.getComponentId()).thenReturn("choose-bot-channel");
-        when(mockEntitySelectInteractionEvent.getMember()).thenReturn(mockMember);
-        when(mockMember.hasPermission(Permission.ADMINISTRATOR)).thenReturn(false);
+    void handleEventWhenComponentIdIsForTheEventAndUserDoesNotHavePermissionRepliesToEventWithErrorMessage() {
+        when(eventMock.getComponentId()).thenReturn("choose-bot-channel");
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MANAGE_SERVER)).thenReturn(false);
 
-        when(mockEntitySelectInteractionEvent.getChannel()).thenReturn(mockMessageChannelUnion);
-        when(mockEntitySelectInteractionEvent.getMessageIdLong()).thenReturn(30L);
-        when(mockEntitySelectInteractionEvent.reply("Only admins can do the setup!")).thenReturn(mockReplyCallbackAction);
+        channelChoosingDropDownEvent.handle(eventMock);
 
-        channelChoosingDropDownEvent.handle(mockEntitySelectInteractionEvent);
-
-        verify(mockGuildRepository, times(0)).save(any());
-        verify(mockEntitySelectInteractionEvent).reply("Only admins can do the setup!");
-        verify(mockReplyCallbackAction, times(0)).and(mockMessageChannelUnion.deleteMessageById(30L));
-        verify(mockReplyCallbackAction).queue();
+        verify(guildRepositoryMock, times(0)).save(any());
+        verify(messageSenderMock).reply(eventMock, "ERROR: Doesn't have permission to setup guild!");
     }
 
     @Test
     void handleEventWhenComponentIdIsNotForTheEventNothingHappens() {
-        when(mockEntitySelectInteractionEvent.getComponentId()).thenReturn("not-choose-bot-channel-id");
+        when(eventMock.getComponentId()).thenReturn("not-choose-bot-channel-id");
 
-        channelChoosingDropDownEvent.handle(mockEntitySelectInteractionEvent);
+        channelChoosingDropDownEvent.handle(eventMock);
 
-        verifyNoInteractions(mockGuildRepository);
-        verify(mockEntitySelectInteractionEvent, times(0)).reply(anyString());
-        verifyNoInteractions(mockReplyCallbackAction);
+        verifyNoInteractions(guildRepositoryMock);
+        verifyNoInteractions(messageSenderMock);
     }
 
     @Test

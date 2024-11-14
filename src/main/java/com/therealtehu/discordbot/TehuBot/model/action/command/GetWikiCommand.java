@@ -39,18 +39,22 @@ public class GetWikiCommand extends CommandWithFunctionality {
         event.deferReply().queue();
         String title = event.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName()).getAsString();
         String articleWikiText = wikiArticleService.getWikiArticle(title);
-        String plainText = WikiTextConverter.convertToPlainText(articleWikiText);
-        if(plainText.length() > MAX_MESSAGE_LENGTH) {
-            plainText = plainText.substring(0, MAX_MESSAGE_LENGTH - 2) + "...";
-        } else if(plainText.startsWith("<!--")) {
-            plainText = "Wiki API too busy, please try again later!";
-        }
-        MessageEmbed messageEmbed = new EmbedBuilder()
-                .setTitle("Wiki article: " + title)
-                .setColor(Color.BLUE)
-                .setDescription(plainText)
-                .build();
+        if(articleWikiText.startsWith("ERROR")) {
+            messageSender.reply(event, articleWikiText);
+        } else {
+            String plainText = WikiTextConverter.convertToPlainText(articleWikiText);
+            if (plainText.startsWith("<!--")) {
+                plainText = "Wiki API too busy, please try again later!";
+            } else if (plainText.length() > MAX_MESSAGE_LENGTH) {
+                plainText = plainText.substring(0, MAX_MESSAGE_LENGTH - 2) + "...";
+            }
+            MessageEmbed messageEmbed = new EmbedBuilder()
+                    .setTitle("Wiki article: " + title)
+                    .setColor(Color.BLUE)
+                    .setDescription(plainText)
+                    .build();
 
-        messageSender.sendMessageEmbedOnHook(event.getHook(), messageEmbed);
+            messageSender.sendMessageEmbedOnHook(event.getHook(), messageEmbed);
+        }
     }
 }

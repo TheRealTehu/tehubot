@@ -14,9 +14,9 @@ import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class ServerJoinEvent extends EventHandler {
     private static final String GREETING_TEXT = "Hey! I'm TehuBot! I'm new on this server, a server admin please go through my initial setup!\n Where should I post?\n";
     private final MessageCreateBuilder messageCreateBuilder;
@@ -36,7 +36,6 @@ public class ServerJoinEvent extends EventHandler {
         super(EventName.SERVER_JOIN.getEventName(), messageSender);
         this.messageCreateBuilder = messageCreateBuilder;
         this.memberService = memberService;
-
         this.guildRepository = guildRepository;
     }
 
@@ -49,7 +48,6 @@ public class ServerJoinEvent extends EventHandler {
             } else {
                 GuildData guildData = new GuildData();
                 guildData.setId(guildJoinEvent.getGuild().getIdLong());
-
                 guildRepository.save(guildData);
 
                 MessageCreateData messageCreateData = messageCreateBuilder

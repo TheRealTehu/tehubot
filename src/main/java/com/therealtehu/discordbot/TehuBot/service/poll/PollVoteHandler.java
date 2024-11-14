@@ -1,10 +1,9 @@
 package com.therealtehu.discordbot.TehuBot.service.poll;
 
 import com.therealtehu.discordbot.TehuBot.database.model.MemberData;
-import com.therealtehu.discordbot.TehuBot.database.model.poll.PollAnswerData;
 import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
-import com.therealtehu.discordbot.TehuBot.database.repository.MemberRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.poll.ClosePollCommand;
+import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class PollVoteHandler {
     private final PollAnswerService pollAnswerService;
     private final ClosePollCommand closePollCommand;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final MessageSender messageSender;
 
     @Autowired
     public PollVoteHandler(PollAnswerService pollAnswerService, ClosePollCommand closePollCommand,
-                           MemberRepository memberRepository, MessageSender messageSender) {
+                           MemberService memberService, MessageSender messageSender) {
         this.pollAnswerService = pollAnswerService;
         this.closePollCommand = closePollCommand;
-        this.memberRepository = memberRepository;
+        this.memberService = memberService;
         this.messageSender = messageSender;
     }
 
@@ -40,14 +38,14 @@ public class PollVoteHandler {
 
         if (isVoteOver(pollData)) return false;
 
-        Optional<MemberData> optionalMember = memberRepository.findByUserId(reactionAddEvent.getUserIdLong());
-        if(optionalMember.isEmpty()) {
+        MemberData memberData;
+        try {
+            memberData = memberService.getMemberData(reactionAddEvent.getUserIdLong());
+        } catch (NoSuchElementException e) {
             messageSender.sendMessage(reactionAddEvent.getChannel().asTextChannel(),
                     "ERROR: Could not find user");
             return false;
         }
-
-        MemberData memberData = optionalMember.get();
 
         if(pollData.isAnonymous() && isDoubleVote(pollData, memberData, reactionAddEvent.getEmoji().getAsReactionCode())) {
             pollAnswerService.removeVote(pollData, memberData, reactionAddEvent.getEmoji().getAsReactionCode());
@@ -59,46 +57,24 @@ public class PollVoteHandler {
             return false;
         }
 
-        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerService
-                .getPollAnswerData(pollData, reactionAddEvent.getEmoji().getAsReactionCode());
-
-        if(optionalPollAnswerData.isPresent()) {
-            PollAnswerData answerData = optionalPollAnswerData.get();
-
-            answerData.addMember(memberData);
-            pollAnswerService.saveAnswer(answerData);
-
-            return true;
-        }
-
-        return false;
+        return pollAnswerService.addVote(pollData, reactionAddEvent.getEmoji().getAsReactionCode(), memberData);
     }
 
     @Transactional
     public boolean removeVote(PollData pollData, MessageReactionEventWithText reactionRemoveEvent) {
         if (isVoteOver(pollData)) return false;
 
-        Optional<MemberData> optionalMember = memberRepository.findByUserId(reactionRemoveEvent.getUserIdLong());
-        if (optionalMember.isEmpty()) {
+        MemberData memberData;
+
+        try {
+            memberData = memberService.getMemberData(reactionRemoveEvent.getUserIdLong());
+        } catch (NoSuchElementException e) {
             messageSender.sendMessage(reactionRemoveEvent.getChannel().asTextChannel(),
                     "ERROR: Could not find user");
             return false;
         }
 
-        MemberData memberData = optionalMember.get();
-
-        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerService
-                .getPollAnswerData(pollData, reactionRemoveEvent.getEmoji().getAsReactionCode());
-
-        if (optionalPollAnswerData.isPresent()) {
-            PollAnswerData answerData = optionalPollAnswerData.get();
-
-            answerData.removeMember(memberData);
-            pollAnswerService.saveAnswer(answerData);
-
-            return true;
-        }
-        return false;
+        return pollAnswerService.removeVote(pollData, memberData, reactionRemoveEvent.getEmoji().getAsReactionCode());
     }
 
     private boolean isVoteOver(PollData pollData) {

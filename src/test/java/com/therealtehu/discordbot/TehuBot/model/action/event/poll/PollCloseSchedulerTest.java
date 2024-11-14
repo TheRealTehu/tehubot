@@ -5,53 +5,60 @@ import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepositor
 import com.therealtehu.discordbot.TehuBot.model.action.command.poll.ClosePollCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class PollCloseSchedulerTest {
     private PollCloseScheduler pollCloseScheduler;
-    private final PollRepository mockPollRepository = Mockito.mock(PollRepository.class);
-    private final ClosePollCommand mockClosePollCommand = Mockito.mock(ClosePollCommand.class);
-    private final PollData mockPollData = Mockito.mock(PollData.class);
+    @Mock
+    private PollRepository pollRepositoryMock;
+    @Mock
+    private ClosePollCommand closePollCommandMock;
+    @Mock
+    private PollData pollDataMock;
 
     @BeforeEach
     void setup() {
-        pollCloseScheduler = new PollCloseScheduler(mockPollRepository, mockClosePollCommand);
+        pollCloseScheduler = new PollCloseScheduler(pollRepositoryMock, closePollCommandMock);
     }
 
     @Test
     void closeExpiredPollsWhenHasOnePollThatIsOpenClosesThePoll() {
-        when(mockPollRepository.findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(any()))
-                .thenReturn(List.of(mockPollData));
+        when(pollRepositoryMock.findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(any()))
+                .thenReturn(List.of(pollDataMock));
 
         pollCloseScheduler.closeExpiredPolls();
 
-        verify(mockClosePollCommand).closePoll(mockPollData);
+        verify(closePollCommandMock).closePoll(pollDataMock);
     }
 
     @Test
     void closeExpiredPollsWhenHasTwoPollThatAreOpenClosesThePolls() {
         PollData mockPollData2 = Mockito.mock(PollData.class);
-        when(mockPollRepository.findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(any()))
-                .thenReturn(List.of(mockPollData, mockPollData2));
+        when(pollRepositoryMock.findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(any()))
+                .thenReturn(List.of(pollDataMock, mockPollData2));
 
         pollCloseScheduler.closeExpiredPolls();
 
-        verify(mockClosePollCommand).closePoll(mockPollData);
-        verify(mockClosePollCommand).closePoll(mockPollData2);
+        verify(closePollCommandMock).closePoll(pollDataMock);
+        verify(closePollCommandMock).closePoll(mockPollData2);
     }
 
     @Test
     void closeExpiredPollsWhenHasNoPollsOpenDoesNothing() {
-        when(mockPollRepository.findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(any()))
+        when(pollRepositoryMock.findByIsClosedFalseAndDeadLineIsNotNullAndDeadLineBefore(any()))
                 .thenReturn(List.of());
 
         pollCloseScheduler.closeExpiredPolls();
 
-        verifyNoInteractions(mockClosePollCommand);
+        verifyNoInteractions(closePollCommandMock);
     }
 }

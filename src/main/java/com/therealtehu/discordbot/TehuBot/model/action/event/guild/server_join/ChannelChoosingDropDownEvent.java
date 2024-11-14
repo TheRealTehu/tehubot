@@ -11,15 +11,13 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Service
+@Component
 public class ChannelChoosingDropDownEvent extends EventHandler implements DropDownEvent {
-
     private final GuildRepository guildRepository;
-
     @Autowired
     public ChannelChoosingDropDownEvent(MessageSender messageSender, GuildRepository guildRepository) {
         super(EventName.CHANNEL_CHOOSING_DROPDOWN.getEventName(), messageSender);
@@ -29,8 +27,8 @@ public class ChannelChoosingDropDownEvent extends EventHandler implements DropDo
     @Override
     public void handle(Event event) {
         if (event instanceof EntitySelectInteractionEvent dropDownEvent) {
-            if (dropDownEvent.getComponentId().equals(ServerJoinEvent.DROP_DOWN_EVENT_ID)) {
-                if(dropDownEvent.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            if (canHandleEvent(dropDownEvent.getComponentId())) {
+                if(dropDownEvent.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                     GuildChannel channel = dropDownEvent.getMentions().getChannels().get(0);
                     Optional<GuildData> foundGuildData = guildRepository.findById(dropDownEvent.getGuild().getIdLong());
                     if(foundGuildData.isPresent()) {
@@ -38,20 +36,16 @@ public class ChannelChoosingDropDownEvent extends EventHandler implements DropDo
                         guildData.setBotChatChannelId(channel.getIdLong());
                         guildRepository.save(guildData);
 
-                        dropDownEvent.reply("Setup finished!")
-                                .and(dropDownEvent.getChannel().deleteMessageById(dropDownEvent.getMessageIdLong()))
-                                .queue();
-
+                        messageSender.replyAndDeleteMessage(dropDownEvent, "Setup finished!",
+                                dropDownEvent.getChannel(), dropDownEvent.getMessageIdLong());
                     } else {
-                        dropDownEvent.reply("Guild not found in database!")
-                                .and(dropDownEvent.getChannel().deleteMessageById(dropDownEvent.getMessageIdLong()))
-                                .queue();
+                        messageSender.replyAndDeleteMessage(dropDownEvent, "ERROR: Guild not found in database!",
+                                dropDownEvent.getChannel(), dropDownEvent.getMessageIdLong());
                     }
                 } else {
-                    dropDownEvent.reply("Only admins can do the setup!").queue();
+                    messageSender.reply(dropDownEvent,"ERROR: Doesn't have permission to setup guild!");
                 }
             }
-
         }
     }
 

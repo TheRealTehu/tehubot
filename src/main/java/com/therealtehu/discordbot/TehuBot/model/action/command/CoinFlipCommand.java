@@ -52,9 +52,9 @@ public class CoinFlipCommand extends CommandWithFunctionality {
         message += conclusion;
         try {
             saveToDatabase(event, dbData);
-            messageSender.replyToEvent(event, message);
+            messageSender.reply(event, message);
         } catch (NoSuchElementException e) {
-            messageSender.replyToEvent(event, e.getMessage());
+            messageSender.reply(event, e.getMessage());
         }
     }
 

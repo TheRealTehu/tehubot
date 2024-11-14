@@ -50,7 +50,7 @@ public class PollAnswerService {
     }
 
     @NotNull
-    private static List<String> getAnswerTexts(SlashCommandInteractionEvent event) {
+    private List<String> getAnswerTexts(SlashCommandInteractionEvent event) {
         List<String> answers = new ArrayList<>();
         for (int i = 1; i <= PollUtil.getMaxNumberOfVoteOptions(); i++) {
             OptionMapping answer = event.getOption("answer" + i);
@@ -76,12 +76,16 @@ public class PollAnswerService {
     }
 
     @Transactional
-    public void removeVote(PollData pollData, MemberData memberData, String answerEmoji) {
-        Optional<PollAnswerData> optionalPollAnswerData = pollAnswerRepository.findByPollDataAndAnswerEmoji(pollData, answerEmoji);
-        optionalPollAnswerData.ifPresent(pollAnswerData -> {
+    public boolean removeVote(PollData pollData, MemberData memberData, String answerEmoji) {
+        Optional<PollAnswerData> optionalPollAnswerData =
+                pollAnswerRepository.findByPollDataAndAnswerEmoji(pollData, answerEmoji);
+        if(optionalPollAnswerData.isPresent()) {
+            PollAnswerData pollAnswerData = optionalPollAnswerData.get();
             pollAnswerData.removeMember(memberData);
             pollAnswerRepository.save(pollAnswerData);
-        });
+            return true;
+        }
+        return false;
     }
 
     public boolean voteExistsForMember(MemberData memberData, PollData pollData, String answerEmoji) {
@@ -92,12 +96,24 @@ public class PollAnswerService {
         return pollAnswerRepository.countByPollDataAndMemberData(pollData, memberData);
     }
 
-    @Transactional
-    public Optional<PollAnswerData> getPollAnswerData(PollData pollData, String emoji) {
+    private Optional<PollAnswerData> getPollAnswerData(PollData pollData, String emoji) {
         return pollAnswerRepository.findByPollDataAndAnswerEmoji(pollData, emoji);
     }
 
-    public void saveAnswer(PollAnswerData pollAnswerData) {
+    private void saveAnswer(PollAnswerData pollAnswerData) {
         pollAnswerRepository.save(pollAnswerData);
+    }
+
+    public boolean addVote(PollData pollData, String emojiReactionCode, MemberData memberData) {
+        Optional<PollAnswerData> optionalPollAnswerData =
+                getPollAnswerData(pollData, emojiReactionCode);
+        if(optionalPollAnswerData.isPresent()) {
+            PollAnswerData answerData = optionalPollAnswerData.get();
+            answerData.addMember(memberData);
+
+            saveAnswer(answerData);
+            return true;
+        }
+        return false;
     }
 }

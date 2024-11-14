@@ -7,11 +7,11 @@ import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 public class PollResultPrinter {
     private final MessageSender messageSender;
     private final GuildFinder guildFinder;
@@ -40,6 +40,7 @@ public class PollResultPrinter {
         stringBuilder.append(buildResultAnswers(pollData));
         return stringBuilder;
     }
+
     private StringBuilder buildResultHeader(PollData pollData) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Poll: ").append(pollData.getPublicId()).append(" has closed with ").append("*")

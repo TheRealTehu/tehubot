@@ -4,12 +4,14 @@ import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.MemberService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class SetupCommand extends CommandWithFunctionality {
 
     private static final String COMMAND_NAME = "setup";
@@ -26,16 +28,21 @@ public class SetupCommand extends CommandWithFunctionality {
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        Guild guild = event.getGuild();
-        GuildData guildData = new GuildData();
+        Member member = event.getMember();
+        if(member.hasPermission(Permission.MANAGE_SERVER)) {
+            Guild guild = event.getGuild();
+            GuildData guildData = new GuildData();
 
-        guildData.setId(guild.getIdLong());
-        guildData.setBotChatChannelId(guild.getDefaultChannel().getIdLong());
+            guildData.setId(guild.getIdLong());
+            guildData.setBotChatChannelId(guild.getDefaultChannel().getIdLong());
 
-        guildRepository.save(guildData);
+            guildRepository.save(guildData);
 
-        memberService.addMembersFromGuild(guild);
+            memberService.addMembersFromGuild(guild);
 
-        event.reply("Guild saved to DB").queue();
+            messageSender.reply(event, "Guild saved to DB");
+        } else {
+            messageSender.reply(event, "ERROR: Doesn't have permission to setup guild!");
+        }
     }
 }
