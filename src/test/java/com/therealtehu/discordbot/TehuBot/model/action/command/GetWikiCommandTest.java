@@ -123,6 +123,23 @@ class GetWikiCommandTest {
         }
     }
 
+    @Test
+    void executeCommandWhenApoErrorOccursSendsErrorMessage() {
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+        when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
+        when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("ERROR: Could not reach Wikipedia!");
+
+        try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
+
+            getWikiCommand.executeCommand(eventMock);
+
+            verify(eventMock.deferReply()).queue();
+            mockWikiTextConverter.verifyNoInteractions();
+            verify(messageSenderMock).reply(eventMock, "ERROR: Could not reach Wikipedia!");
+        }
+    }
+
     private final String textOf4096Characters = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ultrices diam " +
             "a pretium pellentesque. Morbi at egestas libero. Curabitur pulvinar ipsum ipsum, quis eleifend turpis " +
             "sagittis sit amet. In et felis nec dui pulvinar tempor vitae sit amet libero. Donec nulla ipsum, pretium " +
