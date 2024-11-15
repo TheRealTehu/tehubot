@@ -15,7 +15,7 @@ public class GuildStatisticsData {
     private GuildData guild;
     private int numberOfDiceRolls;
     private int numberOfCoinFlips;
-    //private int numberOfWikisChecked;
+    private int numberOfWikisChecked;
     //private int numberOfPolls;
     //private int numberOfGifsSent;
 
@@ -25,7 +25,8 @@ public class GuildStatisticsData {
 //    private int numberOfVideosPlayed;
     public GuildStatisticsData() {
     }
-    public GuildStatisticsData(long guildId, GuildData guild, /*int numberOfWikisChecked, int numberOfPolls,
+
+    public GuildStatisticsData(long guildId, GuildData guild, int numberOfWikisChecked, /*int numberOfPolls,
                                int numberOfGifsSent, */int numberOfDiceRolls, int numberOfCoinFlips/*,
                                int numberOfCatHoroscopes, int numberOfSteamRouletteSpins,
                                int numberOfSongsListenedTo, int numberOfVideosPlayed*/) {
@@ -33,8 +34,8 @@ public class GuildStatisticsData {
         this.guild = guild;
         this.numberOfDiceRolls = numberOfDiceRolls;
         this.numberOfCoinFlips = numberOfCoinFlips;
-        /*this.numberOfWikisChecked = numberOfWikisChecked;
-        this.numberOfPolls = numberOfPolls;
+        this.numberOfWikisChecked = numberOfWikisChecked;
+        /*this.numberOfPolls = numberOfPolls;
         this.numberOfGifsSent = numberOfGifsSent;
         this.numberOfCatHoroscopes = numberOfCatHoroscopes;
         this.numberOfSteamRouletteSpins = numberOfSteamRouletteSpins;
@@ -57,7 +58,8 @@ public class GuildStatisticsData {
     public void setGuild(GuildData guild) {
         this.guild = guild;
     }
-/*
+
+
     public int getNumberOfWikisChecked() {
         return numberOfWikisChecked;
     }
@@ -66,22 +68,23 @@ public class GuildStatisticsData {
         this.numberOfWikisChecked = numberOfWikisChecked;
     }
 
-    public int getNumberOfPolls() {
-        return numberOfPolls;
-    }
+    /*
+            public int getNumberOfPolls() {
+                return numberOfPolls;
+            }
 
-    public void setNumberOfPolls(int numberOfPolls) {
-        this.numberOfPolls = numberOfPolls;
-    }
+            public void setNumberOfPolls(int numberOfPolls) {
+                this.numberOfPolls = numberOfPolls;
+            }
 
-    public int getNumberOfGifsSent() {
-        return numberOfGifsSent;
-    }
+            public int getNumberOfGifsSent() {
+                return numberOfGifsSent;
+            }
 
-    public void setNumberOfGifsSent(int numberOfGifsSent) {
-        this.numberOfGifsSent = numberOfGifsSent;
-    }
-*/
+            public void setNumberOfGifsSent(int numberOfGifsSent) {
+                this.numberOfGifsSent = numberOfGifsSent;
+            }
+        */
     public int getNumberOfDiceRolls() {
         return numberOfDiceRolls;
     }
@@ -97,53 +100,54 @@ public class GuildStatisticsData {
     public void setNumberOfCoinFlips(int numberOfCoinFlips) {
         this.numberOfCoinFlips = numberOfCoinFlips;
     }
-/*
-    public int getNumberOfCatHoroscopes() {
-        return numberOfCatHoroscopes;
-    }
 
-    public void setNumberOfCatHoroscopes(int numberOfCatHoroscopes) {
-        this.numberOfCatHoroscopes = numberOfCatHoroscopes;
-    }
+    /*
+        public int getNumberOfCatHoroscopes() {
+            return numberOfCatHoroscopes;
+        }
 
-    public int getNumberOfSteamRouletteSpins() {
-        return numberOfSteamRouletteSpins;
-    }
+        public void setNumberOfCatHoroscopes(int numberOfCatHoroscopes) {
+            this.numberOfCatHoroscopes = numberOfCatHoroscopes;
+        }
 
-    public void setNumberOfSteamRouletteSpins(int numberOfSteamRouletteSpins) {
-        this.numberOfSteamRouletteSpins = numberOfSteamRouletteSpins;
-    }
+        public int getNumberOfSteamRouletteSpins() {
+            return numberOfSteamRouletteSpins;
+        }
 
-    public int getNumberOfSongsListenedTo() {
-        return numberOfSongsListenedTo;
-    }
+        public void setNumberOfSteamRouletteSpins(int numberOfSteamRouletteSpins) {
+            this.numberOfSteamRouletteSpins = numberOfSteamRouletteSpins;
+        }
 
-    public void setNumberOfSongsListenedTo(int numberOfSongsListenedTo) {
-        this.numberOfSongsListenedTo = numberOfSongsListenedTo;
-    }
+        public int getNumberOfSongsListenedTo() {
+            return numberOfSongsListenedTo;
+        }
 
-    public int getNumberOfVideosPlayed() {
-        return numberOfVideosPlayed;
-    }
+        public void setNumberOfSongsListenedTo(int numberOfSongsListenedTo) {
+            this.numberOfSongsListenedTo = numberOfSongsListenedTo;
+        }
 
-    public void setNumberOfVideosPlayed(int numberOfVideosPlayed) {
-        this.numberOfVideosPlayed = numberOfVideosPlayed;
-    }
-*/
+        public int getNumberOfVideosPlayed() {
+            return numberOfVideosPlayed;
+        }
+
+        public void setNumberOfVideosPlayed(int numberOfVideosPlayed) {
+            this.numberOfVideosPlayed = numberOfVideosPlayed;
+        }
+    */
     @Override
     public String toString() {
         return "GuildStatisticsData{" +
                 "id=" + guildId +
                 ", guild=" + guild +
                 ", numberOfDiceRolls=" + numberOfDiceRolls +
-                ", numberOfCoinFlips=" + numberOfCoinFlips /*+
-                ", numberOfWikisChecked=" + numberOfWikisChecked +
+                ", numberOfCoinFlips=" + numberOfCoinFlips +
+                ", numberOfWikisChecked=" + numberOfWikisChecked /*+
                 ", numberOfPolls=" + numberOfPolls +
                 ", numberOfGifsSent=" + numberOfGifsSent +
                 ", numberOfCatHoroscopes=" + numberOfCatHoroscopes +
                 ", numberOfSteamRouletteSpins=" + numberOfSteamRouletteSpins +
                 ", numberOfSongsListenedTo=" + numberOfSongsListenedTo +
-                ", numberOfVideosPlayed=" + numberOfVideosPlayed */+
+                ", numberOfVideosPlayed=" + numberOfVideosPlayed */ +
                 '}';
     }
 }

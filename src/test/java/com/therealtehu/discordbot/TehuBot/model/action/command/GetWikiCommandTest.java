@@ -1,9 +1,14 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command;
 
+import com.therealtehu.discordbot.TehuBot.database.model.GetWikiData;
+import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
+import com.therealtehu.discordbot.TehuBot.database.repository.GetWikiRepository;
+import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
 import com.therealtehu.discordbot.TehuBot.service.WikiTextConverter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -18,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.awt.*;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -30,6 +36,10 @@ class GetWikiCommandTest {
     @Mock
     private WikiArticleService wikiArticleServiceMock;
     @Mock
+    private GetWikiRepository getWikiRepositoryMock;
+    @Mock
+    private GuildRepository guildRepositoryMock;
+    @Mock
     private SlashCommandInteractionEvent eventMock;
     @Mock
     private OptionMapping optionMappingMock;
@@ -37,23 +47,38 @@ class GetWikiCommandTest {
     private InteractionHook interactionHookMock;
     @Mock
     private ReplyCallbackAction replyCallbackActionMock;
+    @Mock
+    private Guild guildMock;
+    @Mock
+    private GuildData guildDataMock;
 
     @BeforeEach
     void setup() {
-        getWikiCommand = new GetWikiCommand(wikiArticleServiceMock, messageSenderMock);
+        getWikiCommand = new GetWikiCommand(wikiArticleServiceMock, messageSenderMock,
+                getWikiRepositoryMock, guildRepositoryMock);
     }
 
     @Test
-    void executeCommandWhenNormalLengthArticleSendsNormalMessage() {
-        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+    void executeCommandWhenNormalLengthArticleFoundAndGuildIsInDbSendsArticleMessageEmbedAndSavesToDb() {
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+
+        when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
         when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
         when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("Wiki text from the API");
+
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
+
         when(eventMock.getHook()).thenReturn(interactionHookMock);
-        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
             mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
                     .thenReturn("Wiki text from the API");
+
+            GetWikiData expectedWikiData = new GetWikiData();
+            expectedWikiData.setSearchedTopic("Wiki Title");
+            expectedWikiData.setGuild(guildDataMock);
 
             MessageEmbed expectedMessage = new EmbedBuilder()
                     .setTitle("Wiki article: " + "Wiki Title")
@@ -62,24 +87,33 @@ class GetWikiCommandTest {
                     .build();
 
             getWikiCommand.executeCommand(eventMock);
-            verify(eventMock.deferReply()).queue();
-            mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
 
+            verify(eventMock.deferReply()).queue();
+            verify(getWikiRepositoryMock).save(expectedWikiData);
+            mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
             verify(messageSenderMock).sendMessageEmbedOnHook(eventMock.getHook(), expectedMessage);
         }
     }
 
     @Test
-    void executeCommandWhenTooLongArticleSendsShortenedMessage() {
-        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+    void executeCommandWhenTooLongArticleFoundAndGuildIsInDbSendsShortenedMessageAndSavesToDb() {
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+
+        when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
         when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
         when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn(textOf4096Characters);
-        when(eventMock.getHook()).thenReturn(interactionHookMock);
-        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.of(guildDataMock));
 
         try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
             mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
                     .thenReturn(textOf4096Characters);
+
+            GetWikiData expectedWikiData = new GetWikiData();
+            expectedWikiData.setSearchedTopic("Wiki Title");
+            expectedWikiData.setGuild(guildDataMock);
 
             String shortenedText = textOf4096Characters.substring(0, 4093) + "...";
 
@@ -90,43 +124,43 @@ class GetWikiCommandTest {
                     .build();
 
             getWikiCommand.executeCommand(eventMock);
-            verify(eventMock.deferReply()).queue();
-            mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
 
+            verify(eventMock.deferReply()).queue();
+            verify(getWikiRepositoryMock).save(expectedWikiData);
+            mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
             verify(messageSenderMock).sendMessageEmbedOnHook(eventMock.getHook(), expectedMessage);
         }
     }
 
     @Test
     void executeCommandWhenApiTooBusySendsPleaseWaitMessage() {
-        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+
+        when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
         when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
         when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("<!-- API NOT AVAILABLE -->");
-        when(eventMock.getHook()).thenReturn(interactionHookMock);
-        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
             mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
                     .thenReturn("<!-- API NOT AVAILABLE -->");
 
-            MessageEmbed expectedMessage = new EmbedBuilder()
-                    .setTitle("Wiki article: " + "Wiki Title")
-                    .setColor(Color.BLUE)
-                    .setDescription("Wiki API too busy, please try again later!")
-                    .build();
+            String expectedMessage = "Wiki API too busy, please try again later!";
 
             getWikiCommand.executeCommand(eventMock);
-            verify(eventMock.deferReply()).queue();
-            mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
 
-            verify(messageSenderMock).sendMessageEmbedOnHook(eventMock.getHook(), expectedMessage);
+            verify(eventMock.deferReply()).queue();
+            mockWikiTextConverter.verifyNoInteractions();
+            verifyNoInteractions(guildRepositoryMock);
+            verifyNoInteractions(getWikiRepositoryMock);
+            verify(messageSenderMock).reply(eventMock, expectedMessage);
         }
     }
 
     @Test
-    void executeCommandWhenApoErrorOccursSendsErrorMessage() {
+    void executeCommandWhenApiErrorOccursSendsErrorMessage() {
         when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
-        when(eventMock.getOption(anyString())).thenReturn(optionMappingMock);
+
+        when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
         when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
         when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("ERROR: Could not reach Wikipedia!");
 
@@ -136,7 +170,36 @@ class GetWikiCommandTest {
 
             verify(eventMock.deferReply()).queue();
             mockWikiTextConverter.verifyNoInteractions();
+            verifyNoInteractions(guildRepositoryMock);
+            verifyNoInteractions(getWikiRepositoryMock);
             verify(messageSenderMock).reply(eventMock, "ERROR: Could not reach Wikipedia!");
+        }
+    }
+
+    @Test
+    void executeCommandWhenNormalLengthArticleFoundAndGuildIsNotInDbSendsErrorMessage() {
+        when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
+
+        when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
+        when(optionMappingMock.getAsString()).thenReturn("Wiki Title");
+        when(wikiArticleServiceMock.getWikiArticle("Wiki Title")).thenReturn("Wiki text from the API");
+
+        when(eventMock.getGuild()).thenReturn(guildMock);
+        when(guildMock.getIdLong()).thenReturn(1L);
+        when(guildRepositoryMock.findById(1L)).thenReturn(Optional.empty());
+
+        try (MockedStatic<WikiTextConverter> mockWikiTextConverter = Mockito.mockStatic(WikiTextConverter.class)) {
+            mockWikiTextConverter.when(() -> WikiTextConverter.convertToPlainText(anyString()))
+                    .thenReturn("Wiki text from the API");
+
+            getWikiCommand.executeCommand(eventMock);
+
+            verify(eventMock.deferReply()).queue();
+            verify(guildRepositoryMock).findById(1L);
+            verifyNoMoreInteractions(guildRepositoryMock);
+            verifyNoMoreInteractions(getWikiRepositoryMock);
+            mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
+            verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
         }
     }
 

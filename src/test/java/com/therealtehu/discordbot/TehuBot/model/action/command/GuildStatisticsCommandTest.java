@@ -39,7 +39,8 @@ class GuildStatisticsCommandTest {
     void executeCommandWhenGuildIsInDbReturnsGuildStatistics() {
         when(eventMock.getGuild()).thenReturn(guildMock);
         when(guildMock.getIdLong()).thenReturn(1L);
-        GuildStatisticsData guildStatisticsData = new GuildStatisticsData(1L, guildDataMock, 0,0);
+        GuildStatisticsData guildStatisticsData =
+                new GuildStatisticsData(1L, guildDataMock, 0,0,0);
         when(guildStatisticsRepositoryMock.findByGuildId(1L)).thenReturn(Optional.of(guildStatisticsData));
 
         guildStatisticsCommand.executeCommand(eventMock);

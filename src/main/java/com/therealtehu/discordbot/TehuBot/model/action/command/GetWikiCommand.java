@@ -1,5 +1,9 @@
 package com.therealtehu.discordbot.TehuBot.model.action.command;
 
+import com.therealtehu.discordbot.TehuBot.database.model.GetWikiData;
+import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
+import com.therealtehu.discordbot.TehuBot.database.repository.GetWikiRepository;
+import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
 import com.therealtehu.discordbot.TehuBot.service.WikiTextConverter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
@@ -13,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Component
 public class GetWikiCommand extends CommandWithFunctionality {
@@ -28,10 +34,16 @@ public class GetWikiCommand extends CommandWithFunctionality {
     private static final String COMMAND_NAME = "getwiki";
     private static final String COMMAND_DESCRIPTION = "Get a wiki article.";
     private final WikiArticleService wikiArticleService;
+    private final GetWikiRepository getWikiRepository;
+    private final GuildRepository guildRepository;
+
     @Autowired
-    public GetWikiCommand(WikiArticleService wikiArticleService, MessageSender messageSender) {
+    public GetWikiCommand(WikiArticleService wikiArticleService, MessageSender messageSender,
+                          GetWikiRepository getWikiRepository, GuildRepository guildRepository) {
         super(COMMAND_NAME, COMMAND_DESCRIPTION, List.of(TITLE_OPTION), messageSender);
         this.wikiArticleService = wikiArticleService;
+        this.getWikiRepository = getWikiRepository;
+        this.guildRepository = guildRepository;
     }
 
     @Override
@@ -39,22 +51,48 @@ public class GetWikiCommand extends CommandWithFunctionality {
         event.deferReply().queue();
         String title = event.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName()).getAsString();
         String articleWikiText = wikiArticleService.getWikiArticle(title);
-        if(articleWikiText.startsWith("ERROR")) {
-            messageSender.reply(event, articleWikiText);
-        } else {
-            String plainText = WikiTextConverter.convertToPlainText(articleWikiText);
-            if (plainText.startsWith("<!--")) {
-                plainText = "Wiki API too busy, please try again later!";
-            } else if (plainText.length() > MAX_MESSAGE_LENGTH) {
-                plainText = plainText.substring(0, MAX_MESSAGE_LENGTH - 2) + "...";
-            }
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setTitle("Wiki article: " + title)
-                    .setColor(Color.BLUE)
-                    .setDescription(plainText)
-                    .build();
 
-            messageSender.sendMessageEmbedOnHook(event.getHook(), messageEmbed);
+        if (articleWikiText.startsWith("ERROR")) {
+            messageSender.reply(event, articleWikiText);
+        } else if (articleWikiText.startsWith("<!--")) {
+            messageSender.reply(event, "Wiki API too busy, please try again later!");
+        } else {
+            try {
+                String discordText = convertToDiscordText(articleWikiText);
+                saveToDatabase(event, title);
+                replyToEvent(event, title, discordText);
+            } catch (NoSuchElementException e) {
+                messageSender.reply(event, e.getMessage());
+            }
         }
+    }
+
+    private String convertToDiscordText(String articleWikiText) {
+        String discordText = WikiTextConverter.convertToPlainText(articleWikiText);
+        if (discordText.length() > MAX_MESSAGE_LENGTH) {
+            discordText = discordText.substring(0, MAX_MESSAGE_LENGTH - 2) + "...";
+        }
+        return discordText;
+    }
+
+    private void replyToEvent(SlashCommandInteractionEvent event, String title, String plainText) {
+        MessageEmbed messageEmbed = new EmbedBuilder()
+                .setTitle("Wiki article: " + title)
+                .setColor(Color.BLUE)
+                .setDescription(plainText)
+                .build();
+
+        messageSender.sendMessageEmbedOnHook(event.getHook(), messageEmbed);
+    }
+
+    private void saveToDatabase(SlashCommandInteractionEvent event, String searchedTopic) {
+        GetWikiData getWikiData = new GetWikiData();
+        getWikiData.setSearchedTopic(searchedTopic);
+        Optional<GuildData> guildData = guildRepository.findById(event.getGuild().getIdLong());
+        if (guildData.isEmpty()) {
+            throw new NoSuchElementException("DATABASE ERROR: Guild not found!");
+        }
+        getWikiData.setGuild(guildData.get());
+        getWikiRepository.save(getWikiData);
     }
 }
