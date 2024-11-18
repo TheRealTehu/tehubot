@@ -16,8 +16,8 @@ public class GuildStatisticsData {
     private int numberOfDiceRolls;
     private int numberOfCoinFlips;
     private int numberOfWikisChecked;
+    private int numberOfGifsSent;
     //private int numberOfPolls;
-    //private int numberOfGifsSent;
 
     //    private int numberOfCatHoroscopes;
 //    private int numberOfSteamRouletteSpins;
@@ -26,8 +26,8 @@ public class GuildStatisticsData {
     public GuildStatisticsData() {
     }
 
-    public GuildStatisticsData(long guildId, GuildData guild, int numberOfWikisChecked, /*int numberOfPolls,
-                               int numberOfGifsSent, */int numberOfDiceRolls, int numberOfCoinFlips/*,
+    public GuildStatisticsData(long guildId, GuildData guild, int numberOfWikisChecked, int numberOfGifsSent,
+                               int numberOfDiceRolls, int numberOfCoinFlips/*, int numberOfPolls,
                                int numberOfCatHoroscopes, int numberOfSteamRouletteSpins,
                                int numberOfSongsListenedTo, int numberOfVideosPlayed*/) {
         this.guildId = guildId;
@@ -35,8 +35,8 @@ public class GuildStatisticsData {
         this.numberOfDiceRolls = numberOfDiceRolls;
         this.numberOfCoinFlips = numberOfCoinFlips;
         this.numberOfWikisChecked = numberOfWikisChecked;
-        /*this.numberOfPolls = numberOfPolls;
         this.numberOfGifsSent = numberOfGifsSent;
+        /*this.numberOfPolls = numberOfPolls;
         this.numberOfCatHoroscopes = numberOfCatHoroscopes;
         this.numberOfSteamRouletteSpins = numberOfSteamRouletteSpins;
         this.numberOfSongsListenedTo = numberOfSongsListenedTo;
@@ -68,6 +68,13 @@ public class GuildStatisticsData {
         this.numberOfWikisChecked = numberOfWikisChecked;
     }
 
+    public int getNumberOfGifsSent() {
+        return numberOfGifsSent;
+    }
+
+    public void setNumberOfGifsSent(int numberOfGifsSent) {
+        this.numberOfGifsSent = numberOfGifsSent;
+    }
     /*
             public int getNumberOfPolls() {
                 return numberOfPolls;
@@ -77,13 +84,6 @@ public class GuildStatisticsData {
                 this.numberOfPolls = numberOfPolls;
             }
 
-            public int getNumberOfGifsSent() {
-                return numberOfGifsSent;
-            }
-
-            public void setNumberOfGifsSent(int numberOfGifsSent) {
-                this.numberOfGifsSent = numberOfGifsSent;
-            }
         */
     public int getNumberOfDiceRolls() {
         return numberOfDiceRolls;
@@ -141,9 +141,9 @@ public class GuildStatisticsData {
                 ", guild=" + guild +
                 ", numberOfDiceRolls=" + numberOfDiceRolls +
                 ", numberOfCoinFlips=" + numberOfCoinFlips +
-                ", numberOfWikisChecked=" + numberOfWikisChecked /*+
+                ", numberOfWikisChecked=" + numberOfWikisChecked +
+                ", numberOfGifsSent=" + numberOfGifsSent /* +
                 ", numberOfPolls=" + numberOfPolls +
-                ", numberOfGifsSent=" + numberOfGifsSent +
                 ", numberOfCatHoroscopes=" + numberOfCatHoroscopes +
                 ", numberOfSteamRouletteSpins=" + numberOfSteamRouletteSpins +
                 ", numberOfSongsListenedTo=" + numberOfSongsListenedTo +
