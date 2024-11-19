@@ -26,5 +26,4 @@ FROM guild_data
          LEFT JOIN (SELECT guild_id, COUNT(id) AS NUMBER_OF_POLLS
                     FROM poll_data
                     GROUP BY guild_id) AS poll
-                   ON guild_data.id = poll.guild_id
-GROUP BY guild_data.id;
+                   ON guild_data.id = poll.guild_id;
