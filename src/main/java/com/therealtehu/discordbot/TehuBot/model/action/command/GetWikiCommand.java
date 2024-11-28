@@ -8,6 +8,7 @@ import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
 import com.therealtehu.discordbot.TehuBot.service.WikiTextConverter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -48,21 +49,24 @@ public class GetWikiCommand extends CommandWithFunctionality {
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
-        String title = event.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName()).getAsString();
-        String articleWikiText = wikiArticleService.getWikiArticle(title);
+        if (event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
+            event.deferReply().queue();
 
-        if (articleWikiText.startsWith("ERROR")) {
-            messageSender.reply(event, articleWikiText);
-        } else if (articleWikiText.startsWith("<!--")) {
-            messageSender.reply(event, "Wiki API too busy, please try again later!");
-        } else {
-            try {
-                String discordText = convertToDiscordText(articleWikiText);
-                saveToDatabase(event, title);
-                replyToEvent(event, title, discordText);
-            } catch (NoSuchElementException e) {
-                messageSender.reply(event, e.getMessage());
+            String title = event.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName()).getAsString();
+            String articleWikiText = wikiArticleService.getWikiArticle(title);
+
+            if (articleWikiText.startsWith("ERROR")) {
+                messageSender.reply(event, articleWikiText);
+            } else if (articleWikiText.startsWith("<!--")) {
+                messageSender.reply(event, "Wiki API too busy, please try again later!");
+            } else {
+                try {
+                    String discordText = convertToDiscordText(articleWikiText);
+                    saveToDatabase(event, title);
+                    replyToEvent(event, title, discordText);
+                } catch (NoSuchElementException e) {
+                    messageSender.reply(event, e.getMessage());
+                }
             }
         }
     }
