@@ -73,7 +73,6 @@ class SendGifCommandTest {
         sendGifCommand = new SendGifCommand(tenorGifServiceMock, messageSenderMock, messageCreateBuilderMock,
                 guildRepositoryMock, sendGifRepositoryMock);
     }
-        //TODO: Rewrite tests to check DB use. Add test when DB use fails. First test is ok, can copy parts
     @Test
     void executeCommandWhenNoChannelWasGivenAndUserHasPermissionAndGuildIsInDbSendsGifToSameChannelAndSavesToDb() {
         when(eventMock.deferReply()).thenReturn(replyCallbackMock);
