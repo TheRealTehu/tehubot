@@ -1,5 +1,5 @@
 <p align="left">
-    <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-markdown-open.svg" align="left" width="30%">
+    <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-markdown-open.svg" align="left" width="25%" >
 </p>
 <p align="left"><h1 align="left">TEHU-BOT</h1></p>
 <p align="left">
@@ -11,7 +11,7 @@
 	</a>
 <br>
 
-##  Table of Contents
+##  Table of Contents  
 
 - [ Overview](#overview)
 - [ Features](#features)
@@ -48,51 +48,51 @@ The bot differentiates between two kinds of actions: Events and Commands.
  - Events happen automatically, triggered by a specific happening on the Discord server where the bot is active.  
  - Commands can be used by users with the help of Discord's built-in slash command system.
 
-<h3>Events:</h3>
- - <b>ServerJoinEvent:</b> When the bot is added to a new server, an admin can choose a text channel for the bot.  
+### Events:
+ - **ServerJoinEvent:** When the bot is added to a new server, an admin can choose a text channel for the bot.  
 The bot will then execute its initial setup and will send a welcome message.
- - <b>ServerNewMemberEvent:</b> If a new user joins a server where the bot is active, it will greet the new member  
+ - **ServerNewMemberEvent:** If a new user joins a server where the bot is active, it will greet the new member  
 with a welcome gif.
  - Poll related events will be detailed at Poll command.
 
-<h3>Commands:</h3>
+### Commands:
  - <code>/setup</code>: Manually trigger the bots initial setup logic. It will set the servers default text channel as  
 the bots channel and save all members into the database. Requires `MANAGE_SERVER` permission.
  - <code>/sendgif \<gifprompt\> \<gifchannel\></code>: Sends a gif to text channel. Gif will be loaded from <a href= "https://tenor.com/">Tenor</a>.  
 By default, the bot will send the gif to the channel where the command was given. Member requires `MESSAGE_SEND`  
 permission in the channel for the gif to be sent.  
-    - <b>gifprompt</b>: Mandatory. Give search term for the gif. Prompt can only contain alphanumerical characters.
-    - <b>gifchannel</b>: Optional. Choose text channel to send the gif to.
+    - **gifprompt**: Mandatory. Give search term for the gif. Prompt can only contain alphanumerical characters.
+    - **gifchannel**: Optional. Choose text channel to send the gif to.
  - <code>/coinflip</code>: Flips a coin and displays which side it landed on. Result will be printed to the channel where  
 the command was given. Member needs `MESSAGE_SEND` permission in the channel for the command to execute.
  - <code>/diceroll \<sides\></code>: Rolls a dice and displays the result. By default, a 6 sided die will be used.  
 Result will be printed to the channel where the command was given. Member needs `MESSAGE_SEND` permission in  
 the channel for the command to execute.
-   - <b>sides</b>: Optional. Choose the number of sides the dice should have between 3 and 100.
+   - **sides**: Optional. Choose the number of sides the dice should have between 3 and 100.
  - <code>/getwiki \<wikititle\></code>: Gets an article from Wikipedia. Result will be printed to the  
 channel where the command was given. Member needs `MESSAGE_SEND` permission in the channel for the command to execute.
-    - <b>wikititle</b>: Mandatory. The title of the wiki article the member wants to see.
+    - **wikititle**: Mandatory. The title of the wiki article the member wants to see.
  - <code>/create poll \<description\> \<answer1\> \<answer2..20\> \<timelimit\> \<numberofvotes\> \<minrole\> \<anonymousvote\></code>:  
 Creates a poll on which members can vote by sending emojis. Emojis will be chosen from the servers custom emojis  
 and will be filled with basic emojis if needed. Members can vote by reacting with the emoji corresponding with the option  
 they choose. Members can revert their vote by removing the emoji. In case of an anonymous vote, votes can be reverted by  
 reacting with the same emoji again. Only members with `MESSAGE_SEND_POLLS` permission can create polls.
-    - <b>description</b>: Mandatory. The question or topic the members should vote on.
-    - <b>answer1</b>: Mandatory. The first choosable option.
-    - <b>answer2..20</b>: Optional. There can be up to 20 options to vote for. 
-    - <b>timelimit</b>: Optional. Set an end time for the poll, when it will automatically close and declare the result.  
+    - **description**: Mandatory. The question or topic the members should vote on.
+    - **answer1**: Mandatory. The first choosable option.
+    - **answer2..20**: Optional. There can be up to 20 options to vote for. 
+    - **timelimit**: Optional. Set an end time for the poll, when it will automatically close and declare the result.  
    Time limit must be given in UTC time in the following format: `yyyy-MM-dd HH:mm`. If no time limit was given,  
    poll will end when manually closed with `/closepoll` command. If time limit is set, the bot will automatically check  
    if a poll's time limit is expired and will close the given poll and print its result to the text channel set for the bot.
-    - <b>numberofvotes</b>: Optional. Set the number of options a member can vote on in a given poll. By default,  
+    - **numberofvotes**: Optional. Set the number of options a member can vote on in a given poll. By default,  
    each member can only vote once.
-    - <b>minrole</b>: Optional. Set the minimum required role for a member to vote. By default, the `@everyone` role  
+    - **minrole**: Optional. Set the minimum required role for a member to vote. By default, the `@everyone` role  
    will be set.
-    - <b>anonymousvote</b>: Optional. Set the voting to be anonymous. If set, the bot will remove emojis from the poll  
+    - **anonymousvote**: Optional. Set the voting to be anonymous. If set, the bot will remove emojis from the poll  
    automatically.
  - <code>/closepoll \<pollid\></code>: Closes a poll with given id and prints result. Only members with `MANAGE_EVENTS`  
 permission can close polls. Polls with time limit can also be closed manually.
-    - <b>pollid</b>: Mandatory. The id for the poll the member wishes to close.
+    - **pollid**: Mandatory. The id for the poll the member wishes to close.
  - <code>/guildstatistics</code>: Gets information about bot usage on the server. Currently, counts the number of calls  
 for each command. Result will be printed to the channel where the command was given. Member needs `MESSAGE_SEND`  
 permission in the channel for the command to execute.
