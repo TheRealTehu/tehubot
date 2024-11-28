@@ -3,6 +3,7 @@ package com.therealtehu.discordbot.TehuBot.model.action.command;
 import com.therealtehu.discordbot.TehuBot.database.model.GuildStatisticsData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildStatisticsRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,11 +24,14 @@ public class GuildStatisticsCommand extends CommandWithFunctionality{
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        Optional<GuildStatisticsData> guildStatisticsData = guildStatisticsRepository.findByGuildId(event.getGuild().getIdLong());
-        if(guildStatisticsData.isPresent()) {
-            messageSender.reply(event, guildStatisticsData.get().toString());
-        } else {
-            messageSender.reply(event, "DATABASE ERROR: Guild not found!");
+        if(event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
+            Optional<GuildStatisticsData> guildStatisticsData = guildStatisticsRepository
+                    .findByGuildId(event.getGuild().getIdLong());
+            if (guildStatisticsData.isPresent()) {
+                messageSender.reply(event, guildStatisticsData.get().toString());
+            } else {
+                messageSender.reply(event, "DATABASE ERROR: Guild not found!");
+            }
         }
     }
 }

@@ -4,7 +4,9 @@ import com.therealtehu.discordbot.TehuBot.database.model.GuildData;
 import com.therealtehu.discordbot.TehuBot.database.model.GuildStatisticsData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildStatisticsRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class GuildStatisticsCommandTest {
     private GuildStatisticsCommand guildStatisticsCommand;
@@ -25,6 +27,8 @@ class GuildStatisticsCommandTest {
     private GuildStatisticsRepository guildStatisticsRepositoryMock;
     @Mock
     private SlashCommandInteractionEvent eventMock;
+    @Mock
+    private Member memberMock;
     @Mock
     private Guild guildMock;
     @Mock
@@ -36,7 +40,10 @@ class GuildStatisticsCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbReturnsGuildStatistics() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbReturnsGuildStatistics() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         when(guildMock.getIdLong()).thenReturn(1L);
         GuildStatisticsData guildStatisticsData =
@@ -50,7 +57,10 @@ class GuildStatisticsCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsNotInDbReturnsErrorMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsNotInDbReturnsErrorMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         when(guildMock.getIdLong()).thenReturn(1L);
         when(guildStatisticsRepositoryMock.findByGuildId(1L)).thenReturn(Optional.empty());
@@ -59,5 +69,16 @@ class GuildStatisticsCommandTest {
 
         verify(guildStatisticsRepositoryMock).findByGuildId(1L);
         verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
+    }
+
+    @Test
+    void executeCommandWhenMemberDoesNotHavePermissionDoesNothing() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(false);
+
+        guildStatisticsCommand.executeCommand(eventMock);
+
+        verifyNoInteractions(guildStatisticsRepositoryMock);
+        verifyNoInteractions(messageSenderMock);
     }
 }
