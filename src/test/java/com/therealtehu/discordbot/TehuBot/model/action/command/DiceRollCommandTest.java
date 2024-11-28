@@ -6,6 +6,7 @@ import com.therealtehu.discordbot.TehuBot.database.repository.DiceRollRepository
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -49,11 +50,12 @@ class DiceRollCommandTest {
     }
 
     @Test
-    void executeCommandWhenNoSidesOptionGivenAndGuildIsInDbRollsBetween1And6AndSavesDataToDb() {
+    void executeCommandWhenMemberHasPermissionAndNoSidesOptionGivenAndGuildIsInDbRollsBetween1And6AndSavesDataToDb() {
         String expectedMessage = "Member as mention rolled a 6 sided die and the result is: 4!";
 
         when(eventMock.getOption("sides")).thenReturn(null);
         when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
         when(memberMock.getAsMention()).thenReturn(("Member as mention"));
         when(randomNumberGeneratorMock.getRandomNumber(1, 6)).thenReturn(4);
 
@@ -75,12 +77,13 @@ class DiceRollCommandTest {
     }
 
     @Test
-    void executeCommandWhenSidesOptionGivenAndGuildIsInDbRollsBetween1AndGivenOptionAndSavesDataToDb() {
+    void executeCommandWhenMemberHasPermissionAndSidesOptionGivenAndGuildIsInDbRollsBetween1AndGivenOptionAndSavesDataToDb() {
         String expectedMessage = "Member as mention rolled a 100 sided die and the result is: 100!";
         OptionMapping mockOption = Mockito.mock(OptionMapping.class);
 
         when(eventMock.getOption("sides")).thenReturn(mockOption);
         when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
         when(memberMock.getAsMention()).thenReturn(("Member as mention"));
         when(mockOption.getAsInt()).thenReturn(100);
         when(randomNumberGeneratorMock.getRandomNumber(anyInt(), anyInt())).thenReturn(100);
@@ -103,10 +106,12 @@ class DiceRollCommandTest {
     }
 
     @Test
-    void executeCommandWhenSidesOptionGivenAndGuildIsNotInDbReturnsErrorMessage() {
+    void executeCommandWhenMemberHasPermissionAndSidesOptionGivenAndGuildIsNotInDbReturnsErrorMessageAndDoesNotSaveToDb() {
         String expectedMessage = "DATABASE ERROR: Guild not found!";
         OptionMapping mockOption = Mockito.mock(OptionMapping.class);
 
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
         when(eventMock.getOption("sides")).thenReturn(mockOption);
         when(mockOption.getAsInt()).thenReturn(100);
         when(randomNumberGeneratorMock.getRandomNumber(anyInt(), anyInt())).thenReturn(100);
@@ -120,5 +125,17 @@ class DiceRollCommandTest {
         verify(randomNumberGeneratorMock).getRandomNumber(1,100);
         verify(diceRollRepositoryMock, times(0)).save(any());
         verify(messageSenderMock).reply(eventMock, expectedMessage);
+    }
+
+    @Test
+    void executeCommandWhenMemberDoesNotHavePermissionDoesNothing() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(false);
+
+        diceRollCommand.executeCommand(eventMock);
+
+        verifyNoInteractions(randomNumberGeneratorMock);
+        verifyNoInteractions(diceRollRepositoryMock);
+        verifyNoInteractions(messageSenderMock);
     }
 }

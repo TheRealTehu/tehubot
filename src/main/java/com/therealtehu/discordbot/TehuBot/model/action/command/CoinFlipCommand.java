@@ -6,6 +6,7 @@ import com.therealtehu.discordbot.TehuBot.database.repository.CoinFlipRepository
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,29 +33,31 @@ public class CoinFlipCommand extends CommandWithFunctionality {
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        int decision = randomNumberGenerator.getRandomNumber(100);
-        String message = event.getMember().getAsMention() + " has flipped a coin and ";
-        String conclusion = "";
-        String dbData;
-        if (decision < 49) {
-            conclusion += "it was HEAD!";
-            dbData = "Head";
-        } else if (decision < 98) {
-            conclusion += "it was TAIL!";
-            dbData = "Tail";
-        } else if (decision == 98) {
-            conclusion += "the coin STOOD ON IT'S SIDE!";
-            dbData = "Side";
-        } else {
-            conclusion += "the coin bounced behind the couch, you can't find it!";
-            dbData = "Lost";
-        }
-        message += conclusion;
-        try {
-            saveToDatabase(event, dbData);
-            messageSender.reply(event, message);
-        } catch (NoSuchElementException e) {
-            messageSender.reply(event, e.getMessage());
+        if(event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
+            int decision = randomNumberGenerator.getRandomNumber(100);
+            String message = event.getMember().getAsMention() + " has flipped a coin and ";
+            String conclusion = "";
+            String dbData;
+            if (decision < 49) {
+                conclusion += "it was HEAD!";
+                dbData = "Head";
+            } else if (decision < 98) {
+                conclusion += "it was TAIL!";
+                dbData = "Tail";
+            } else if (decision == 98) {
+                conclusion += "the coin STOOD ON IT'S SIDE!";
+                dbData = "Side";
+            } else {
+                conclusion += "the coin bounced behind the couch, you can't find it!";
+                dbData = "Lost";
+            }
+            message += conclusion;
+            try {
+                saveToDatabase(event, dbData);
+                messageSender.reply(event, message);
+            } catch (NoSuchElementException e) {
+                messageSender.reply(event, e.getMessage());
+            }
         }
     }
 

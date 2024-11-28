@@ -11,6 +11,7 @@ import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.service.poll.PollUtil;
 import jakarta.transaction.Transactional;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -45,27 +46,29 @@ public class CreatePollCommand extends CommandWithFunctionality {
     @Override
     @Transactional
     public void executeCommand(SlashCommandInteractionEvent event) {
-        Long guildId = event.getGuild().getIdLong();
+        if(event.getMember().hasPermission(Permission.MESSAGE_SEND_POLLS)) {
+            Long guildId = event.getGuild().getIdLong();
 
-        Optional<GuildData> guildDataOptional = guildRepository.findById(guildId);
+            Optional<GuildData> guildDataOptional = guildRepository.findById(guildId);
 
-        if (guildDataOptional.isEmpty()) {
-            messageSender.reply(event, "DATABASE ERROR: Guild not found!");
-        } else {
-            try {
-                PollData pollData = createPollData(event, guildDataOptional.get());
+            if (guildDataOptional.isEmpty()) {
+                messageSender.reply(event, "DATABASE ERROR: Guild not found!");
+            } else {
+                try {
+                    PollData pollData = createPollData(event, guildDataOptional.get());
 
-                pollRepository.save(pollData);
+                    pollRepository.save(pollData);
 
-                List<PollAnswerData> answerData = pollAnswerService.saveAnswers(event, pollData);
+                    List<PollAnswerData> answerData = pollAnswerService.saveAnswers(event, pollData);
 
-                pollData.setAnswers(answerData);
+                    pollData.setAnswers(answerData);
 
-                String response = createFormattedPoll(pollData);
+                    String response = createFormattedPoll(pollData);
 
-                messageSender.reply(event, response);
-            } catch (DateTimeParseException e) {
-                messageSender.reply(event, "OPTION ERROR: Invalid time limit format!");
+                    messageSender.reply(event, response);
+                } catch (DateTimeParseException e) {
+                    messageSender.reply(event, "OPTION ERROR: Invalid time limit format!");
+                }
             }
         }
     }

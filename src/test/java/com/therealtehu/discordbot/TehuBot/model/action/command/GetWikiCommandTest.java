@@ -8,7 +8,9 @@ import com.therealtehu.discordbot.TehuBot.service.WikiArticleService;
 import com.therealtehu.discordbot.TehuBot.service.WikiTextConverter;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -42,6 +44,8 @@ class GetWikiCommandTest {
     @Mock
     private SlashCommandInteractionEvent eventMock;
     @Mock
+    private Member memberMock;
+    @Mock
     private OptionMapping optionMappingMock;
     @Mock
     private InteractionHook interactionHookMock;
@@ -59,7 +63,10 @@ class GetWikiCommandTest {
     }
 
     @Test
-    void executeCommandWhenNormalLengthArticleFoundAndGuildIsInDbSendsArticleMessageEmbedAndSavesToDb() {
+    void executeCommandWhenMemberHasPermissionAndNormalLengthArticleFoundAndGuildIsInDbSendsArticleMessageEmbedAndSavesToDb() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
@@ -96,7 +103,10 @@ class GetWikiCommandTest {
     }
 
     @Test
-    void executeCommandWhenTooLongArticleFoundAndGuildIsInDbSendsShortenedMessageAndSavesToDb() {
+    void executeCommandWhenMemberHasPermissionAndTooLongArticleFoundAndGuildIsInDbSendsShortenedMessageAndSavesToDb() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
@@ -133,7 +143,10 @@ class GetWikiCommandTest {
     }
 
     @Test
-    void executeCommandWhenApiTooBusySendsPleaseWaitMessage() {
+    void executeCommandWhenMemberHasPermissionAndApiTooBusySendsPleaseWaitMessageAndDoesNotSaveToDb() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
@@ -157,7 +170,10 @@ class GetWikiCommandTest {
     }
 
     @Test
-    void executeCommandWhenApiErrorOccursSendsErrorMessage() {
+    void executeCommandWhenMemberHasPermissionAndApiErrorOccursSendsErrorMessageAndDoesNotSaveToDb() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
@@ -177,7 +193,10 @@ class GetWikiCommandTest {
     }
 
     @Test
-    void executeCommandWhenNormalLengthArticleFoundAndGuildIsNotInDbSendsErrorMessage() {
+    void executeCommandWhenMemberHasPermissionAndNormalLengthArticleFoundAndGuildIsNotInDbSendsErrorMessageAndDoesNotSaveToDb() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(true);
+
         when(eventMock.deferReply()).thenReturn(replyCallbackActionMock);
 
         when(eventMock.getOption(OptionName.GET_WIKI_TITLE_OPTION.getOptionName())).thenReturn(optionMappingMock);
@@ -201,6 +220,19 @@ class GetWikiCommandTest {
             mockWikiTextConverter.verify(() -> WikiTextConverter.convertToPlainText(anyString()), times(1));
             verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
         }
+    }
+
+    @Test
+    void executeCommandWhenMemberDoesNotHavePermissionDoesNothing() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND)).thenReturn(false);
+
+        getWikiCommand.executeCommand(eventMock);
+
+        verifyNoInteractions(getWikiRepositoryMock);
+        verifyNoInteractions(guildRepositoryMock);
+        verifyNoInteractions(wikiArticleServiceMock);
+        verifyNoInteractions(messageSenderMock);
     }
 
     private final String textOf4096Characters = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ultrices diam " +

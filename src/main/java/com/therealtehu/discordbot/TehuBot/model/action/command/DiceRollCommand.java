@@ -6,6 +6,7 @@ import com.therealtehu.discordbot.TehuBot.database.repository.DiceRollRepository
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
 import com.therealtehu.discordbot.TehuBot.utils.RandomNumberGenerator;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -45,23 +46,25 @@ public class DiceRollCommand extends CommandWithFunctionality{
 
     @Override
     public void executeCommand(SlashCommandInteractionEvent event) {
-        OptionMapping optionData = event.getOption(OptionName.DICE_ROLL_SIDES_OPTION.getOptionName());
-        int numberOfSides = DEFAULT_DICE_SIDES;
-        if(optionData != null) {
-            numberOfSides = optionData.getAsInt();
-        }
-        int rolledNumber = randomNumberGenerator.getRandomNumber(1, numberOfSides);
-        String message;
+        if(event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
+            OptionMapping optionData = event.getOption(OptionName.DICE_ROLL_SIDES_OPTION.getOptionName());
+            int numberOfSides = DEFAULT_DICE_SIDES;
+            if (optionData != null) {
+                numberOfSides = optionData.getAsInt();
+            }
+            int rolledNumber = randomNumberGenerator.getRandomNumber(1, numberOfSides);
+            String message;
 
-        try {
-            saveToDatabase(numberOfSides, rolledNumber, event);
-            message = event.getMember().getAsMention() + " rolled a " + numberOfSides
-                    + " sided die and the result is: " + rolledNumber + "!";
-        } catch (NoSuchElementException e) {
-            message = e.getMessage();
-        }
+            try {
+                saveToDatabase(numberOfSides, rolledNumber, event);
+                message = event.getMember().getAsMention() + " rolled a " + numberOfSides
+                        + " sided die and the result is: " + rolledNumber + "!";
+            } catch (NoSuchElementException e) {
+                message = e.getMessage();
+            }
 
-        messageSender.reply(event, message);
+            messageSender.reply(event, message);
+        }
     }
 
     private void saveToDatabase(int numberOfSides, int rolledNumber, SlashCommandInteractionEvent event) {

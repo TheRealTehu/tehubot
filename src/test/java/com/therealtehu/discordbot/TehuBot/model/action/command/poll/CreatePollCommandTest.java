@@ -6,9 +6,11 @@ import com.therealtehu.discordbot.TehuBot.database.model.poll.PollData;
 import com.therealtehu.discordbot.TehuBot.database.repository.GuildRepository;
 import com.therealtehu.discordbot.TehuBot.database.repository.poll.PollRepository;
 import com.therealtehu.discordbot.TehuBot.model.action.command.OptionName;
-import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
 import com.therealtehu.discordbot.TehuBot.service.display.MessageSender;
+import com.therealtehu.discordbot.TehuBot.service.poll.PollAnswerService;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -41,6 +43,8 @@ class CreatePollCommandTest {
     @Mock
     private SlashCommandInteractionEvent eventMock;
     @Mock
+    private Member memberMock;
+    @Mock
     private Guild guildMock;
     @Mock
     private GuildData guildDataMock;
@@ -54,7 +58,23 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildNotInDbSendsErrorMessage() {
+    void executeCommandWhenMemberDoesNotHavePermissionDoesNothing() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(false);
+
+        createPollCommand.executeCommand(eventMock);
+
+        verifyNoInteractions(guildRepositoryMock);
+        verifyNoInteractions(messageSenderMock);
+        verifyNoInteractions(pollRepositoryMock);
+        verifyNoInteractions(pollAnswerServiceMock);
+    }
+
+    @Test
+    void executeCommandWhenMemberHasPermissionAndGuildNotInDbSendsErrorMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -64,10 +84,15 @@ class CreatePollCommandTest {
 
         verify(guildRepositoryMock).findById(id);
         verify(messageSenderMock).reply(eventMock, "DATABASE ERROR: Guild not found!");
+        verifyNoInteractions(pollRepositoryMock);
+        verifyNoInteractions(pollAnswerServiceMock);
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndAllDefaultValuesSavesProperPollInDbAndSendsPollMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndAllDefaultValuesSavesProperPollInDbAndSendsPollMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -121,7 +146,10 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndHasEndTimeSavesProperPollInDbAndSendsPollMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndHasEndTimeSavesProperPollInDbAndSendsPollMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -182,7 +210,10 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndHasEndTimeFormattedBadlyDoesntSavePollInDbAndSendsErrorMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndHasEndTimeFormattedBadlyDoesntSavePollInDbAndSendsErrorMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -201,7 +232,10 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndHasNumberOfVotesOptionSavesProperPollInDbAndSendsPollMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndHasNumberOfVotesOptionSavesProperPollInDbAndSendsPollMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -259,7 +293,10 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndHasMinRoleSavesProperPollInDbAndSendsPollMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndHasMinRoleSavesProperPollInDbAndSendsPollMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -319,7 +356,10 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndIsAnonymousSavesProperPollInDbAndSendsPollMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndIsAnonymousSavesProperPollInDbAndSendsPollMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -375,7 +415,10 @@ class CreatePollCommandTest {
     }
 
     @Test
-    void executeCommandWhenGuildIsInDbHasOneAnswerAndDbAlreadyHasPollsGivesIncrementedPollId() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasOneAnswerAndDbAlreadyHasPollsGivesIncrementedPollId() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
@@ -428,9 +471,11 @@ class CreatePollCommandTest {
         verify(messageSenderMock).reply(eventMock, expectedText);
     }
 
-    //TODO: Question has two answers
     @Test
-    void executeCommandWhenGuildIsInDbHasTwoAnswerAndAllDefaultValuesSavesProperPollInDbAndSendsPollMessage() {
+    void executeCommandWhenMemberHasPermissionAndGuildIsInDbHasTwoAnswerAndAllDefaultValuesSavesProperPollInDbAndSendsPollMessage() {
+        when(eventMock.getMember()).thenReturn(memberMock);
+        when(memberMock.hasPermission(Permission.MESSAGE_SEND_POLLS)).thenReturn(true);
+
         when(eventMock.getGuild()).thenReturn(guildMock);
         Long id = 1L;
         when(guildMock.getIdLong()).thenReturn(id);
