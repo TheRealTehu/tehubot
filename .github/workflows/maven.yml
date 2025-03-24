@@ -15,6 +15,13 @@ on:
   pull_request:
     branches: [ "development" ]
 
+permissions:
+  contents: read
+  id-token: write
+  packages: read
+  actions: read
+  security-events: write
+
 jobs:
   build:
 
