@@ -19,8 +19,8 @@ services:
       DB_URL: jdbc:postgresql://database:5432/discordbot_db
       DB_USER: myuser
       DB_PASS: mypassword
-      HIBERNATE_DDL: create-drop
-      SQL_INIT_MODE: always
+      HIBERNATE_DDL: none
+      SQL_INIT_MODE: never
       BOT_TOKEN: ${BOT_TOKEN}
       TENOR_API_KEY: ${TENOR_API_KEY}
     ports:

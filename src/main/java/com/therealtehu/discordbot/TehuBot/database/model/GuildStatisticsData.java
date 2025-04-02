@@ -2,6 +2,7 @@ package com.therealtehu.discordbot.TehuBot.database.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
 @Entity
 @Immutable

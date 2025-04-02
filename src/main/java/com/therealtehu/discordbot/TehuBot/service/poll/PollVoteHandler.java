@@ -47,8 +47,8 @@ public class PollVoteHandler {
             return false;
         }
 
-        if(pollData.isAnonymous() && isDoubleVote(pollData, memberData, reactionAddEvent.getEmoji().getAsReactionCode())) {
-            pollAnswerService.removeVote(pollData, memberData, reactionAddEvent.getEmoji().getAsReactionCode());
+        if(pollData.isAnonymous() && isDoubleVote(pollData, memberData, reactionAddEvent.getEmoji().getFormatted())) {
+            pollAnswerService.removeVote(pollData, memberData, reactionAddEvent.getEmoji().getFormatted());
             return true;
         }
 
@@ -57,7 +57,7 @@ public class PollVoteHandler {
             return false;
         }
 
-        return pollAnswerService.addVote(pollData, reactionAddEvent.getEmoji().getAsReactionCode(), memberData);
+        return pollAnswerService.addVote(pollData, reactionAddEvent.getEmoji().getFormatted(), memberData);
     }
 
     @Transactional
@@ -74,7 +74,7 @@ public class PollVoteHandler {
             return false;
         }
 
-        return pollAnswerService.removeVote(pollData, memberData, reactionRemoveEvent.getEmoji().getAsReactionCode());
+        return pollAnswerService.removeVote(pollData, memberData, reactionRemoveEvent.getEmoji().getFormatted());
     }
 
     private boolean isVoteOver(PollData pollData) {

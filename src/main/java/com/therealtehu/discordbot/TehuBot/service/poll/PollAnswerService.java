@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +41,7 @@ public class PollAnswerService {
             PollAnswerData pollAnswerData = new PollAnswerData();
             pollAnswerData.setPollData(pollData);
             pollAnswerData.setAnswerText(answerTexts.get(i));
-            pollAnswerData.setAnswerEmoji(emojis.get(i).getAsReactionCode());
+            pollAnswerData.setAnswerEmoji(emojis.get(i).getFormatted());
 
             answerData.add(pollAnswerData);
 
@@ -71,7 +73,7 @@ public class PollAnswerService {
                 emojisToUse.add(unicodeEmoji);
             }
         }
-        Collections.shuffle(guildEmojis);
+        Collections.shuffle(emojisToUse);
         return emojisToUse;
     }
 
