@@ -64,7 +64,7 @@ class PollVoteHandlerTest {
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.addVote(pollDataMock, "emoji", memberDataMock))
                 .thenReturn(true);
 
@@ -97,7 +97,7 @@ class PollVoteHandlerTest {
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.addVote(pollDataMock, "emoji", memberDataMock))
                 .thenReturn(true);
 
@@ -126,7 +126,7 @@ class PollVoteHandlerTest {
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.addVote(pollDataMock, "emoji", memberDataMock))
                 .thenReturn(true);
 
@@ -183,7 +183,7 @@ class PollVoteHandlerTest {
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.addVote(pollDataMock, "emoji", memberDataMock))
                 .thenReturn(false);
 
@@ -240,7 +240,7 @@ class PollVoteHandlerTest {
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.addVote(pollDataMock, "emoji", memberDataMock))
                 .thenReturn(true);
 
@@ -267,7 +267,7 @@ class PollVoteHandlerTest {
         when(pollAnswerServiceMock.voteExistsForMember(memberDataMock, pollDataMock, "emoji"))
                 .thenReturn(true);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
 
         boolean actual = pollVoteHandler.handleVote(pollDataMock, reactionEventWithTextMock);
 
@@ -323,7 +323,7 @@ class PollVoteHandlerTest {
         when(pollDataMock.getNumberOfVotesPerMember()).thenReturn(1);
         when(pollAnswerServiceMock.countVotes(pollDataMock, memberDataMock)).thenReturn(0);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.addVote(pollDataMock, "emoji", memberDataMock))
                 .thenReturn(true);
 
@@ -354,7 +354,7 @@ class PollVoteHandlerTest {
         when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
         when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.removeVote(pollDataMock, memberDataMock, "emoji"))
                 .thenReturn(true);
 
@@ -372,7 +372,7 @@ class PollVoteHandlerTest {
         when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
         when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.removeVote(pollDataMock, memberDataMock, "emoji"))
                 .thenReturn(false);
 
@@ -421,7 +421,7 @@ class PollVoteHandlerTest {
         when(reactionEventWithTextMock.getUserIdLong()).thenReturn(1L);
         when(memberServiceMock.getMemberData(1L)).thenReturn(memberDataMock);
         when(reactionEventWithTextMock.getEmoji()).thenReturn(emojiUnionMock);
-        when(emojiUnionMock.getAsReactionCode()).thenReturn("emoji");
+        when(emojiUnionMock.getFormatted()).thenReturn("emoji");
         when(pollAnswerServiceMock.removeVote(pollDataMock, memberDataMock, "emoji"))
                 .thenReturn(true);
 

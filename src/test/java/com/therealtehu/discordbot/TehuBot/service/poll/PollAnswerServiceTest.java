@@ -64,7 +64,7 @@ class PollAnswerServiceTest {
         PollAnswerData expectedAnswerData = new PollAnswerData();
         expectedAnswerData.setPollData(pollDataMock);
         expectedAnswerData.setAnswerText("First answer");
-        expectedAnswerData.setAnswerEmoji(expectedEmoji.getAsReactionCode());
+        expectedAnswerData.setAnswerEmoji(expectedEmoji.getFormatted());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData);
         List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(slashCommandInteractionEventMock, pollDataMock);
@@ -93,12 +93,12 @@ class PollAnswerServiceTest {
         PollAnswerData expectedAnswerData = new PollAnswerData();
         expectedAnswerData.setPollData(pollDataMock);
         expectedAnswerData.setAnswerText("First answer");
-        expectedAnswerData.setAnswerEmoji(expectedEmoji.getAsReactionCode());
+        expectedAnswerData.setAnswerEmoji(expectedEmoji.getFormatted());
 
         PollAnswerData expectedAnswerData2 = new PollAnswerData();
         expectedAnswerData2.setPollData(pollDataMock);
         expectedAnswerData2.setAnswerText("Second answer");
-        expectedAnswerData2.setAnswerEmoji(expectedEmoji2.getAsReactionCode());
+        expectedAnswerData2.setAnswerEmoji(expectedEmoji2.getFormatted());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData, expectedAnswerData2);
         List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(slashCommandInteractionEventMock, pollDataMock);
@@ -129,12 +129,12 @@ class PollAnswerServiceTest {
         PollAnswerData expectedAnswerData = new PollAnswerData();
         expectedAnswerData.setPollData(pollDataMock);
         expectedAnswerData.setAnswerText("First answer");
-        expectedAnswerData.setAnswerEmoji(expectedEmoji.getAsReactionCode());
+        expectedAnswerData.setAnswerEmoji(expectedEmoji.getFormatted());
 
         PollAnswerData expectedAnswerData2 = new PollAnswerData();
         expectedAnswerData2.setPollData(pollDataMock);
         expectedAnswerData2.setAnswerText("Fifteenth answer");
-        expectedAnswerData2.setAnswerEmoji(expectedEmoji2.getAsReactionCode());
+        expectedAnswerData2.setAnswerEmoji(expectedEmoji2.getFormatted());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData, expectedAnswerData2);
         List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(slashCommandInteractionEventMock, pollDataMock);
@@ -152,7 +152,7 @@ class PollAnswerServiceTest {
         when(slashCommandInteractionEventMock.getGuild()).thenReturn(guildMock);
 
         RichCustomEmoji mockGuildEmoji = Mockito.mock(RichCustomEmoji.class);
-        when(mockGuildEmoji.getAsReactionCode()).thenReturn("000");
+        when(mockGuildEmoji.getFormatted()).thenReturn("000");
         when(guildMock.getEmojis()).thenReturn(List.of(mockGuildEmoji));
 
         PollAnswerData expectedAnswerData = new PollAnswerData();
@@ -181,7 +181,7 @@ class PollAnswerServiceTest {
         when(slashCommandInteractionEventMock.getGuild()).thenReturn(guildMock);
 
         RichCustomEmoji mockGuildEmoji = Mockito.mock(RichCustomEmoji.class);
-        when(mockGuildEmoji.getAsReactionCode()).thenReturn("011");
+        when(mockGuildEmoji.getFormatted()).thenReturn("011");
         when(guildMock.getEmojis()).thenReturn(List.of(mockGuildEmoji));
 
         when(randomNumberGeneratorMock.getRandomNumber(anyInt())).thenReturn(0);
@@ -196,7 +196,7 @@ class PollAnswerServiceTest {
         PollAnswerData expectedAnswerData2 = new PollAnswerData();
         expectedAnswerData2.setPollData(pollDataMock);
         expectedAnswerData2.setAnswerText("Second answer");
-        expectedAnswerData2.setAnswerEmoji(expectedEmoji.getAsReactionCode());
+        expectedAnswerData2.setAnswerEmoji(expectedEmoji.getFormatted());
 
         List<PollAnswerData> expectedAnswerList = List.of(expectedAnswerData, expectedAnswerData2);
         List<PollAnswerData> actualAnswerList = pollAnswerService.saveAnswers(slashCommandInteractionEventMock, pollDataMock);
