@@ -151,7 +151,7 @@ To successfully run Tehubot on your computer you have to do the following steps:
 
 4. (Optional) Change environment variables in docker-compose:
 - Change `POSTGRES_USER` and `POSTGRES_PASSWORD` for a more secure database
-- Change `HIBERNATE_DDL` to `update` if you want the database to persist between launches
+- Change `HIBERNATE_DDL` to `none` if you want the database to persist between launches
 
 5. Run the bot:  
 ```sh
