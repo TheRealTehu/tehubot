@@ -84,6 +84,10 @@ public class QuizData {
         isOngoing = ongoing;
     }
 
+    public String getListInformation() {
+        return "**Quiz title: **" + quizTitle + "** public id: **" + publicId + "** questions: **" + questions.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
